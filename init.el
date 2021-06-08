@@ -1,13 +1,11 @@
 ;;; -*- lexical-binding: t; -*-
 
 ;;; TODO:
-;; port spc q
-;; configure: cl, rust, c, clojure, latex, lua, markdown, js, nix, python, sh
-;; snippets
-;; magit
+;; configure:
+;; port work with file (rename, delete, move, etc...)
+;; magit, forge
 ;; org, org-roam
 ;; debugger (dap-mode?)
-;; lsp
 ;; rss
 
 
@@ -23,13 +21,13 @@
 
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+(setq package-archives '(
+                         ("melpa" . "https://melpa.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
-
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package) ; unless it is already installed
@@ -144,7 +142,7 @@ See `display-line-numbers' for what these values mean."
                  (_ (symbol-name next))))))
 
   :bind
-  (("C-c t l" . kei/toggle-line-numbers)
+  (("C-c o n" . kei/toggle-line-numbers)
    ("C-c o u" . insert-char)
    :map global-map
    ("<C-left>" . enlarge-window-horizontally)
@@ -191,6 +189,15 @@ search started."
                       (unless (eq ibuffer-sorting-mode 'alphabetic)
                         (ibuffer-do-sort-by-alphabetic))))))
 
+;;; Ripgrep
+(use-package rg
+  :bind
+  (:map search-map
+        ("g" . rg))
+  :init
+  (advice-add 'project-find-regexp :override #'rg-project))
+
+
 ;;; Files
 (use-package files
   :hook
@@ -228,9 +235,13 @@ search started."
     (sudo-edit (projectile-find-file-in-directory "/etc/nixos/config/emacs/doom/")))
 
   :bind
-  (("C-c o o" . kei/find-file-in-org)
-   ("C-c o c" . kei/find-file-in-keimacs)
-   ("C-c o p" . kei/find-config-in-nix)))
+  (:map global-map
+        ("C-c f o" . kei/find-file-in-org)
+        ("C-c f c" . kei/find-file-in-keimacs)
+        ("C-c f p" . kei/find-config-in-nix)
+        ("C-c f m" . rename-file)
+        ("C-c f c" . copy-file)
+        ("C-c f s" . sudo-edit)))
 
 (use-package no-littering
   :ensure t
@@ -266,10 +277,10 @@ search started."
 ;;; Edit as sudo
 (use-package tramp
   :defer t
-  :config
-  (put 'temporary-file-directory 'standard-value `(,temporary-file-directory))
+  ;; :config
+  ;; (put 'temporary-file-directory 'standard-value `(,temporary-file-directory))
   :custom
-  (tramp-backup-directory-alist backup-directory-alist)
+  ;; (tramp-backup-directory-alist backup-directory-alist)
   (tramp-default-method "ssh")
   (tramp-default-proxies-alist nil))
 
@@ -277,7 +288,8 @@ search started."
   :ensure t
   :config (sudo-edit-indicator-mode)
   :bind (:map ctl-x-map
-              ("M-s" . sudo-edit)))
+              ("M-s" . sudo-edit)
+              ("M-f" . sudo-edit-find-file)))
 
 ;;; Dired
 (use-package dired
@@ -366,8 +378,8 @@ search started."
   (modus-themes-hl-line 'accented-background)
   (modus-themes-slanted-constructs t)
   :init
-  ;; (load-theme 'modus-operandi t))
-  (load-theme 'modus-vivendi t))
+  (load-theme 'modus-operandi t))
+;; (load-theme 'modus-vivendi t))
 
 ;;; Solaire-mode
 ;; REVIEW
@@ -425,7 +437,7 @@ search started."
     "Delegate to evil-force-normal-state but also clear search highlighting"
     (interactive)
     (progn
-      (keyboard-escape-quit)
+      ;; (keyboard-escape-quit)
       (evil-force-normal-state)
       (evil-ex-nohighlight)))
 
@@ -444,7 +456,7 @@ search started."
    :map evil-motion-state-map
    ("C-w Q" . kill-buffer-and-window)
    ("<escape>" . custom-evil-force-normal-state)
-   ([tab] . evil-jump-item)
+   ;; ([tab] . evil-jump-item)
    :map evil-normal-state-map
    ("<escape>" . custom-evil-force-normal-state)
    :map evil-insert-state-map
@@ -462,8 +474,11 @@ search started."
 
 ;;; Format all the code
 ;;; FIXME
+;;; TODO format-all-formatters (("Nix" nixfmt) ("C" . clang) ...)
 (use-package format-all
   :ensure t
+  :bind
+  (("C-c o f" . format-all-buffer))
   :init
   (add-hook 'before-save-hook (lambda () (call-interactively #'format-all-buffer)))
   ;; :hook
@@ -498,13 +513,14 @@ search started."
   (:map evil-motion-state-map
         ("M-d" . evil-multiedit-match-symbol-and-next)
         ("M-D" . evil-multiedit-match-symbol-and-prev)
+        ("M-R" . evil-multiedit-match-all)
         ("C-M-d" . evil-multiedit-restore)))
 
 ;; Smartparens
 (use-package smartparens
   :hook
-  (prog-mode-hook . smartparens-global-mode)
-  (prog-mode-hook . show-smartparens-mode)
+  (after-init-hook . smartparens-global-strict-mode)
+  (after-init-hook . show-smartparens-global-mode)
   :config
   (sp-pair "`" nil :actions nil)
   (sp-pair "'" nil :actions nil))
@@ -682,10 +698,11 @@ search started."
   :hook
   (dired-mode-hook . all-the-icons-dired-mode))
 
-(use-package emojify
-  :ensure t
-  :hook
-  (after-init-hook . global-emojify-mode))
+;;; TODO mb add to telega
+;; (use-package emojify
+;;   :ensure t
+;;   :hook
+;;   (after-init-hook . global-emojify-mode))
 
 ;;; Modeline
 (use-package doom-modeline
@@ -942,9 +959,8 @@ Must be bound to `minibuffer-local-filename-completion-map'."
 
 ;;;; Highlighting
 (use-package hl-line
-  :ensure t
-  :config
-  (global-hl-line-mode 1))
+  :hook
+  (prog-mode-hook . hl-line-mode))
 
 (use-package page-break-lines
   :ensure t
@@ -1113,24 +1129,19 @@ method to prepare vterm at the corresponding remote directory."
                (tramp-tramp-file-p default-directory))
       (message "default-directory is %s" default-directory)
       (with-parsed-tramp-file-name default-directory path
-        (let ((method (cadr (assoc `tramp-login-program
-                                   (assoc path-method tramp-methods)))))
-          (vterm-send-string
-           (concat method " "
-                   (when path-user (concat path-user "@")) path-host))
-          (vterm-send-return)
-          (vterm-send-string
-           (concat "cd " path-localname))
-          (vterm-send-return)))))
+                                   (let ((method (cadr (assoc `tramp-login-program
+                                                              (assoc path-method tramp-methods)))))
+                                     (vterm-send-string
+                                      (concat method " "
+                                              (when path-user (concat path-user "@")) path-host))
+                                     (vterm-send-return)
+                                     (vterm-send-string
+                                      (concat "cd " path-localname))
+                                     (vterm-send-return)))))
   :bind
   (:map evil-motion-state-map
         ("C-c o V" . +vterm/here)
         ("C-c o v" . +vterm/toggle)))
-
-;; (use-package vterm-toggle
-;;   :ensure t)
-
-
 
 ;; REVIEW
 ;; (use-package vterm-toggle
@@ -1160,11 +1171,8 @@ method to prepare vterm at the corresponding remote directory."
 (use-package link-hint
   :ensure t
   :bind
-  (:map mode-specific-map
-        :prefix-map link-hint-keymap
-        :prefix "l"
-        ("o" . link-hint-open-link)
-        ("c" . link-hint-copy-link)))
+  (("C-c o l o" . link-hint-open-link)
+   ("C-c o l c" . link-hint-copy-link)))
 
 (use-package frog-jump-buffer
   :ensure t
@@ -1186,6 +1194,7 @@ method to prepare vterm at the corresponding remote directory."
 (use-package google-translate
   :ensure t
   :commands (google-translate-smooth-translate)
+  :after google-this
   :config
   (defun kei/google-translate-at-point (arg)
     "Translate word at point. If prefix is provided, do reverse translation"
@@ -1208,9 +1217,9 @@ method to prepare vterm at the corresponding remote directory."
 	    google-translate-preferable-input-methods-alist '((nil . ("en"))
 							                              (russian-computer . ("ru"))))
   :bind
-  (:map evil-motion-state-map
-        ("C-c o t" . google-translate-smooth-translate)
-        ("C-c o T" . kei/google-translate-at-point)))
+  (:map google-this-mode-submap
+        ("n" . google-translate-smooth-translate)
+        ("T" . kei/google-translate-at-point)))
 
 ;;;; FIXME find a better way to define this?
 (require 'google-translate)
@@ -1221,20 +1230,93 @@ method to prepare vterm at the corresponding remote directory."
 (use-package popup
   :ensure t)
 
-;;; TODO export to sh-mode
-;; When saving a file that start with '#!', make it executable
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 ;;;; Multiple cursors
 ;;; REVIEW
-;; (use-package evil-mc
-;;   :ensure t
-;;   :config
-;;   :bind
-;;   (:map evil-motion-state-map
-;;         ("g b u" . evil-mc-undo-cursor)
-;;         ("g b z" . evil-mc-toggle-cursor-here)
-;;         ("g b t" . evil-mc-toggle-cursors)))
+(use-package evil-mc
+  :ensure t
+  :config
+  (evil-define-command +multiple-cursors/evil-mc-toggle-cursor-here ()
+    "Create a cursor at point. If in visual block or line mode, then create
+cursors on each line of the selection, on the column of the cursor. Otherwise
+pauses cursors."
+    :repeat nil
+    :keep-visual nil
+    :evil-mc t
+    (interactive)
+    (cond ((and (evil-mc-has-cursors-p)
+                (evil-normal-state-p)
+                (let* ((pos (point))
+                       (cursor (cl-find-if (lambda (cursor)
+                                             (eq pos (evil-mc-get-cursor-start cursor)))
+                                           evil-mc-cursor-list)))
+                  (when cursor
+                    (evil-mc-delete-cursor cursor)
+                    (setq evil-mc-cursor-list (delq cursor evil-mc-cursor-list))
+                    t))))
+
+          ((memq evil-this-type '(block line))
+           (let ((col (evil-column))
+                 (line-at-pt (line-number-at-pos)))
+             ;; Fix off-by-one error
+             (when (= evil-visual-direction 1)
+               (cl-decf col)
+               (backward-char))
+             (save-excursion
+               (evil-apply-on-block
+                (lambda (ibeg _)
+                  (unless (or (= line-at-pt (line-number-at-pos ibeg))
+                              (invisible-p ibeg))
+                    (goto-char ibeg)
+                    (move-to-column col)
+                    (when (= (current-column) col)
+                      (evil-mc-make-cursor-here))))
+                evil-visual-beginning
+                (if (eq evil-this-type 'line) (1- evil-visual-end) evil-visual-end)
+                nil)
+               (evil-exit-visual-state))))
+          (t
+           (evil-mc-pause-cursors)
+           ;; I assume I don't want the cursors to move yet
+           (evil-mc-make-cursor-here))))
+
+  :bind
+  (:map evil-motion-state-map
+        ("g b u" . evil-mc-undo-cursor)
+        ("g b z" . evil-mc-toggle-cursor-here)
+        ("g b t" . evil-mc-toggle-cursors)))
+
+;;; Make it work with smartparens
+;; (dolist (cmd '(sp-up-sexp
+;;                sp-copy-sexp
+;;                sp-down-sexp
+;;                sp-join-sexp
+;;                sp-kill-sexp
+;;                sp-next-sexp
+;;                sp-split-sexp
+;;                sp-wrap-curly
+;;                sp-wrap-round
+;;                sp-raise-sexp
+;;                sp-clone-sexp
+;;                sp-wrap-square
+;;                sp-splice-sexp
+;;                sp-end-of-sexp
+;;                sp-forward-sexp
+;;                sp-backward-sexp
+;;                sp-convolute-sexp
+;;                sp-transpose-sexp
+;;                sp-kill-whole-line
+;;                sp-beginning-of-sexp
+;;                sp-forward-barf-sexp
+;;                sp-forward-slurp-sexp
+;;                sp-backward-barf-sexp
+;;                sp-backward-slurp-sexp
+;;                sp-splice-sexp-killing-forward
+;;                sp-splice-sexp-killing-backward))
+;;     (add-to-list
+;;      'evil-mc-custom-known-commands
+;;      `(,cmd (:default . evil-mc-execute-call))))
+
 
 ;;; Tabs
 (use-package tab-bar
@@ -1274,3 +1356,462 @@ questions.  Else use completion to select the tab to switch to."
          ("C-x t n" . tab-new)
          ("C-x t q" . tab-close)
          ("C-x t s" . tab-switcher)))
+
+;;;; Snippets
+(use-package autoinsert
+  :hook
+  (find-file . auto-insert))
+
+(use-package yasnippet
+  :defer 0.2
+  :ensure t
+  :custom
+  (yas-prompt-functions '(yas-completing-prompt))
+  :config
+  (yas-reload-all)
+  :hook
+  (prog-mode-hook  . yas-minor-mode))
+
+(use-package doom-snippets
+  :quelpa
+  (doom-snippets
+   :repo "hlissner/doom-snippets"
+   :fetcher github
+   :files ("*" (:exclude ".*" "README.md")))
+  :after yasnippet)
+
+;;; LSP
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (
+         (c-mode . lsp)
+         (cc-mode . lsp)
+         (c++-mode . lsp)
+         (sh-mode . lsp)
+         (js-mode . lsp)
+         (js2-mode . lsp)
+         (lsp-mode . lsp-enable-whick-key-integration)))
+
+(use-package lsp-ui :commands lsp-ui-mode)
+
+(use-package compile
+  :defer t
+  :custom
+  (compilation-scroll-output t))
+
+;;;; Clojure
+(use-package flymake-kondor
+  :ensure t
+  :hook
+  ((clojure-mode-hook
+    clojurec-mode-hook
+    clojurescript-mode-hook) . flymake-kondor-setup))
+
+(use-package eldoc
+  :ensure t
+  :defer t
+  :custom
+  (eldoc-echo-area-use-multiline-p nil))
+
+(use-package cider-mode
+  :custom
+  (cider-font-lock-dynamically nil)
+  (cider-font-lock-reader-conditionals nil)
+  :bind
+  (:map cider-mode-map
+        ("C-c x" . cider-interrupt)
+        ("C-c e u" . cider-undef)
+        ("C-c r c" . cider-find-and-clear-repl-output)
+        ("C-c e e" . cider-eval-last-sexp)
+        ("C-c e b" . cider-eval-buffer)
+        ("C-c e d" . cider-eval-defun-at-point)
+        ("C-c e r" . cider-eval-region)
+        ("C-c n p" . cider-pprint-eval-last-sexp)
+        ("C-c n P" . cider-pprint-eval-last-sexp-to-comment)
+        ("C-c n d" . cider-pprint-eval-defun-at-point)
+        ("C-c n D" . cider-pprint-eval-defun-to-comment)
+        ("C-c t n" . cider-test-run-ns-tests)
+        ("C-c t t" . cider-test-run-test)
+        ("C-c t p" . cider-test-run-project-tests)
+        ("C-c m m" . cider-macroexpand-1)
+        ("C-c m M" . cider-macroexpand-all)
+        ("C-c r q" . cider-quit)))
+
+(use-package cider-eldoc
+  :after cider-mode eldoc
+  :custom
+  (cider-eldoc-display-context-dependent-info t))
+
+(use-package cider-common
+  :after cider-mode
+  :custom
+  (cider-prompt-for-symbol nil)
+  (cider-special-mode-truncate-lines nil))
+
+(use-package cider-repl
+  :after cider-mode
+  :bind
+  (:map cider-repl-mode-map
+        ("C-c q" . cider-quit)
+        ("C-c c" . cider-repl-clear-buffer))
+  :custom
+  (cider-repl-pop-to-buffer-on-connect nil)
+  (cider-repl-display-in-current-window t)
+  (cider-repl-buffer-size-limit 600)
+  :init
+  (advice-add 'cider-repl--insert-banner :override #'ignore))
+
+(use-package cider-completion
+  :after cider-mode
+  :custom
+  (cider-completion-use-context nil)
+  (cider-completion-annotations-include-ns 'always))
+
+(use-package clojure-mode
+  :ensure t
+  :bind
+  (:map clojure-mode-map
+        ("C-c c" . cider-connect-clj)))
+
+(use-package nrepl-client
+  :defer t
+  :custom
+  (nrepl-hide-special-buffers t))
+
+;;; Debugger
+;; (use-package dap-mode
+;;   :defer t
+;;   :ensure t
+;;   ;; :init
+;;   ;; (dap-gdb-lldb-setup)
+;;   :custom
+;;   (dap-auto-configure-mode t                           "Automatically configure dap.")
+;;   (dap-auto-configure-features
+;;    '(sessions locals breakpoints expressions tooltip)  "Remove the button panel in the top.")
+;;   :config
+;;   (require 'dap-gdb-lldb)
+;;   :bind
+;;   (:map dap-mode-map
+;;         ("C-c d s" . dap-debug)
+;;         ("C-c d p" . dap-debug-last)
+;;         ("C-c d n" . dap-debug-last)
+;;         ("C-c d t" . dap-breakpoint-toggle)
+;;         ("C-c d c" . dap-breakpoint-condition)
+;;         ("C-c d h" . dap-breakpoint-hit-condition)
+;;         ("C-c d H" . dap-hydra)
+;;         ("C-c d l" . dap-breakpoint-log-message)
+;;         ("C-c d D" . dap-breakpoint-delete)
+;;         ("C-c d P" . dap-ui-breakpoints)))
+
+
+;;;; CC
+(use-package ccls
+  :ensure t)
+
+(use-package gdb
+  :hook
+  (gdb-mode-hook . gdb-many-windows)
+  :hook
+  (c-mode-hook . (lambda ()
+                   (define-key c-mode-base-map (kbd "C-c d g") 'gdb)
+                   (define-key c-mode-base-map (kbd "C-c d W") 'gdb-many-windows)
+                   (define-key c-mode-base-map (kbd "C-c d b") 'gud-break)
+                   (define-key c-mode-base-map (kbd "C-c d d") 'gud-remove)
+                   (define-key c-mode-base-map (kbd "C-c d r") 'gud-remove)
+                   (define-key c-mode-base-map (kbd "C-c d R") 'gud-refresh)
+                   (define-key c-mode-base-map (kbd "C-c d p") 'gud-print)
+                   (define-key c-mode-base-map (kbd "C-c d n") 'gud-next)
+                   (define-key c-mode-base-map (kbd "C-c d w") 'gud-watch)
+                   (define-key c-mode-base-map (kbd "C-c d c") 'gud-cont)
+                   (define-key c-mode-base-map (kbd "C-c d s") 'gud-step)
+                   (define-key c-mode-base-map (kbd "C-c d x") 'gud-finish))))
+
+;; (rustic-mode-hook . (lambda ()
+;;                       (define-key rustic-mode-map (kbd "C-c d g") 'gdb)
+;;                       (define-key rustic-mode-map (kbd "C-c d W") 'gdb-many-windows)
+;;                       (define-key rustic-mode-map (kbd "C-c d b") 'gud-break)
+;;                       (define-key rustic-mode-map (kbd "C-c d d") 'gud-remove)
+;;                       (define-key rustic-mode-map (kbd "C-c d r") 'gud-remove)
+;;                       (define-key rustic-mode-map (kbd "C-c d R") 'gud-refresh)
+;;                       (define-key rustic-mode-map (kbd "C-c d p") 'gud-print)
+;;                       (define-key rustic-mode-map (kbd "C-c d n") 'gud-next)
+;;                       (define-key rustic-mode-map (kbd "C-c d w") 'gud-watch)
+;;                       (define-key rustic-mode-map (kbd "C-c d c") 'gud-cont)
+;;                       (define-key rustic-mode-map (kbd "C-c d s") 'gud-step)
+;;                       (define-key rustic-mode-map (kbd "C-c d x") 'gud-finish)))
+
+;; :config
+;; :bind
+;; (:map rustic-mode-map
+;;       ("C-c d g" . gdb)
+;;       ("C-c d W" . gdb-many-windows)
+;;       ("C-c d b" . gud-break)
+;;       ("C-c d d" . gud-remove)
+;;       ("C-c d r" . gud-remove)
+;;       ("C-c d R" . gud-refresh)
+;;       ("C-c d p" . gud-print)
+;;       ("C-c d n" . gud-next)
+;;       ("C-c d w" . gud-watch)
+;;       ("C-c d c" . gud-cont)
+;;       ("C-c d s" . gud-step)
+;;       ("C-c d x" . gud-finish)))
+
+
+;;;; Rust
+;; (use-package rust-mode
+;;   :ensure t
+;;   :custom
+;;   (rust-format-on-save . t))
+
+(use-package rustic
+  :ensure t
+  :bind
+  (:map rustic-mode-map
+        ("C-c c c" . rustic-compile)
+        ("C-c c r" . rustic-recompile)
+        ("C-c c s" . rustic-compile-send-input)
+        ("C-c i b" . rustic-format-buffer)
+        ("C-c i f" . rustic-format-file)
+        ("C-c i w" . rustic-cargo-fmt)
+        ;; TODO install cargo-edit
+        ("C-c e a" . rustic-cargo-add)
+        ("C-c e r" . rustic-cargo-rm)
+        ("C-c e u" . rustic-cargo-upgrade)
+        ("C-c e o" . rustic-cargo-outdated)
+        ("C-c t t" . rustic-cargo-test)
+        ("C-c t r" . rustic-cargo-test-rerun)
+        ("C-c t c" . rustic-cargo-current-test)
+        ;;; FIXME gdb
+        ("C-c d g" . gdb)
+        ("C-c d W" . gdb-many-windows)
+        ("C-c d b" . gud-break)
+        ("C-c d d" . gud-remove)
+        ("C-c d r" . gud-remove)
+        ("C-c d R" . gud-refresh)
+        ("C-c d p" . gud-print)
+        ("C-c d n" . gud-next)
+        ("C-c d w" . gud-watch)
+        ("C-c d c" . gud-cont)
+        ("C-c d s" . gud-step)
+        ("C-c d x" . gud-finish)))
+
+;;; Lua (just for awesomewm)
+(use-package lua-mode
+  :ensure t)
+
+;;; Common Lisp
+(use-package sly
+  :ensure t
+  :config
+  (setq inferior-lisp-program "/etc/profiles/per-user/kei/bin/sbcl")
+  :hook
+  (sly-mode-hook . (lambda ()
+                     (unless (sly-connected-p)
+                       (save-excursion (sly)))))
+  :bind
+  (:map sly-mode-map
+        ("C-c x" . sly-interrup)
+        ("C-c d i" . sly-documentation-lookup)
+        ("C-c d s" . sly-describe-symbol)
+        ("C-c d f" . sly-describe-function)
+        ("C-c d a" . sly-apropos)
+        ("C-c d h" . sly-hyperspec-lookup)
+        ("C-c e u" . sly-undefine-function)
+        ("C-c e i" . sly-interactive-eval)
+        ("C-c e e" . sly-eval-last-expression)
+        ("C-c e d" . sly-eval-defun)
+        ("C-c e r" . sly-eval-region)
+        ("C-c e l" . sly-load-file)
+        ("C-c e p" . sly-pprint-eval-last-expresion)
+        ("C-c c d" . sly-compile-defun)
+        ("C-c c i" . sly-interactive-eval)
+        ("C-c c f" . sly-compile-file)
+        ("C-c c l" . sly-compile-and-load-file)
+        ("C-c c r" . sly-compile-region)
+        ("C-c n d" . sly-stickers-dwim)
+        ("C-c n r" . sly-stickers-replay)
+        ("C-c n t" . sly-stickers-toggle-break-on-stickers)
+        ("C-c n f" . sly-stickers-fetch)
+        ("C-c n n" . sly-stickers-next-sticker)
+        ("C-c n p" . sly-stickers-prev-sticker)
+        ("C-c m m" . sly-macroexpand-1)
+        ("C-c m M" . sly-macroexpand-all)
+        ("C-c m s" . sly-format-string-expand)
+        ("C-c r s" . sly-mrepl)))
+
+(use-package sly-quicklisp
+  :ensure t)
+
+(use-package sly-named-readtables
+  :ensure t)
+
+(use-package sly-macrostep
+  :ensure t
+  :bind
+  (:map sly-prefix-map
+        ("C-c m e" . macrostep-expand)))
+
+(use-package sly-asdf
+  :ensure t)
+
+;;;; Nix
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'"
+  :bind
+  (:map nix-mode-map
+        ("C-c b" . nix-build)
+        ("C-c r r" . nix-repl-show)
+        ("C-c r s" . nix-repl-shell)
+        ("C-c U" . nix-unpack)))
+
+(use-package nix-update
+  :ensure t
+  :bind
+  (:map nix-mode-map
+        ("C-c u" . nix-update-fetch)))
+
+;;; TODO Get rid of ivy/helm dependency
+;; (use-package ivy-nixos-options
+(use-package helm-nixos-options
+  :ensure t
+  :bind
+  (:map nix-mode-map
+        ("C-c d" . helm-nixos-options)))
+;; ("C-c d" . ivy-nixos-options)))
+
+
+;;;; Shell
+(use-package sh-mode
+  :hook
+  (after-save-hook . executable-make-buffer-file-executable-if-script-p))
+
+(use-package company-shell
+  :ensure t
+  :config
+  (add-to-list 'company-backends '(company-shell company-shell-env)))
+
+;;;; JSON
+(use-package json-mode
+  :ensure t)
+
+(use-package json-snatcher
+  :ensure t
+  :bind
+  (:map js-mode-map
+        ("C-c p" . jsons-print-path))
+  :hook
+  js-mode
+  js2-mode)
+
+;;;; JS & TS
+;; TODO mb config fully
+;; + [[https://github.com/defunkt/coffee-mode][coffee-mode]]
+;; + [[https://github.com/mooz/js2-mode][js2-mode]]
+;; + [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]]
+;; + [[https://github.com/emacs-typescript/typescript.el][typescript-mode]]
+;; + [[https://github.com/magnars/js2-refactor.el][js2-refactor]]
+;; + [[https://github.com/mojochao/npm-mode][npm-mode]]
+;; + [[https://github.com/abicky/nodejs-repl.el][nodejs-repl]]
+;; + [[https://github.com/skeeto/skewer-mode][skewer-mode]]
+;; + [[https://github.com/ananthakumaran/tide][tide]]
+;; + [[https://github.com/NicolasPetton/xref-js2][xref-js2]]*
+
+(use-package coffee-mode
+  :ensure t)
+
+(use-package js2-mode
+  :ensure t)
+
+(use-package rjsx-mode
+  :ensure t)
+
+(use-package typescript-mode
+  :ensure t)
+
+(use-package skewer-mode
+  :ensure t)
+
+(use-package tide
+  :ensure t)
+
+;;;; Markdown
+;; TODO mb add keybindings to insert md elements...
+(use-package markdown-mode
+  :ensure t)
+
+;;;; Latex
+(use-package auctex
+  :defer t
+  :ensure t)
+
+(use-package adaptive-wrap
+  :ensure t
+  :hook
+  (LaTeX-mode-hook . adaptive-wrap-prefix-mode))
+
+(use-package evil-tex
+  :ensure t)
+
+(use-package latex-preview-pane
+  :ensure t
+  :hook
+  (LaTeX-mode-hook . latex-preview-pane-mode)
+  :bind
+  (:map LaTeX-mode-map
+        ("C-c v u" . latex-preview-pane-update)
+        ("C-c v s" . latex-preview-pane-mode)))
+
+(use-package company-auctex
+  :ensure t
+  :init
+  (company-auctex-init))
+
+(use-package company-math
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-math-symbols-unicode))
+
+;;; Magit
+(use-package magit
+  :ensure t
+  :custom
+  (magit-log-margin '(t age-abbreviated magit-log-margin-width t 7))
+  :bind
+  ;; (:map magit-mode-map
+  ;;       ("<tab>" . magit-section-toggle))
+  ("C-c p m" . magit-project-status)
+  ("C-c m a" . magit-stage-file)       ; the closest analog to git add
+  ("C-c m b" . magit-blame)
+  ("C-c m B" . magit-branch)
+  ("C-c m c" . magit-checkout)
+  ("C-c m C" . magit-commit)
+  ("C-c m d" . magit-diff)
+  ("C-c m D" . magit-discard)
+  ("C-c m f" . magit-fetch)
+  ("C-c m g" . vc-git-grep)
+  ("C-c m G" . magit-gitignore)
+  ("C-c m i" . magit-init)
+  ("C-c m l" . magit-log)
+  ("C-c m m" . magit)
+  ("C-c m M" . magit-merge)
+  ("C-c m n" . magit-notes-edit)
+  ("C-c m p" . magit-pull-branch)
+  ("C-c m P" . magit-push-current)
+  ("C-c m r" . magit-reset)
+  ("C-c m R" . magit-rebase)
+  ("C-c m s" . magit-status)
+  ("C-c m S" . magit-stash)
+  ("C-c m t" . magit-tag)
+  ("C-c m T" . magit-tag-delete)
+  ("C-c m u" . magit-unstage)
+  ("C-c m U" . magit-update-index))
+
+(use-package evil-collection-magit
+  :disabled t
+  :after magit
+  :custom
+  (evil-collection-magit-want-horizontal-movement t)
+  (evil-collection-magit-use-y-for-yank t))
