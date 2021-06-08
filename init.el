@@ -1,14 +1,5 @@
 ;;; -*- lexical-binding: t; -*-
 
-;;; TODO:
-;; configure:
-;; port work with file (rename, delete, move, etc...)
-;; magit, forge
-;; org, org-roam
-;; debugger (dap-mode?)
-;; rss
-
-
 (eval-and-compile
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t)
@@ -21,8 +12,7 @@
 
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
-(setq package-archives '(
-                         ("melpa" . "https://melpa.org/packages/")
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
@@ -33,9 +23,6 @@
 (unless (package-installed-p 'use-package) ; unless it is already installed
   (package-refresh-contents)               ; updage packages archive
   (package-install 'use-package)) ; and install the most recent version of use-package
-
-;; REVIEW
-;; (setq use-package-always-ensure t)
 
 ;; Setup use-package
 (eval-when-compile
@@ -76,14 +63,6 @@
   :config
   (fnhh-mode 1))
 
-;;; Modernized Package Menu
-;; REVIEW
-;; (use-package paradox
-;;   :ensure t
-;;   :defer 1
-;;   :config
-;;   (paradox-enable))
-
 ;;;; Utils
 (defun kei/notify-send (title message)
   "Display a desktop notification by shelling MESSAGE with TITLE out to `notify-send'."
@@ -116,6 +95,7 @@
                          (left-fringe . 5)
                          (right-fringe . 0)))
   (user-full-name "Druk Oleksandr")
+
   :config
   (defun kei/toggle-line-numbers ()
     "Toggle line numbers.
@@ -141,9 +121,16 @@ See `display-line-numbers' for what these values mean."
                  (`nil "disabled")
                  (_ (symbol-name next))))))
 
+  ;; Treat underscore as a part of a word in code
+  (add-hook 'prog-mode-hook
+            (lambda () (modify-syntax-entry ?_ "w")))
+  (add-hook 'prog-mode-hook
+            (lambda () (modify-syntax-entry ?- "w")))
   :bind
-  (("C-c o n" . kei/toggle-line-numbers)
-   ("C-c o u" . insert-char)
+  (("C-c k n" . kei/toggle-line-numbers)
+   ("C-c k u" . insert-char)
+   ("C-c k f" . make-frame)
+   ("C-c k z" . olivetty-mode)
    :map global-map
    ("<C-left>" . enlarge-window-horizontally)
    ("<C-down>" . shrink-window)
@@ -197,7 +184,6 @@ search started."
   :init
   (advice-add 'project-find-regexp :override #'rg-project))
 
-
 ;;; Files
 (use-package files
   :hook
@@ -207,11 +193,6 @@ search started."
   (require-final-newline t)
   ;; backup settings
   (backup-by-copying t)
-  ;; REVIEW (no-littering)
-  ;; (backup-directory-alist
-  ;;  `((".*" . ,(locate-user-emacs-file "tmp/backups/"))))
-  ;; (auto-save-list-file-prefix (locate-user-emacs-file "tmp/auto-saves/sessions/"))
-  ;; (auto-save-file-name-transforms `((".*" ,(locate-user-emacs-file "tmp/auto-saves/") t)))
   (delete-old-versions t)
   (kept-new-versions 6)
   (kept-old-versions 2)
@@ -237,9 +218,10 @@ search started."
   :bind
   (:map global-map
         ("C-c f o" . kei/find-file-in-org)
-        ("C-c f c" . kei/find-file-in-keimacs)
+        ("C-c f k" . kei/find-file-in-keimacs)
         ("C-c f p" . kei/find-config-in-nix)
         ("C-c f m" . rename-file)
+        ("C-c f D" . delete-file)
         ("C-c f c" . copy-file)
         ("C-c f s" . sudo-edit)))
 
@@ -345,7 +327,7 @@ search started."
 (use-package scratch
   :ensure
   :config
-  (defun prot/scratch-buffer-setup ()
+  (defun kei/scratch-buffer-setup ()
     "Add contents to `scratch' buffer and name it accordingly."
     (let* ((mode (format "%s" major-mode))
            (string (concat "Scratch buffer for: " mode "\n\n")))
@@ -356,7 +338,7 @@ search started."
           (comment-region (point-at-bol) (point-at-eol)))
         (forward-line 2))
       (rename-buffer (concat "*Scratch for " mode "*") t)))
-  :hook (scratch-create-buffer-hook . prot/scratch-buffer-setup)
+  :hook (scratch-create-buffer-hook . kei/scratch-buffer-setup)
   :bind ("C-c s" . scratch))
 
 ;;; Winner
@@ -380,13 +362,6 @@ search started."
   :init
   (load-theme 'modus-operandi t))
 ;; (load-theme 'modus-vivendi t))
-
-;;; Solaire-mode
-;; REVIEW
-;; (use-package solaire-mode
-;;   :ensure t
-;;   :config
-;;   (solaire-global-mode +1))
 
 ;;; Faces
 ;; TODO
@@ -478,7 +453,7 @@ search started."
 (use-package format-all
   :ensure t
   :bind
-  (("C-c o f" . format-all-buffer))
+  (("C-c f f" . format-all-buffer))
   :init
   (add-hook 'before-save-hook (lambda () (call-interactively #'format-all-buffer)))
   ;; :hook
@@ -519,7 +494,7 @@ search started."
 ;; Smartparens
 (use-package smartparens
   :hook
-  (after-init-hook . smartparens-global-strict-mode)
+  (after-init-hook . smartparens-global-mode)
   (after-init-hook . show-smartparens-global-mode)
   :config
   (sp-pair "`" nil :actions nil)
@@ -539,13 +514,13 @@ search started."
   :custom
   (evil-cleverparens-use-s-and-S nil)
   :hook
-  (emacs-lisp-mode-hook . evil-cleverparens-mode)
-  (lisp-mode-hook . evil-cleverparens-mode)
-  (scheme-mode-hook . evil-cleverparens-mode)
-  (clojure-mode-hook . evil-cleverparens-mode)
-  (clojurec-mode-hook . evil-cleverparens-mode)
-  (clojurescript-mode-hook . evil-cleverparens-mode)
-  (lisp-interaction-mode-hook . evil-cleverparens-mode)
+  ((emacs-lisp-mode-hook
+    lisp-mode-hook
+    scheme-mode-hook
+    clojure-mode-hook
+    clojurec-mode-hook
+    clojurescript-mode-hook
+    lisp-interaction-mode-hook) . evil-cleverparens-mode )
   :init
   (advice-add 'evil-cp-set-additional-bindings :around #'do-not-map-M-s-and-M-d))
 
@@ -586,12 +561,6 @@ search started."
 ;; (define-key evil-insert-state-map "о" #'kei/maybe-exit)
 
 
-;; Treat underscore as a part of a word in code
-;; TODO
-(add-hook 'prog-mode-hook
-          (lambda () (modify-syntax-entry ?_ "w")))
-(add-hook 'prog-mode-hook
-          (lambda () (modify-syntax-entry ?- "w")))
 ;; Fancy lambdas
 (global-prettify-symbols-mode t)
 
@@ -648,29 +617,6 @@ search started."
   :bind (:map flyspell-mode-map
               ("C-c $" . flyspell-correct-at-point)))
 
-;; Dashboard
-;; TODO setup projectile
-(use-package dashboard
-  :ensure t
-  :preface
-  (defun kei/dashboard-banner ()
-    "Set a dashboard banner including information on package initialization
-			   time and garbage collections."""
-    (setq dashboard-banner-logo-title
-	      (format "Emacs ready in %.2f seconds with %d garbage collections."
-		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
-  :custom
-  (dashboard-startup-banner "~/pix/doom/stallman.png")
-  (dashboard-center-content t)
-  (dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
-                     ;; (projects . 5)
-                     (agenda . 5)
-                     (registers . 5)))
-  :config
-  (dashboard-setup-startup-hook)
-  (dashboard-refresh-buffer))
-
 ;;; Fancy
 (use-package olivetti
   :ensure t
@@ -699,10 +645,9 @@ search started."
   (dired-mode-hook . all-the-icons-dired-mode))
 
 ;;; TODO mb add to telega
-;; (use-package emojify
-;;   :ensure t
-;;   :hook
-;;   (after-init-hook . global-emojify-mode))
+(use-package emojify
+  :ensure t
+  :hook (elfeed-search-mode-hook . emojify-mode))
 
 ;;; Modeline
 (use-package doom-modeline
@@ -754,8 +699,7 @@ search started."
   (completion-styles '(partial-completion orderless))
   (completion-show-help nil)
   :bind
-  ;; TODO change binding
-  ("C-SPC" . completion-at-point))
+  ("s-SPC" . completion-at-point))
 
 (use-package minibuffer-eldef
   :hook
@@ -921,14 +865,11 @@ Must be bound to `minibuffer-local-filename-completion-map'."
     (when (string-prefix-p "-" p)
       `(orderless-strict-leading-initialism . ,(substring p 1))))
   :custom
-  ;; REVIEW orderless-literal
-  ;; (orderless-matching-styles '(orderless-flex orderless-regexp orderless-literal))
   (orderless-matching-styles '(orderless-flex orderless-regexp))
   (orderless-style-dispatchers '(orderless-literal-dispatcher
                                  orderless-sli-dispatcher)))
 
 ;;; Consult
-;;; REVIEW
 (use-package consult
   :ensure t
   :custom
@@ -965,14 +906,17 @@ Must be bound to `minibuffer-local-filename-completion-map'."
 (use-package page-break-lines
   :ensure t
   :hook
-  (help-mode-hook . page-break-lines-mode)
-  (prog-mode-hook . page-break-lines-mode)
-  (special-mode . page-break-lines-mode)
-  (compilation-mode . page-break-lines-mode))
+  ((help-mode-hook
+    prog-mode-hook
+    special-mode
+    compilation-mode) . page-break-lines-mode))
+
 
 (use-package rainbow-mode
   :ensure t
-  :hook '(prog-mode-hook help-mode-hook))
+  :hook
+  ((prog-mode-hook
+    help-mode-hook) . rainbow-mode))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -986,15 +930,15 @@ Must be bound to `minibuffer-local-filename-completion-map'."
   (evil-goggles-enable-delete nil)
   :config
   (evil-goggles-mode)
-  ;; REVIEW
   (evil-goggles-use-diff-faces))
 
 (use-package hl-todo
   :ensure t
   :custom-face
   (hl-todo ((t (:inherit hl-todo :italic t))))
-  :hook ((prog-mode-hook . hl-todo-mode)
-         (yaml-mode-hook . hl-todo-mode)))
+  :hook
+  ((prog-mode-hook
+    yaml-mode-hook) . hl-todo-mode))
 
 (use-package so-long
   :ensure t
@@ -1140,20 +1084,8 @@ method to prepare vterm at the corresponding remote directory."
                                      (vterm-send-return)))))
   :bind
   (:map evil-motion-state-map
-        ("C-c o V" . +vterm/here)
-        ("C-c o v" . +vterm/toggle)))
-
-;; REVIEW
-;; (use-package vterm-toggle
-;;   :ensure t
-;;   :custom
-;;   (vterm-toggle-fullscreen-p . nil)
-;;   :config
-;;   (add-to-list 'display-buffer-alist
-;;                '((lambda(bufname _) (with-current-buffer bufname (equal major-mode 'vterm-mode)))
-;;                  (display-buffer-reuse-window display-buffer-at-bottom)
-;;                  (reusable-frames . visible)
-;;                  (window-height . 0.3))))
+        ("C-c k V" . +vterm/here)
+        ("C-c k v" . +vterm/toggle)))
 
 
 ;;;; Quick jumps
@@ -1171,8 +1103,8 @@ method to prepare vterm at the corresponding remote directory."
 (use-package link-hint
   :ensure t
   :bind
-  (("C-c o l o" . link-hint-open-link)
-   ("C-c o l c" . link-hint-copy-link)))
+  (("C-c k l o" . link-hint-open-link)
+   ("C-c k l c" . link-hint-copy-link)))
 
 (use-package frog-jump-buffer
   :ensure t
@@ -1229,94 +1161,6 @@ method to prepare vterm at the corresponding remote directory."
 ;; Google-translate dependency
 (use-package popup
   :ensure t)
-
-
-;;;; Multiple cursors
-;;; REVIEW
-(use-package evil-mc
-  :ensure t
-  :config
-  (evil-define-command +multiple-cursors/evil-mc-toggle-cursor-here ()
-    "Create a cursor at point. If in visual block or line mode, then create
-cursors on each line of the selection, on the column of the cursor. Otherwise
-pauses cursors."
-    :repeat nil
-    :keep-visual nil
-    :evil-mc t
-    (interactive)
-    (cond ((and (evil-mc-has-cursors-p)
-                (evil-normal-state-p)
-                (let* ((pos (point))
-                       (cursor (cl-find-if (lambda (cursor)
-                                             (eq pos (evil-mc-get-cursor-start cursor)))
-                                           evil-mc-cursor-list)))
-                  (when cursor
-                    (evil-mc-delete-cursor cursor)
-                    (setq evil-mc-cursor-list (delq cursor evil-mc-cursor-list))
-                    t))))
-
-          ((memq evil-this-type '(block line))
-           (let ((col (evil-column))
-                 (line-at-pt (line-number-at-pos)))
-             ;; Fix off-by-one error
-             (when (= evil-visual-direction 1)
-               (cl-decf col)
-               (backward-char))
-             (save-excursion
-               (evil-apply-on-block
-                (lambda (ibeg _)
-                  (unless (or (= line-at-pt (line-number-at-pos ibeg))
-                              (invisible-p ibeg))
-                    (goto-char ibeg)
-                    (move-to-column col)
-                    (when (= (current-column) col)
-                      (evil-mc-make-cursor-here))))
-                evil-visual-beginning
-                (if (eq evil-this-type 'line) (1- evil-visual-end) evil-visual-end)
-                nil)
-               (evil-exit-visual-state))))
-          (t
-           (evil-mc-pause-cursors)
-           ;; I assume I don't want the cursors to move yet
-           (evil-mc-make-cursor-here))))
-
-  :bind
-  (:map evil-motion-state-map
-        ("g b u" . evil-mc-undo-cursor)
-        ("g b z" . evil-mc-toggle-cursor-here)
-        ("g b t" . evil-mc-toggle-cursors)))
-
-;;; Make it work with smartparens
-;; (dolist (cmd '(sp-up-sexp
-;;                sp-copy-sexp
-;;                sp-down-sexp
-;;                sp-join-sexp
-;;                sp-kill-sexp
-;;                sp-next-sexp
-;;                sp-split-sexp
-;;                sp-wrap-curly
-;;                sp-wrap-round
-;;                sp-raise-sexp
-;;                sp-clone-sexp
-;;                sp-wrap-square
-;;                sp-splice-sexp
-;;                sp-end-of-sexp
-;;                sp-forward-sexp
-;;                sp-backward-sexp
-;;                sp-convolute-sexp
-;;                sp-transpose-sexp
-;;                sp-kill-whole-line
-;;                sp-beginning-of-sexp
-;;                sp-forward-barf-sexp
-;;                sp-forward-slurp-sexp
-;;                sp-backward-barf-sexp
-;;                sp-backward-slurp-sexp
-;;                sp-splice-sexp-killing-forward
-;;                sp-splice-sexp-killing-backward))
-;;     (add-to-list
-;;      'evil-mc-custom-known-commands
-;;      `(,cmd (:default . evil-mc-execute-call))))
-
 
 ;;; Tabs
 (use-package tab-bar
@@ -1385,13 +1229,12 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :init
   (setq lsp-keymap-prefix "C-c l")
-  :hook (
-         (c-mode . lsp)
-         (cc-mode . lsp)
-         (c++-mode . lsp)
-         (sh-mode . lsp)
-         (js-mode . lsp)
-         (js2-mode . lsp)
+  :hook (((c-mode
+           cc-mode
+           c++-mode
+           sh-mode
+           js-mode
+           js2-mode) . lsp)
          (lsp-mode . lsp-enable-whick-key-integration)))
 
 (use-package lsp-ui :commands lsp-ui-mode)
@@ -1528,43 +1371,8 @@ questions.  Else use completion to select the tab to switch to."
                    (define-key c-mode-base-map (kbd "C-c d s") 'gud-step)
                    (define-key c-mode-base-map (kbd "C-c d x") 'gud-finish))))
 
-;; (rustic-mode-hook . (lambda ()
-;;                       (define-key rustic-mode-map (kbd "C-c d g") 'gdb)
-;;                       (define-key rustic-mode-map (kbd "C-c d W") 'gdb-many-windows)
-;;                       (define-key rustic-mode-map (kbd "C-c d b") 'gud-break)
-;;                       (define-key rustic-mode-map (kbd "C-c d d") 'gud-remove)
-;;                       (define-key rustic-mode-map (kbd "C-c d r") 'gud-remove)
-;;                       (define-key rustic-mode-map (kbd "C-c d R") 'gud-refresh)
-;;                       (define-key rustic-mode-map (kbd "C-c d p") 'gud-print)
-;;                       (define-key rustic-mode-map (kbd "C-c d n") 'gud-next)
-;;                       (define-key rustic-mode-map (kbd "C-c d w") 'gud-watch)
-;;                       (define-key rustic-mode-map (kbd "C-c d c") 'gud-cont)
-;;                       (define-key rustic-mode-map (kbd "C-c d s") 'gud-step)
-;;                       (define-key rustic-mode-map (kbd "C-c d x") 'gud-finish)))
-
-;; :config
-;; :bind
-;; (:map rustic-mode-map
-;;       ("C-c d g" . gdb)
-;;       ("C-c d W" . gdb-many-windows)
-;;       ("C-c d b" . gud-break)
-;;       ("C-c d d" . gud-remove)
-;;       ("C-c d r" . gud-remove)
-;;       ("C-c d R" . gud-refresh)
-;;       ("C-c d p" . gud-print)
-;;       ("C-c d n" . gud-next)
-;;       ("C-c d w" . gud-watch)
-;;       ("C-c d c" . gud-cont)
-;;       ("C-c d s" . gud-step)
-;;       ("C-c d x" . gud-finish)))
-
 
 ;;;; Rust
-;; (use-package rust-mode
-;;   :ensure t
-;;   :custom
-;;   (rust-format-on-save . t))
-
 (use-package rustic
   :ensure t
   :bind
@@ -1702,9 +1510,7 @@ questions.  Else use completion to select the tab to switch to."
   :bind
   (:map js-mode-map
         ("C-c p" . jsons-print-path))
-  :hook
-  js-mode
-  js2-mode)
+  :hook '(js-mode js2-mode))
 
 ;;;; JS & TS
 ;; TODO mb config fully
@@ -1738,7 +1544,6 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t)
 
 ;;;; Markdown
-;; TODO mb add keybindings to insert md elements...
 (use-package markdown-mode
   :ensure t)
 
@@ -1815,3 +1620,333 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (evil-collection-magit-want-horizontal-movement t)
   (evil-collection-magit-use-y-for-yank t))
+
+(use-package forge
+  :defer t
+  :after magit
+  :ensure t)
+
+;;; Org
+(use-package calendar
+  :defer t
+  :custom (calendar-week-start-day 1))
+
+(use-package org-fancy-priorities
+  :ensure t
+  :hook
+  (org-mode-hook . org-fancy-priorities-mode)
+  :config
+  (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
+
+
+(use-package org
+  :hook (org-mode-hook . variable-pitch-mode)
+  :hook (org-mode-hook . org-num-mode)
+  :bind (:map org-mode-map
+              ("C-c '"   . org-edit-src-code)
+              ("C-c o q" . org-set-tags-command)
+              ("C-c o t" . org-todo)
+              ("C-c o p" . org-priority)
+              ("C-c o r" . org-refile)
+              ("C-c o s" . org-schedule)
+              ("C-c o d" . org-deadline)
+              :map org-src-mode-map
+              ("C-c '"   . org-edit-src-exit))
+  :custom
+  (org-default-notes-file "~/org/todo.org")
+  (org-hidden-keywords '(title author date startup))
+  (org-hide-emphasis-markers t)
+  (org-tag-alist '(("study" . ?s) ("nixos"  . ?n)
+                   ("video" . ?v) ("prog"   . ?p)
+                   ("listen" . ?l) ("read"  . ?r)
+                   ("emacs"  . ?e) ("gtd"   . ?t)
+                   ("write"  . ?w) ("idea"  . ?i)
+                   ("en")))
+  (org-startup-folded 'overview)
+  (org-ellipsis "↩")
+  (org-direcotry "~/org")
+  (org-adapt-indentation nil)
+  (org-hide-leading-stars t)
+  (org-image-actual-width nil)
+  (org-refile-targets '((nil :maxlevel . 2)
+                        (org-agenda-files :maxlevel . 2)))
+  :config
+  (defun org-get-level-face (n)
+    "Get the right face for match N in font-lock matching of headlines."
+    (let* ((org-l0 (- (match-end 2) (match-beginning 1) 1))
+           (org-l (if org-odd-levels-only (1+ (/ org-l0 2)) org-l0))
+           (org-f (if org-cycle-level-faces
+                      (nth (% (1- org-l) org-n-level-faces) org-level-faces)
+                    (nth (1- (min org-l org-n-level-faces)) org-level-faces))))
+      (cond
+       ((eq n 1) (if org-hide-leading-stars 'org-hide org-f))
+       ((eq n 2) 'org-hide)
+       (t (unless org-level-color-stars-only org-f))))))
+
+
+(use-package org-src
+  :custom (org-src-window-setup 'current-window))
+
+(use-package org-agenda
+  :bind (("C-c o a" . org-agenda-list)
+         ("C-c o A" . org-agenda))
+  :config
+  (setq org-agenda-files '("~/org/todo.org"
+                           "~/org/learning.org"
+                           "~/org/university.org"
+                           "~/org/birthdays.org"
+                           "~/org/habits.org"
+                           "~/org/books.org"
+                           "~/org/bookmarks.org"
+                           "~/org/life.org"))
+
+  (setq org-agenda-custom-commands
+	    '(("p" tags-todo "+prog"
+	       ((org-agenda-overriding-header "Things to learn on practice")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("s" tags-todo "+study"
+	       ((org-agenda-overriding-header "Things to study")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("w" tags-todo "+write"
+	       ((org-agenda-overriding-header "Things that include writing")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("l" tags-todo "+listen"
+	       ((org-agenda-overriding-header "Things to listen")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("v" tags-todo "+video-prog"
+	       ((org-agenda-overriding-header "Things to watch without practice")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("V" tags-todo "+video+prog"
+	       ((org-agenda-overriding-header "Things to watch and practice")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("r" tags-todo "+read"
+	       ((org-agenda-overriding-header "Things to read")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("e" tags-todo "+emacs"
+	       ((org-agenda-overriding-header "Things to hack on emacs")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("n" tags-todo "+nixos"
+	       ((org-agenda-overriding-header "Things to hack on nixos")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("u" tags-todo "+university"
+	       ((org-agenda-overriding-header "Things for university")
+	        (org-agenda-files org-agenda-files)))))
+  :custom
+  (org-agenda-skip-scheduled-if-done . nil)
+  (org-agenda-skip-deadline-if-done . nil))
+
+;; (use-package org-roam
+;;   :ensure t
+;;   :bind (("C-c o c" . org-roam-capture)
+;;          :map org-roam-mode-map
+;;          (("C-c n l" . org-roam)
+;;           ("C-c n f" . org-roam-find-file)
+;;           ("C-c n u" . org-roam-buffer-update)
+;;           ("C-c n g" . org-roam-graph))
+;;          :map org-mode-map
+;;          ("C-c n i" . org-roam-insert)
+;;          ("C-c n I" . org-roam-insert-immediate))
+;;   :custom
+;;   (org-roam-capture-templates
+;;    `(0("b" "Bookmark" entry
+;; 	   (file+olp "~/org/bookmarks.org")
+;; 	   "* [[%?][]] \n")
+;; 	  ("l" "Learn" entry
+;; 	   (file+olp "~/org/learning.org")
+;; 	   "\n* TODO [[%?][]] \n")
+;; 	  ("u" "University" entry
+;; 	   (file+olp+datetree "~/org/university.org")
+;; 	   "* TODO DEADLINE: %t %? :university:\n")
+;; 	  ("i" "Ideas" entry
+;; 	   (file+olp+datetree "~/org/ideas.org")
+;; 	   "* %T %? :idea:\n")))
+
+;;   (org-roam-directory
+;;    (file-truename "~/org/roam/")))
+
+;; (use-package evil-org
+;;   :ensure t
+;;   :after org
+;;   :hook (org-mode . (lambda () evil-org-mode))
+;;   :config
+;;   (require 'evil-org-agenda)
+;;   (evil-org-agenda-set-keys))
+
+;; ;;; Elfeed
+;; (use-package elfeed
+;;   :ensure t
+;;   :config
+;;   (defun prot-elfeed-show-eww (&optional link)
+;;     "Browse current entry's link or optional LINK in `eww'.
+
+;; Only show the readable part once the website loads.  This can
+;; fail on poorly-designed websites."
+;;     (interactive)
+;;     (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+;;                       elfeed-show-entry
+;;                     (elfeed-search-selected :ignore-region)))
+;;            (link (or link (elfeed-entry-link entry))))
+;;       (eww link)
+;;       (add-hook 'eww-after-render-hook 'eww-readable nil t)))
+
+;;   (defvar prot-elfeed-mpv-buffer-name "*prot-elfeed-mpv-output*"
+;;     "Name of buffer holding Elfeed MPV output.")
+
+;;   (defcustom prot-elfeed-laptop-resolution-breakpoint 1366
+;;     "Determine video resolution based on this display width.
+;; This is used to check whether I am on the laptop or whether an
+;; external display is attached to it.  In the latter case, a
+;; `prot-elfeed-video-resolution-large' video resolution will be
+;; used, else `prot-elfeed-video-resolution-small'."
+;;     :type 'integer
+;;     :group 'prot-elfeed)
+
+;;   (defcustom prot-elfeed-video-resolution-small 720
+;;     "Set video resolution width for smaller displays."
+;;     :type 'integer
+;;     :group 'prot-elfeed)
+
+;;   (defcustom prot-elfeed-video-resolution-large 1080
+;;     "Set video resolution width for larger displays."
+;;     :type 'integer
+;;     :group 'prot-elfeed)
+
+;;   (defun prot-elfeed--video-resolution ()
+;;     "Determine display resolution.
+;; This checks `prot-elfeed-laptop-resolution-breakpoint'."
+;;     (if (<= (display-pixel-width) prot-elfeed-laptop-resolution-breakpoint)
+;;         prot-elfeed-video-resolution-small
+;;       prot-elfeed-video-resolution-large))
+
+;;   (defun prot-elfeed--get-mpv-buffer ()
+;;     "Prepare `prot-elfeed-mpv-buffer-name' buffer."
+;;     (let ((buf (get-buffer prot-elfeed-mpv-buffer-name))
+;;           (inhibit-read-only t))
+;;       (with-current-buffer buf
+;;         (erase-buffer))))
+
+;;   (declare-function elfeed-entry-enclosures "elfeed")
+
+;;   (defun prot-elfeed-mpv-dwim ()
+;;     "Play entry link with the external MPV program.
+;; When there is an audio enclosure (assumed to be a podcast), play
+;; just the audio.  Else spawn a video player at a resolution that
+;; accounts for the current monitor's width."
+;;     (interactive)
+;;     (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+;;                       elfeed-show-entry
+;;                     (elfeed-search-selected :ignore-region)))
+;;            (link (elfeed-entry-link entry))
+;;            (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
+;;            (audio "--no-video")
+;;            ;; Here the display width checks if I am on the laptop
+;;            (height (prot-elfeed--video-resolution))
+;;            (video                       ; this assumes mpv+youtube-dl
+;;             (format "--ytdl-format=bestvideo[height\\<=?%s]+bestaudio/best" height))
+;;            (buf (pop-to-buffer prot-elfeed-mpv-buffer-name)))
+;;       (prot-elfeed--get-mpv-buffer)
+;;       (if enclosure
+;;           (progn
+;;             (async-shell-command (format "mpv %s %s" audio enclosure) buf)
+;;             (message "Launching MPV for %s" enclosure))
+;;         (async-shell-command (format "mpv %s %s" video link) buf)
+;;         (message "Launching MPV for %s" link))))
+
+;;   (evil-define-key* 'motion elfeed-search-mode-map
+;;     "e" #'prot-elfeed-show-eww
+;;     "v" #'prot-elfeed-mpv-dwim
+;;     "o" #'elfeed-show-visit)
+
+;;   (evil-define-key* 'motion elfeed-show-mode-map
+;;     "e" #'prot-elfeed-show-eww
+;;     "v" #'prot-elfeed-mpv-dwim
+;;     "o" #'elfeed-show-visit)
+
+;;   :bind (("C-c w" . elfeed)
+;;          (:map elfeed-show-mode-map
+;;                ("e" . prot-elfeed-show-eww)
+;;                ("v" . prot-elfeed-mpv-dwim)
+;;                ("o" . elfeed-show-visit))
+;;          (:map elfeed-search-mode-map
+;;                ("e" . prot-elfeed-show-eww)
+;;                ("v" . prot-elfeed-mpv-dwim)
+;;                ("o" . elfeed-show-visit)))
+
+;;   :hook (elfeed-search-mode . elfeed-update)
+;;   :custom
+;;   (elfeed-feeds
+;;    '(;; Tech
+;; 	 ("https://nitter.net/ebanoe_it/rss" ebanoe it)
+;; 	 ("https://habr.com/ru/rss/all/all/?fl=ru" habr it)
+;; 	 ("https://os.phil-opp.com/rss.xml" rust)
+;; 	 ("https://this-week-in-rust.org/rss.xml" rust)
+;; 	 ("https://dou.ua/feed/" dou it)
+;; 	 ("https://protesilaos.com/codelog.xml" shprot emacs)
+;; 	 ("https://sachachua.com/blog/category/emacs/feed" emacs)
+;; 	 ("https://weekly.nixos.org/feeds/all.rss.xml" nix)
+;; 	 ("https://devpew.com/index.xml" johenews)
+;; 	 ;; Reddit
+
+;;      ("https://www.reddit.com/r/Common_Lisp/new.rss" lisp cl)
+;;      ("https://www.reddit.com/r/lisp/new.rss" lisp)
+;;      ("https://www.reddit.com/r/Clojure/new.rss" lisp clj)
+;;      ("https://www.reddit.com/r/NixOS/new.rss" nix)
+;; 	 ("https://www.reddit.com/r/DoomEmacs/new.rss" emacs doom)
+;; 	 ("https://www.reddit.com/r/emacs/new.rss" emacs )
+;; 	 ;; Podcasts
+;; 	 ("https://rustacean-station.org/podcast.rss" rust podcast)
+;; 	 ("http://feeds.rucast.net/radio-t" radiot podcast)
+;; 	 ;; Youtubetech
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA" ytt luke)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" ytt dt)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA" ytt mental-outlaw)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsnGwSIHyoYN0kiINAGUKxg" ytt wolfgang)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA" ytt brodie)
+;; 	 ;; Youtubefun
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCLKB9g1374gcxezJINOLtag" ytf raiz)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8M5YVWQan_3Elm-URehz9w" ytf utopia)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC_gKMJFeCf1bKzZr_fICkig" ytf thedrzj)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7nQ_p09KDD0fI6p34nsr4A" ytf voldemar)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfdgIq01iG92AXBt-NxgPkg" ytf later)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD-S-2TMDY4fL-R5iDQn-6Q" ytf 2shell)
+;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCr1Pf6rqk3h8b1APvAt42Bw" ytf slidan))))
+
+;; (use-package elfeed-goodies
+;;   :ensure t
+;;   :after elfeed
+;;   :custom
+;;   (elfeed-goodies/entry-pane-position 'bottom)
+;;   :config
+;;   (elfeed-goodies/setup))
+
+;; Dashboard
+;; ALWAYS IN THE END!
+(use-package dashboard
+  :ensure t
+  :preface
+  (defun kei/dashboard-banner ()
+    "Set a dashboard banner including information on package initialization
+			   time and garbage collections."""
+    (setq dashboard-banner-logo-title
+	      (format "Emacs ready in %.2f seconds with %d garbage collections."
+		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
+  :custom
+  (dashboard-startup-banner "~/pix/doom/stallman.png")
+  (dashboard-center-content t)
+  (dashboard-items '((recents  . 5)
+                     ;; (bookmarks . 5)
+                     ;; (registers . 5)
+                     (agenda . 5)
+                     (projects . 5)))
+  :config
+  (dashboard-setup-startup-hook)
+  (dashboard-refresh-buffer))
