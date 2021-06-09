@@ -1760,34 +1760,34 @@ questions.  Else use completion to select the tab to switch to."
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil))
 
-;; (use-package org-roam
-;;   :ensure t
-;;   :bind (("C-c o c" . org-roam-capture)
-;;          :map org-roam-mode-map
-;;          (("C-c n l" . org-roam)
-;;           ("C-c n f" . org-roam-find-file)
-;;           ("C-c n u" . org-roam-buffer-update)
-;;           ("C-c n g" . org-roam-graph))
-;;          :map org-mode-map
-;;          ("C-c n i" . org-roam-insert)
-;;          ("C-c n I" . org-roam-insert-immediate))
-;;   :custom
-;;   (org-roam-capture-templates
-;;    `(0("b" "Bookmark" entry
-;; 	   (file+olp "~/org/bookmarks.org")
-;; 	   "* [[%?][]] \n")
-;; 	  ("l" "Learn" entry
-;; 	   (file+olp "~/org/learning.org")
-;; 	   "\n* TODO [[%?][]] \n")
-;; 	  ("u" "University" entry
-;; 	   (file+olp+datetree "~/org/university.org")
-;; 	   "* TODO DEADLINE: %t %? :university:\n")
-;; 	  ("i" "Ideas" entry
-;; 	   (file+olp+datetree "~/org/ideas.org")
-;; 	   "* %T %? :idea:\n")))
+(use-package org-roam
+  :ensure t
+  :bind (("C-c o c" . org-roam-capture)
+         :map org-roam-mode-map
+         (("C-c n l" . org-roam)
+          ("C-c n f" . org-roam-find-file)
+          ("C-c n u" . org-roam-buffer-update)
+          ("C-c n g" . org-roam-graph))
+         :map org-mode-map
+         ("C-c n i" . org-roam-insert)
+         ("C-c n I" . org-roam-insert-immediate))
+  :custom
+  (org-roam-capture-templates
+   `(0("b" "Bookmark" entry
+	   (file+olp "~/org/bookmarks.org")
+	   "* [[%?][]] \n")
+	  ("l" "Learn" entry
+	   (file+olp "~/org/learning.org")
+	   "\n* TODO [[%?][]] \n")
+	  ("u" "University" entry
+	   (file+olp+datetree "~/org/university.org")
+	   "* TODO DEADLINE: %t %? :university:\n")
+	  ("i" "Ideas" entry
+	   (file+olp+datetree "~/org/ideas.org")
+	   "* %T %? :idea:\n")))
 
-;;   (org-roam-directory
-;;    (file-truename "~/org/roam/")))
+  (org-roam-directory
+   (file-truename "~/org/roam/")))
 
 (use-package evil-org
   :ensure t
