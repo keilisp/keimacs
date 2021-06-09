@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; TODO ssh setup [[https://github.com/tarsius/keychain-environment/blob/master/keychain-environment.el#L27-L48][Keychain]]
+;; TODO org startup folded
+
 (eval-and-compile
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t)
@@ -455,9 +458,12 @@ search started."
   :bind
   (("C-c f f" . format-all-buffer))
   :init
+  ;; (add-hook 'prog-mode-hook 'format-all-mode)
+  ;; (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
   (add-hook 'before-save-hook (lambda () (call-interactively #'format-all-buffer)))
   ;; :hook
   ;; (prog-mode-hook . format-all-mode)
+  ;; (format-all-mode-hook . format-all-ensure-formatter)
   ;; (prog-mode-hook . (lambda ()
   ;;                       (add-hook 'before-save-hook #'format-all-buffer)))
   ;; (before-save-hook . #'format-all-buffer)
@@ -1073,15 +1079,15 @@ method to prepare vterm at the corresponding remote directory."
                (tramp-tramp-file-p default-directory))
       (message "default-directory is %s" default-directory)
       (with-parsed-tramp-file-name default-directory path
-                                   (let ((method (cadr (assoc `tramp-login-program
-                                                              (assoc path-method tramp-methods)))))
-                                     (vterm-send-string
-                                      (concat method " "
-                                              (when path-user (concat path-user "@")) path-host))
-                                     (vterm-send-return)
-                                     (vterm-send-string
-                                      (concat "cd " path-localname))
-                                     (vterm-send-return)))))
+        (let ((method (cadr (assoc `tramp-login-program
+                                   (assoc path-method tramp-methods)))))
+          (vterm-send-string
+           (concat method " "
+                   (when path-user (concat path-user "@")) path-host))
+          (vterm-send-return)
+          (vterm-send-string
+           (concat "cd " path-localname))
+          (vterm-send-return)))))
   :bind
   (:map evil-motion-state-map
         ("C-c k V" . +vterm/here)
@@ -1580,6 +1586,12 @@ questions.  Else use completion to select the tab to switch to."
   (add-to-list 'company-backends 'company-math-symbols-unicode))
 
 ;;; Magit
+
+(use-package keychain-environment
+  :ensure t
+  :init
+  (keychain-refresh-environment))
+
 (use-package magit
   :ensure t
   :custom
@@ -1773,160 +1785,13 @@ questions.  Else use completion to select the tab to switch to."
 ;;   (org-roam-directory
 ;;    (file-truename "~/org/roam/")))
 
-;; (use-package evil-org
-;;   :ensure t
-;;   :after org
-;;   :hook (org-mode . (lambda () evil-org-mode))
-;;   :config
-;;   (require 'evil-org-agenda)
-;;   (evil-org-agenda-set-keys))
-
-;; ;;; Elfeed
-;; (use-package elfeed
-;;   :ensure t
-;;   :config
-;;   (defun prot-elfeed-show-eww (&optional link)
-;;     "Browse current entry's link or optional LINK in `eww'.
-
-;; Only show the readable part once the website loads.  This can
-;; fail on poorly-designed websites."
-;;     (interactive)
-;;     (let* ((entry (if (eq major-mode 'elfeed-show-mode)
-;;                       elfeed-show-entry
-;;                     (elfeed-search-selected :ignore-region)))
-;;            (link (or link (elfeed-entry-link entry))))
-;;       (eww link)
-;;       (add-hook 'eww-after-render-hook 'eww-readable nil t)))
-
-;;   (defvar prot-elfeed-mpv-buffer-name "*prot-elfeed-mpv-output*"
-;;     "Name of buffer holding Elfeed MPV output.")
-
-;;   (defcustom prot-elfeed-laptop-resolution-breakpoint 1366
-;;     "Determine video resolution based on this display width.
-;; This is used to check whether I am on the laptop or whether an
-;; external display is attached to it.  In the latter case, a
-;; `prot-elfeed-video-resolution-large' video resolution will be
-;; used, else `prot-elfeed-video-resolution-small'."
-;;     :type 'integer
-;;     :group 'prot-elfeed)
-
-;;   (defcustom prot-elfeed-video-resolution-small 720
-;;     "Set video resolution width for smaller displays."
-;;     :type 'integer
-;;     :group 'prot-elfeed)
-
-;;   (defcustom prot-elfeed-video-resolution-large 1080
-;;     "Set video resolution width for larger displays."
-;;     :type 'integer
-;;     :group 'prot-elfeed)
-
-;;   (defun prot-elfeed--video-resolution ()
-;;     "Determine display resolution.
-;; This checks `prot-elfeed-laptop-resolution-breakpoint'."
-;;     (if (<= (display-pixel-width) prot-elfeed-laptop-resolution-breakpoint)
-;;         prot-elfeed-video-resolution-small
-;;       prot-elfeed-video-resolution-large))
-
-;;   (defun prot-elfeed--get-mpv-buffer ()
-;;     "Prepare `prot-elfeed-mpv-buffer-name' buffer."
-;;     (let ((buf (get-buffer prot-elfeed-mpv-buffer-name))
-;;           (inhibit-read-only t))
-;;       (with-current-buffer buf
-;;         (erase-buffer))))
-
-;;   (declare-function elfeed-entry-enclosures "elfeed")
-
-;;   (defun prot-elfeed-mpv-dwim ()
-;;     "Play entry link with the external MPV program.
-;; When there is an audio enclosure (assumed to be a podcast), play
-;; just the audio.  Else spawn a video player at a resolution that
-;; accounts for the current monitor's width."
-;;     (interactive)
-;;     (let* ((entry (if (eq major-mode 'elfeed-show-mode)
-;;                       elfeed-show-entry
-;;                     (elfeed-search-selected :ignore-region)))
-;;            (link (elfeed-entry-link entry))
-;;            (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
-;;            (audio "--no-video")
-;;            ;; Here the display width checks if I am on the laptop
-;;            (height (prot-elfeed--video-resolution))
-;;            (video                       ; this assumes mpv+youtube-dl
-;;             (format "--ytdl-format=bestvideo[height\\<=?%s]+bestaudio/best" height))
-;;            (buf (pop-to-buffer prot-elfeed-mpv-buffer-name)))
-;;       (prot-elfeed--get-mpv-buffer)
-;;       (if enclosure
-;;           (progn
-;;             (async-shell-command (format "mpv %s %s" audio enclosure) buf)
-;;             (message "Launching MPV for %s" enclosure))
-;;         (async-shell-command (format "mpv %s %s" video link) buf)
-;;         (message "Launching MPV for %s" link))))
-
-;;   (evil-define-key* 'motion elfeed-search-mode-map
-;;     "e" #'prot-elfeed-show-eww
-;;     "v" #'prot-elfeed-mpv-dwim
-;;     "o" #'elfeed-show-visit)
-
-;;   (evil-define-key* 'motion elfeed-show-mode-map
-;;     "e" #'prot-elfeed-show-eww
-;;     "v" #'prot-elfeed-mpv-dwim
-;;     "o" #'elfeed-show-visit)
-
-;;   :bind (("C-c w" . elfeed)
-;;          (:map elfeed-show-mode-map
-;;                ("e" . prot-elfeed-show-eww)
-;;                ("v" . prot-elfeed-mpv-dwim)
-;;                ("o" . elfeed-show-visit))
-;;          (:map elfeed-search-mode-map
-;;                ("e" . prot-elfeed-show-eww)
-;;                ("v" . prot-elfeed-mpv-dwim)
-;;                ("o" . elfeed-show-visit)))
-
-;;   :hook (elfeed-search-mode . elfeed-update)
-;;   :custom
-;;   (elfeed-feeds
-;;    '(;; Tech
-;; 	 ("https://nitter.net/ebanoe_it/rss" ebanoe it)
-;; 	 ("https://habr.com/ru/rss/all/all/?fl=ru" habr it)
-;; 	 ("https://os.phil-opp.com/rss.xml" rust)
-;; 	 ("https://this-week-in-rust.org/rss.xml" rust)
-;; 	 ("https://dou.ua/feed/" dou it)
-;; 	 ("https://protesilaos.com/codelog.xml" shprot emacs)
-;; 	 ("https://sachachua.com/blog/category/emacs/feed" emacs)
-;; 	 ("https://weekly.nixos.org/feeds/all.rss.xml" nix)
-;; 	 ("https://devpew.com/index.xml" johenews)
-;; 	 ;; Reddit
-
-;;      ("https://www.reddit.com/r/Common_Lisp/new.rss" lisp cl)
-;;      ("https://www.reddit.com/r/lisp/new.rss" lisp)
-;;      ("https://www.reddit.com/r/Clojure/new.rss" lisp clj)
-;;      ("https://www.reddit.com/r/NixOS/new.rss" nix)
-;; 	 ("https://www.reddit.com/r/DoomEmacs/new.rss" emacs doom)
-;; 	 ("https://www.reddit.com/r/emacs/new.rss" emacs )
-;; 	 ;; Podcasts
-;; 	 ("https://rustacean-station.org/podcast.rss" rust podcast)
-;; 	 ("http://feeds.rucast.net/radio-t" radiot podcast)
-;; 	 ;; Youtubetech
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA" ytt luke)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" ytt dt)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA" ytt mental-outlaw)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsnGwSIHyoYN0kiINAGUKxg" ytt wolfgang)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA" ytt brodie)
-;; 	 ;; Youtubefun
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCLKB9g1374gcxezJINOLtag" ytf raiz)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8M5YVWQan_3Elm-URehz9w" ytf utopia)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC_gKMJFeCf1bKzZr_fICkig" ytf thedrzj)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7nQ_p09KDD0fI6p34nsr4A" ytf voldemar)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfdgIq01iG92AXBt-NxgPkg" ytf later)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD-S-2TMDY4fL-R5iDQn-6Q" ytf 2shell)
-;; 	 ("https://www.youtube.com/feeds/videos.xml?channel_id=UCr1Pf6rqk3h8b1APvAt42Bw" ytf slidan))))
-
-;; (use-package elfeed-goodies
-;;   :ensure t
-;;   :after elfeed
-;;   :custom
-;;   (elfeed-goodies/entry-pane-position 'bottom)
-;;   :config
-;;   (elfeed-goodies/setup))
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 ;; Dashboard
 ;; ALWAYS IN THE END!
@@ -1945,8 +1810,8 @@ questions.  Else use completion to select the tab to switch to."
   (dashboard-items '((recents  . 5)
                      ;; (bookmarks . 5)
                      ;; (registers . 5)
-                     (agenda . 5)
-                     (projects . 5)))
+                     ;; (projects . 5)
+                     (agenda . 5)))
   :config
   (dashboard-setup-startup-hook)
   (dashboard-refresh-buffer))
