@@ -1811,9 +1811,9 @@ questions.  Else use completion to select the tab to switch to."
   (dashboard-startup-banner "~/pix/doom/stallman.png")
   (dashboard-center-content t)
   (dashboard-items '((recents  . 5)
-                     ;; (bookmarks . 5)
-                     ;; (registers . 5)
-                     ;; (projects . 5)
+                     (bookmarks . 5)
+                     (registers . 5)
+                     (projects . 5)
                      (agenda . 5)))
   :config
   (dashboard-setup-startup-hook)
