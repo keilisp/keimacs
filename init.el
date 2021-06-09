@@ -1079,15 +1079,15 @@ method to prepare vterm at the corresponding remote directory."
                (tramp-tramp-file-p default-directory))
       (message "default-directory is %s" default-directory)
       (with-parsed-tramp-file-name default-directory path
-                                   (let ((method (cadr (assoc `tramp-login-program
-                                                              (assoc path-method tramp-methods)))))
-                                     (vterm-send-string
-                                      (concat method " "
-                                              (when path-user (concat path-user "@")) path-host))
-                                     (vterm-send-return)
-                                     (vterm-send-string
-                                      (concat "cd " path-localname))
-                                     (vterm-send-return)))))
+        (let ((method (cadr (assoc `tramp-login-program
+                                   (assoc path-method tramp-methods)))))
+          (vterm-send-string
+           (concat method " "
+                   (when path-user (concat path-user "@")) path-host))
+          (vterm-send-return)
+          (vterm-send-string
+           (concat "cd " path-localname))
+          (vterm-send-return)))))
   :bind
   (:map evil-motion-state-map
         ("C-c k V" . +vterm/here)
@@ -1683,6 +1683,7 @@ questions.  Else use completion to select the tab to switch to."
   (org-adapt-indentation nil)
   (org-hide-leading-stars t)
   (org-image-actual-width nil)
+  (org-startup-folded t)
   (org-refile-targets '((nil :maxlevel . 2)
                         (org-agenda-files :maxlevel . 2)))
   :config
