@@ -1721,16 +1721,17 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org
   :hook (org-mode-hook . variable-pitch-mode)
   :hook (org-mode-hook . org-num-mode)
-  :bind (:map org-mode-map
-              ("C-c '"   . org-edit-src-code)
-              ("C-c o q" . org-set-tags-command)
-              ("C-c o t" . org-todo)
-              ("C-c o p" . org-priority)
-              ("C-c o r" . org-refile)
-              ("C-c o s" . org-schedule)
-              ("C-c o d" . org-deadline)
-              :map org-src-mode-map
-              ("C-c '"   . org-edit-src-exit))
+  :bind (("C-c o c" . org-capture)
+         :map org-mode-map
+         ("C-c '"   . org-edit-src-code)
+         ("C-c o q" . org-set-tags-command)
+         ("C-c o t" . org-todo)
+         ("C-c o p" . org-priority)
+         ("C-c o r" . org-refile)
+         ("C-c o s" . org-schedule)
+         ("C-c o d" . org-deadline)
+         :map org-src-mode-map
+         ("C-c '"   . org-edit-src-exit))
   :custom
   (org-default-notes-file "~/org/todo.org")
   (org-hidden-keywords '(title author date startup))
@@ -1740,17 +1741,23 @@ questions.  Else use completion to select the tab to switch to."
                    ("listen" . ?l) ("read"  . ?r)
                    ("emacs"  . ?e) ("gtd"   . ?t)
                    ("write"  . ?w) ("idea"  . ?i)
-                   ("en")))
+                   ("en")          ("life" . ?d)))
   (org-startup-folded 'overview)
   (org-ellipsis "↩")
   (org-direcotry "~/org")
   (org-adapt-indentation nil)
   (org-hide-leading-stars t)
   (org-image-actual-width nil)
+  ;; (org-export-latex-packages-alist (quote (("" "cmap" t) ("ukrainian,russian,english" «babel» t))))
+  ;; (org-export-default-language "ru")
   (org-startup-folded t)
   (org-refile-targets '((nil :maxlevel . 2)
-                        (org-agenda-files :maxlevel . 2)))
+                        (org-agenda-files :maxlevel . 3)
+                        ("archive.org" :maxlevel . 1)))
   :config
+  ;; (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
+  ;; (add-to-list 'org-latex-default-packages-alist '("ukrainian,russian,english" "babel" t))
+
   (defun org-get-level-face (n)
     "Get the right face for match N in font-lock matching of headlines."
     (let* ((org-l0 (- (match-end 2) (match-beginning 1) 1))
@@ -1761,72 +1768,112 @@ questions.  Else use completion to select the tab to switch to."
       (cond
        ((eq n 1) (if org-hide-leading-stars 'org-hide org-f))
        ((eq n 2) 'org-hide)
-       (t (unless org-level-color-stars-only org-f))))))
+       (t (unless org-level-color-stars-only org-f)))))
 
+
+  (setq org-capture-templates
+	    `(("t" "Task" entry
+	       (file+olp "~/org/todo.org")
+	       "* TODO %t %? :gtd:\n")
+	      ("b" "Bookmark" entry
+	       (file+olp "~/org/bookmarks.org")
+	       "* [[%?][]] \n")
+	      ("s" "Study" entry
+	       (file+olp "~/org/learning.org")
+	       "\n* [[%?][]] :study: \n")
+	      ("r" "Read" entry
+	       (file+olp "~/org/learning.org")
+	       "\n* [[%?][]] :read: \n")
+	      ("v" "Video" entry
+	       (file+olp "~/org/learning.org")
+	       "\n* [[%?][]] :video: \n")
+	      ("l" "Listen" entry
+	       (file+olp "~/org/learning.org")
+	       "\n* [[%?][]] :listen: \n")
+	      ("p" "Prog" entry
+	       (file+olp "~/org/learning.org")
+	       "\n* [[%?][]] :prog: \n")
+	      ("i" "Idea" entry
+	       (file+olp+datetree "~/org/ideas.org")
+	       "* %T %? :idea:\n"))))
+
+
+;; (use-package org-latex
+;;   :config
+;;   (add-to-list 'org-latex-default-packages-alist '("ukrainian,russian,english" "babel" t)))
 
 (use-package org-src
   :custom (org-src-window-setup 'current-window))
 
 (use-package org-agenda
   :bind (("C-c o a" . org-agenda-list)
-         ("C-c o A" . org-agenda))
+         ("C-c o A" . org-agenda)
+         ("C-c o r" . org-agenda-refile))
   :config
   (setq org-agenda-files '("~/org/todo.org"
                            "~/org/learning.org"
                            "~/org/university.org"
                            "~/org/birthdays.org"
                            "~/org/habits.org"
-                           "~/org/books.org"
                            "~/org/bookmarks.org"
                            "~/org/life.org"))
 
   (setq org-agenda-custom-commands
-	    '(("p" tags-todo "+prog"
+	    '(("g" tags "+gtd"
+	       ((org-agenda-overriding-header "Things to get done")
+	        (org-agenda-files org-agenda-files)))
+
+          ("p" tags "+prog"
 	       ((org-agenda-overriding-header "Things to learn on practice")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("s" tags-todo "+study"
+	      ("s" tags "+study"
 	       ((org-agenda-overriding-header "Things to study")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("w" tags-todo "+write"
+	      ("w" tags "+write"
 	       ((org-agenda-overriding-header "Things that include writing")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("l" tags-todo "+listen"
+	      ("d" tags "+life"
+	       ((org-agenda-overriding-header "Things to todo in longer distance")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("l" tags "+listen"
 	       ((org-agenda-overriding-header "Things to listen")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("v" tags-todo "+video-prog"
+	      ("v" tags "+video-prog"
 	       ((org-agenda-overriding-header "Things to watch without practice")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("V" tags-todo "+video+prog"
+	      ("V" tags "+video+prog"
 	       ((org-agenda-overriding-header "Things to watch and practice")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("r" tags-todo "+read"
+	      ("r" tags "+read"
 	       ((org-agenda-overriding-header "Things to read")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("e" tags-todo "+emacs"
+	      ("e" tags "+emacs"
 	       ((org-agenda-overriding-header "Things to hack on emacs")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("n" tags-todo "+nixos"
+	      ("n" tags "+nixos"
 	       ((org-agenda-overriding-header "Things to hack on nixos")
 	        (org-agenda-files org-agenda-files)))
 
-	      ("u" tags-todo "+university"
+	      ("u" tags "+university"
 	       ((org-agenda-overriding-header "Things for university")
 	        (org-agenda-files org-agenda-files)))))
+
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil))
 
 (use-package org-roam
   :ensure t
-  :bind (("C-c o c" . org-roam-capture)
+  :bind (("C-c o C" . org-roam-capture)
          :map org-roam-mode-map
          (("C-c n l" . org-roam)
           ("C-c n f" . org-roam-find-file)
@@ -1836,19 +1883,19 @@ questions.  Else use completion to select the tab to switch to."
          ("C-c n i" . org-roam-insert)
          ("C-c n I" . org-roam-insert-immediate))
   :custom
-  (org-roam-capture-templates
-   `(0("b" "Bookmark" entry
-	   (file+olp "~/org/bookmarks.org")
-	   "* [[%?][]] \n")
-	  ("l" "Learn" entry
-	   (file+olp "~/org/learning.org")
-	   "\n* TODO [[%?][]] \n")
-	  ("u" "University" entry
-	   (file+olp+datetree "~/org/university.org")
-	   "* TODO DEADLINE: %t %? :university:\n")
-	  ("i" "Ideas" entry
-	   (file+olp+datetree "~/org/ideas.org")
-	   "* %T %? :idea:\n")))
+  ;; (org-roam-capture-templates
+  ;;  `(0("b" "Bookmark" entry
+  ;;      (file+olp "~/org/bookmarks.org")
+  ;;      "* [[%?][]] \n")
+  ;;     ("l" "Learn" entry
+  ;;      (file+olp "~/org/learning.org")
+  ;;      "\n* TODO [[%?][]] \n")
+  ;;     ("u" "University" entry
+  ;;      (file+olp+datetree "~/org/university.org")
+  ;;      "* TODO DEADLINE: %t %? :university:\n")
+  ;;     ("i" "Ideas" entry
+  ;;      (file+olp+datetree "~/org/ideas.org")
+  ;;      "* %T %? :idea:\n")))
 
   (org-roam-directory
    (file-truename "~/org/roam/")))
