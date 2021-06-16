@@ -1705,6 +1705,14 @@ questions.  Else use completion to select the tab to switch to."
   :after magit
   :ensure t)
 
+(use-package smerge-mode
+  :defer t)
+
+(use-package browse-at-remote
+  :ensure t
+  :bind
+  (("C-c k l r" . browse-at-remote)))
+
 ;;; Org
 (use-package calendar
   :defer t
