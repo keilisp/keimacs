@@ -80,7 +80,9 @@
   (tab-width 4)
   (use-dialog-box nil)
   (use-file-dialog nil)
+  (scroll-conservatively 101)
   (scroll-step 1)
+  (scroll-margin)
   (auto-window-vscroll nil)
   (tooltip-mode nil)
   (enable-recursive-minibuffers t)
@@ -460,9 +462,9 @@ search started."
   :init
   ;; (add-hook 'prog-mode-hook 'format-all-mode)
   ;; (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
-  (add-hook 'before-save-hook (lambda () (call-interactively #'format-all-buffer)))
-  ;; :hook
-  ;; (prog-mode-hook . format-all-mode)
+  ;; (add-hook 'before-save-hook (lambda () (call-interactively #'format-all-buffer)))
+  :hook
+  (prog-mode-hook . format-all-mode)
   ;; (format-all-mode-hook . format-all-ensure-formatter)
   ;; (prog-mode-hook . (lambda ()
   ;;                       (add-hook 'before-save-hook #'format-all-buffer)))
@@ -944,6 +946,7 @@ Must be bound to `minibuffer-local-filename-completion-map'."
   :config
   (setf (alist-get #'consult-completion-in-region consult-config)
         '(:completion-styles (basic))))
+
 
 ;;; Pdf
 (use-package pdf-tools
@@ -1938,3 +1941,7 @@ questions.  Else use completion to select the tab to switch to."
   :config
   (dashboard-setup-startup-hook)
   (dashboard-refresh-buffer))
+
+
+;; (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
+;; (add-to-list 'org-latex-default-packages-alist '("russian" "babel" t))
