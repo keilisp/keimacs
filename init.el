@@ -1318,13 +1318,16 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (eldoc-echo-area-use-multiline-p nil))
 
+(use-package cider
+  :ensure t)
+
 (use-package cider-mode
   :custom
   (cider-font-lock-dynamically nil)
   (cider-font-lock-reader-conditionals nil)
   :bind
   (:map cider-mode-map
-        ("C-c x" . cider-interrupt)
+        ("C-c x"   . cider-interrupt)
         ("C-c e u" . cider-undef)
         ("C-c r c" . cider-find-and-clear-repl-output)
         ("C-c e e" . cider-eval-last-sexp)
@@ -1358,11 +1361,16 @@ questions.  Else use completion to select the tab to switch to."
   :bind
   (:map cider-repl-mode-map
         ("C-c q" . cider-quit)
-        ("C-c c" . cider-repl-clear-buffer))
+        ("C-c c" . cider-repl-clear-buffer)
+        ;; ("C-k" . cider-repl-previous-input )
+        ;; ("C-j" . cider-repl-next-input)
+        ("C-p" . cider-repl-previous-input )
+        ("C-n" . cider-repl-next-input))
   :custom
-  (cider-repl-pop-to-buffer-on-connect nil)
-  (cider-repl-display-in-current-window t)
-  (cider-repl-buffer-size-limit 600)
+  (cider-repl-pop-to-buffer-on-connect 'display-only)
+  ;; (cider-repl-pop-to-buffer-on-connect nil)
+  ;; (cider-repl-display-in-current-window t)
+  ;; (cider-repl-buffer-size-limit 600)
   :init
   (advice-add 'cider-repl--insert-banner :override #'ignore))
 
@@ -1376,7 +1384,8 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :bind
   (:map clojure-mode-map
-        ("C-c c" . cider-connect-clj)))
+        ("C-c r" . cider-connect-clj)
+        ("C-c c" . cider-jack-in)))
 
 (use-package nrepl-client
   :defer t
