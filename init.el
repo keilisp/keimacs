@@ -526,7 +526,8 @@ search started."
     clojure-mode-hook
     clojurec-mode-hook
     clojurescript-mode-hook
-    lisp-interaction-mode-hook) . evil-cleverparens-mode )
+    lisp-interaction-mode-hook
+    cider-repl-mode-hook) . evil-cleverparens-mode )
   :init
   (advice-add 'evil-cp-set-additional-bindings :around #'do-not-map-M-s-and-M-d))
 
