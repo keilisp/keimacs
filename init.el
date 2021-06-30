@@ -135,7 +135,7 @@ See `display-line-numbers' for what these values mean."
   (("C-c k n" . kei/toggle-line-numbers)
    ("C-c k u" . insert-char)
    ("C-c k f" . make-frame)
-   ("C-c k z" . olivetty-mode)
+   ("C-c k z" . olivetti-mode)
    :map global-map
    ("<C-left>" . enlarge-window-horizontally)
    ("<C-down>" . shrink-window)
@@ -1413,6 +1413,10 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package clojure-mode
   :ensure t
+  :hook
+  ((clojure-mode-hook
+    clojurescript-mode-hook
+    clojurec-mode-hook) . lsp)
   :bind
   (:map clojure-mode-map
         ("C-c r" . cider-connect-clj)
@@ -1426,7 +1430,7 @@ questions.  Else use completion to select the tab to switch to."
 ;;;; Clojure Cookbook
 (use-package adoc-mode
   :ensure t
-:mode "\\.asciidoc\\'"
+  :mode "\\.asciidoc\\'"
   :hook (cider-mode)
   :config
   (defun increment-clojure-cookbook ()
@@ -1822,8 +1826,8 @@ the next chapter, open Dired so you can find it manually."
   ;; (org-export-default-language "ru")
   (org-startup-folded t)
   (org-refile-targets '((nil :maxlevel . 2)
-                        (org-agenda-files :maxlevel . 3)
-                        ("archive.org" :maxlevel . 1)))
+                        (org-agenda-files :maxlevel . 4)
+                        ("archive.org" :maxlevel . 2)))
   :config
   ;; (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
   ;; (add-to-list 'org-latex-default-packages-alist '("ukrainian,russian,english" "babel" t))
@@ -1865,7 +1869,12 @@ the next chapter, open Dired so you can find it manually."
 	       "\n* [[%?][]] :prog: \n")
 	      ("i" "Idea" entry
 	       (file+olp+datetree "~/org/ideas.org")
-	       "* %T %? :idea:\n"))))
+	       "* %T %? :idea:\n")))
+
+  ;; Save org-files after refile
+  (advice-add 'org-refile :after
+	          (lambda (&rest _)
+	            (org-save-all-org-buffers))))
 
 
 ;; (use-package org-latex
