@@ -1427,37 +1427,6 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (nrepl-hide-special-buffers t))
 
-;;;; Clojure Cookbook
-(use-package adoc-mode
-  :ensure t
-  :mode "\\.asciidoc\\'"
-  :hook (cider-mode)
-  :config
-  (defun increment-clojure-cookbook ()
-    "When reading the Clojure cookbook, find the next section, and
-close the buffer. If the next section is a sub-directory or in
-the next chapter, open Dired so you can find it manually."
-    (interactive)
-    (let* ((cur (buffer-name))
-	       (split-cur (split-string cur "[-_]"))
-	       (chap (car split-cur))
-	       (rec (car (cdr split-cur)))
-	       (rec-num (string-to-number rec))
-	       (next-rec-num (1+ rec-num))
-	       (next-rec-s (number-to-string next-rec-num))
-	       (next-rec (if (< next-rec-num 10)
-		                 (concat "0" next-rec-s)
-		               next-rec-s))
-	       (target (file-name-completion (concat chap "-" next-rec) "")))
-      (progn
-        (if (equal target nil)
-	        (dired (file-name-directory (buffer-file-name)))
-	      (find-file target))
-        (kill-buffer cur))))
-  :bind
-  (:map adoc-mode-map
-        ("M-+" . increment-clojure-cookbook)))
-
 ;;; Debugger
 ;; (use-package dap-mode
 ;;   :defer t
