@@ -1325,7 +1325,11 @@ questions.  Else use completion to select the tab to switch to."
            c++-mode
            sh-mode
            js-mode
-           js2-mode) . lsp)
+           js2-mode
+           ;; clojure-mode-hook
+           ;; clojurescript-mode-hook
+           ;; clojurec-mode-hook
+           ) . lsp)
          (lsp-mode . lsp-enable-whick-key-integration)))
 
 (use-package lsp-ui :commands lsp-ui-mode)
@@ -1413,10 +1417,6 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package clojure-mode
   :ensure t
-  :hook
-  ((clojure-mode-hook
-    clojurescript-mode-hook
-    clojurec-mode-hook) . lsp)
   :bind
   (:map clojure-mode-map
         ("C-c r" . cider-connect-clj)
@@ -1968,15 +1968,25 @@ questions.  Else use completion to select the tab to switch to."
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
-  (dashboard-startup-banner "~/pix/doom/stallman.png")
+  ;; (dashboard-startup-banner "~/pix/doom/stallman.png")
+  (dashboard-startup-banner "~/pix/doom/Emacs-logo-long.png")
   (dashboard-center-content t)
   (dashboard-items '((recents  . 5)
                      ;; (bookmarks . 5)
                      ;; (registers . 5)
-                     ;; (projects . 5)
+                     (projects . 5)
                      (agenda . 5)))
   :config
+  (defun dashboard-insert-agenda (&rest _)
+    "Insert a copy of org-agenda buffer."
+    (insert (save-window-excursion
+              (org-agenda-list)
+              (prog1 (buffer-string)
+                (kill-buffer)))))
+  ;; (setq dashboard-week-agenda t)
+  ;; (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
   (dashboard-setup-startup-hook)
+  (dashboard-insert-agenda)
   (dashboard-refresh-buffer))
 
 
