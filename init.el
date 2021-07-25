@@ -1761,8 +1761,10 @@ questions.  Else use completion to select the tab to switch to."
 
 
 (use-package org
-  :hook (org-mode-hook . variable-pitch-mode)
-  :hook (org-mode-hook . org-num-mode)
+  :hook
+  (org-mode-hook . variable-pitch-mode)
+  (org-mode-hook . org-num-mode)
+  (org-mode-hook . org-indent-mode)
   :bind (("C-c o c" . org-capture)
          :map org-mode-map
          ("C-c '"   . org-edit-src-code)
@@ -1788,7 +1790,7 @@ questions.  Else use completion to select the tab to switch to."
   (org-startup-folded 'overview)
   (org-ellipsis "↩")
   (org-direcotry "~/org")
-  (org-adapt-indentation nil)
+  ;; (org-adapt-indentation nil)
   (org-hide-leading-stars t)
   (org-image-actual-width nil)
   ;; (org-export-latex-packages-alist (quote (("" "cmap" t) ("ukrainian,russian,english" «babel» t))))
@@ -1820,22 +1822,22 @@ questions.  Else use completion to select the tab to switch to."
 	       "* TODO %t %? :gtd:\n")
 	      ("b" "Bookmark" entry
 	       (file+olp "~/org/bookmarks.org")
-	       "* [[%?][]] \n")
+	       "* [%?[][]] \n")
 	      ("s" "Study" entry
 	       (file+olp "~/org/learning.org")
-	       "\n* [[%?][]] :study: \n")
+	       "\n* [%?[][]] :study: \n")
 	      ("r" "Read" entry
 	       (file+olp "~/org/learning.org")
-	       "\n* [[%?][]] :read: \n")
+	       "\n* [%?[][]] :read: \n")
 	      ("v" "Video" entry
 	       (file+olp "~/org/learning.org")
-	       "\n* [[%?][]] :video: \n")
+	       "\n* [%?[][]] :video: \n")
 	      ("l" "Listen" entry
 	       (file+olp "~/org/learning.org")
-	       "\n* [[%?][]] :listen: \n")
+	       "\n* [%?[][]] :listen: \n")
 	      ("p" "Prog" entry
 	       (file+olp "~/org/learning.org")
-	       "\n* [[%?][]] :prog: \n")
+	       "\n* [%?[][]] :prog: \n")
 	      ("i" "Idea" entry
 	       (file+olp+datetree "~/org/ideas.org")
 	       "* %T %? :idea:\n")))
@@ -1917,7 +1919,8 @@ questions.  Else use completion to select the tab to switch to."
 
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
-  (org-agenda-skip-deadline-if-done . nil))
+  (org-agenda-skip-deadline-if-done . nil)
+  (org-agenda-span 10))
 
 (use-package org-roam
   :ensure t
