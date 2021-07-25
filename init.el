@@ -681,6 +681,33 @@ search started."
   :hook
   (dired-mode-hook . all-the-icons-dired-mode))
 
+;;; Treemacs
+(use-package treemacs
+  :ensure t
+  :defer t
+  :custom
+  (treemacs-show-cursor t)
+  :bind
+  (:map global-map
+        ("C-c k t"   . treemacs)))
+
+(use-package treemacs-evil
+  :after (treemacs evil)
+  :ensure t)
+
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after (treemacs dired)
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
+
 ;;; TODO mb add to telega
 (use-package emojify
   :ensure t
