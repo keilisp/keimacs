@@ -690,7 +690,6 @@ search started."
 (use-package doom-modeline
   :ensure t
   :custom
-
   (doom-modeline-height 15)
   ;; (doom-modeline-enable-word-count t)
   :init
@@ -1598,6 +1597,11 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c d" . helm-nixos-options)))
 ;; ("C-c d" . ivy-nixos-options)))
 
+;;; Direnv (lorri)
+(use-package direnv
+ :ensure t
+ :config
+ (direnv-mode))
 
 ;;;; Shell
 (use-package sh-mode
