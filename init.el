@@ -1516,12 +1516,12 @@ questions.  Else use completion to select the tab to switch to."
 ;;; Common Lisp
 (use-package sly
   :ensure t
-  :config
-  (setq inferior-lisp-program "/etc/profiles/per-user/kei/bin/sbcl")
-  :hook
-  (sly-mode-hook . (lambda ()
-                     (unless (sly-connected-p)
-                       (save-excursion (sly)))))
+  :custom
+  (inferior-lisp-program "/etc/profiles/per-user/kei/bin/sbcl")
+  ;; :hook
+  ;; (sly-mode-hook . (lambda ()
+  ;;                    (unless (sly-connected-p)
+  ;;                      (save-excursion (sly)))))
   :bind
   (:map sly-mode-map
         ("C-c x" . sly-interrup)
