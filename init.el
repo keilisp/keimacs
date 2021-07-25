@@ -538,6 +538,7 @@ search started."
 ;;; Evil-cleverparens
 (use-package evil-cleverparens
   :ensure t
+  :after lsp-mode
   :preface
   (defun do-not-map-M-s-and-M-d (f)
     (let ((evil-cp-additional-bindings
@@ -991,6 +992,7 @@ Must be bound to `minibuffer-local-filename-completion-map'."
 
 ;;;; Highlighting
 (use-package hl-line
+  :ensure t
   :hook
   (prog-mode-hook . hl-line-mode))
 
@@ -1326,13 +1328,15 @@ questions.  Else use completion to select the tab to switch to."
            sh-mode
            js-mode
            js2-mode
-           ;; clojure-mode-hook
-           ;; clojurescript-mode-hook
-           ;; clojurec-mode-hook
+           clojure-mode-hook
+           clojurescript-mode-hook
+           clojurec-mode-hook
            ) . lsp)
          (lsp-mode . lsp-enable-whick-key-integration)))
 
-(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
 
 (use-package compile
   :defer t
@@ -1402,8 +1406,8 @@ questions.  Else use completion to select the tab to switch to."
         ("C-p" . cider-repl-previous-input )
         ("C-n" . cider-repl-next-input))
   :custom
-  (cider-repl-pop-to-buffer-on-connect 'display-only)
-  ;; (cider-repl-pop-to-buffer-on-connect nil)
+  ;; (cider-repl-pop-to-buffer-on-connect 'display-only)
+  (cider-repl-pop-to-buffer-on-connect nil)
   ;; (cider-repl-display-in-current-window t)
   ;; (cider-repl-buffer-size-limit 600)
   :init
