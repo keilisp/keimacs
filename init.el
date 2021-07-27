@@ -213,12 +213,7 @@ search started."
   (defun kei/find-file-in-keimacs()
     "Search for a file in `org'."
     (interactive)
-    (projectile-find-file-in-directory "~/.config/keimacs"))
-
-  (defun kei/find-config-in-nix ()
-    "Search file in private Doom config in nix config."
-    (interactive)
-    (sudo-edit (projectile-find-file-in-directory "/etc/nixos/config/emacs/doom/")))
+    (projectile-find-file-in-directory "~/.config/emacs"))
 
   :bind
   (:map global-map
@@ -326,7 +321,7 @@ search started."
   (inhibit-startup-screen t)
   (initial-scratch-message nil)
   (inhibit-startup-echo-area-message t)
-  (initial-major-mode #'org-mode))
+  (initial-major-mode #'emacs-lisp-mode))
 
 ;;; Scratch per major-mode
 (use-package scratch
@@ -351,22 +346,12 @@ search started."
   :config
   (winner-mode 1))
 
+
 ;;; Theme
-(use-package modus-themes
-  :ensure t
-  :custom
-  (modus-themes-completions 'moderate)
-  (modus-themes-mode-line 'borderless)
-  (modus-themes-region 'accent-no-extend)
-  (modus-themes-org-blocks 'tinted-background)
-  (modus-themes-variable-pitch-headings t)
-  (modus-themes-lang-checkers nil)
-  (modus-themes-paren-match 'intense)
-  (modus-themes-hl-line 'accented-background)
-  (modus-themes-slanted-constructs t)
-  :init
-  (load-theme 'modus-operandi t))
-;; (load-theme 'modus-vivendi t))
+(let ((theme-file "~/.config/emacs/current-theme.el"))
+  (when (file-exists-p theme-file)
+    (load-file theme-file)))
+
 
 ;;; Faces
 ;; TODO
@@ -1626,9 +1611,9 @@ questions.  Else use completion to select the tab to switch to."
 
 ;;; Direnv (lorri)
 (use-package direnv
- :ensure t
- :config
- (direnv-mode))
+  :ensure t
+  :config
+  (direnv-mode))
 
 ;;;; Shell
 (use-package sh-mode
