@@ -1994,8 +1994,7 @@ questions.  Else use completion to select the tab to switch to."
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
-  ;; (dashboard-startup-banner "~/pix/doom/stallman.png")
-  (dashboard-startup-banner "~/pix/doom/Emacs-logo-long.png")
+  (dashboard-startup-banner 'official)
   (dashboard-center-content t)
   (dashboard-items '((recents  . 5)
                      ;; (bookmarks . 5)
