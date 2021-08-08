@@ -1005,6 +1005,7 @@ Must be bound to `minibuffer-local-filename-completion-map'."
 (use-package hl-line
   :ensure t
   :hook
+  (dired-mode-hook . hl-line-mode)
   (prog-mode-hook . hl-line-mode))
 
 (use-package page-break-lines
