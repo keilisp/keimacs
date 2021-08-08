@@ -1432,6 +1432,8 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package clojure-mode
   :ensure t
+  :config
+  (add-hook 'before-save-hook #'cider-format-buffer)
   :bind
   (:map clojure-mode-map
         ("C-c r" . cider-connect-clj)
