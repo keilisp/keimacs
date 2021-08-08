@@ -1442,6 +1442,9 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package nrepl-client
   :defer t
+  :config
+  (add-hook 'nrepl-connected-hook
+            (lambda () (switch-to-buffer-other-frame (cider-current-repl))))
   :custom
   (nrepl-hide-special-buffers t))
 
