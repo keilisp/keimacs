@@ -849,12 +849,15 @@ search started."
   (:map icomplete-minibuffer-map
         ("C-j" . icomplete-forward-completions)
         ("C-n" . icomplete-forward-completions)
+        ("<down>" . icomplete-forward-completions)
         ("C-k" . icomplete-backward-completions)
         ("C-p" . icomplete-backward-completions)
+        ("<up>" . icomplete-backward-completions)
         ("C-l" . icomplete-force-complete)
+        ("<right>" . icomplete-force-complete)
         ("<return>" . icomplete-force-complete-and-exit)
         ("<tab>" . icomplete-force-complete)
-        ("C-u" . kill-whole-line)
+        ("C-w" . kill-whole-line)
         ("<backspace>" . kei/minibuffer-backward-updir))
   :config
   (defun kei/minibuffer-backward-updir ()
@@ -1022,6 +1025,17 @@ Must be bound to `minibuffer-local-filename-completion-map'."
   :hook
   ((prog-mode-hook
     help-mode-hook) . rainbow-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook
+  (prog-mode-hook . rainbow-delimiters-mode))
+
+;; (use-package prism
+;;   :ensure t
+;;   :quelpa (prism :fetcher github :repo "alphapapa/prism.el")
+;;   :hook
+;;   (prog-mode-hook . prism-mode))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -1376,25 +1390,41 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (cider-font-lock-dynamically nil)
   (cider-font-lock-reader-conditionals nil)
+  (cider-overlays-use-font-lock t)
+  (cider-save-file-on-load t)
+  (cider-font-lock-dynamically '(macro core function var))
   :bind
   (:map cider-mode-map
         ("C-c x"   . cider-interrupt)
-        ("C-c e u" . cider-undef)
         ("C-c r c" . cider-find-and-clear-repl-output)
+        ("C-c r q" . cider-quit)
+        ("C-c e u" . cider-undef)
         ("C-c e e" . cider-eval-last-sexp)
         ("C-c e b" . cider-eval-buffer)
         ("C-c e d" . cider-eval-defun-at-point)
         ("C-c e r" . cider-eval-region)
-        ("C-c n p" . cider-pprint-eval-last-sexp)
-        ("C-c n P" . cider-pprint-eval-last-sexp-to-comment)
+        ("C-c e t" . cider-eval-defun-up-to-point)
+        ("C-c e f" . cider-load-all-files)
+        ("C-c e n" . cider-eval-ns-form)
+        ("C-c e N" . cider-ns-refresh)
+        ("C-c d d" . cider-doc)
+        ("C-c d j" . cider-javadoc)
+        ("C-c d c" . cider-clojuredocs)
+        ("C-c d a" . cider-apropos)
+        ("C-c d A" . cider-apropos-documentation)
+        ("C-c d n" . cider-browse-ns)
+        ("C-c d s" . cider-browse-spec)
+        ("C-c d S" . cider-browse-spec-all)
+        ("C-c n e" . cider-pprint-eval-last-sexp)
+        ("C-c n E" . cider-pprint-eval-last-sexp-to-comment)
         ("C-c n d" . cider-pprint-eval-defun-at-point)
         ("C-c n D" . cider-pprint-eval-defun-to-comment)
         ("C-c t n" . cider-test-run-ns-tests)
         ("C-c t t" . cider-test-run-test)
         ("C-c t p" . cider-test-run-project-tests)
+        ("C-c t f" . cider-test-rerun-failed-tests)
         ("C-c m m" . cider-macroexpand-1)
-        ("C-c m M" . cider-macroexpand-all)
-        ("C-c r q" . cider-quit)))
+        ("C-c m M" . cider-macroexpand-all)))
 
 (use-package cider-eldoc
   :after cider-mode eldoc
@@ -1434,7 +1464,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package clojure-mode
   :ensure t
   :config
-  (add-hook 'before-save-hook #'cider-format-buffer)
+  (add-hook 'before-save-hook #'cider-format-buffer t t)
   :bind
   (:map clojure-mode-map
         ("C-c r" . cider-connect-clj)
@@ -2016,7 +2046,3 @@ questions.  Else use completion to select the tab to switch to."
   (dashboard-setup-startup-hook)
   (dashboard-insert-agenda)
   (dashboard-refresh-buffer))
-
-
-;; (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
-;; (add-to-list 'org-latex-default-packages-alist '("russian" "babel" t))
