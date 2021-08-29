@@ -1447,9 +1447,8 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package nrepl-client
   :defer t
-  :config
-  (add-hook 'nrepl-connected-hook
-            (lambda () (switch-to-buffer-other-frame (cider-current-repl))))
+  :hook
+  (nrepl-connected-hook . (lambda () (switch-to-buffer-other-frame (cider-current-repl))))
   :custom
   (nrepl-hide-special-buffers t))
 
@@ -1544,12 +1543,14 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :custom
   (inferior-lisp-program "/etc/profiles/per-user/kei/bin/sbcl")
-  ;; :hook
+  :hook
+  (sly-connected-hook . (lambda () (switch-to-buffer-other-frame (sly-mrepl))))
   ;; (sly-mode-hook . (lambda ()
   ;;                    (unless (sly-connected-p)
   ;;                      (save-excursion (sly)))))
   :bind
   (:map sly-mode-map
+        ("C-c C" . sly)
         ("C-c x" . sly-interrup)
         ("C-c d i" . sly-documentation-lookup)
         ("C-c d s" . sly-describe-symbol)
