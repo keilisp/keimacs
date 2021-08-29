@@ -144,7 +144,6 @@ See `display-line-numbers' for what these values mean."
 
 ;;; Isearch
 (use-package isearch
-  :demand
   :config
   (defun kei/search-isearch-abort-dwim ()
     "Delete failed `isearch' input, single char, or cancel search.
@@ -740,7 +739,7 @@ search started."
   (:map ctl-x-map
         ("K" . kill-this-buffer)))
 
-;;; Minibuffer
+;; Minibuffer
 (use-package minibuffer
   :custom
   (completion-cycle-threshold 1)
@@ -842,9 +841,11 @@ search started."
   (icomplete-delay-completions-threshold 0)
   (icomplete-max-delay-chars 0)
   (icomplete-compute-delay 0)
-  (icomplete-show-matches-on-no-input t)
   (icomplete-show-common-prefix nil)
+  (icomplete-show-matches-on-no-input t)
   (icomplete-prospects-height 10)
+  :hook
+  (after-init-hook . icomplete-mode)
   :bind
   (:map icomplete-minibuffer-map
         ("C-j" . icomplete-forward-completions)
@@ -862,7 +863,7 @@ search started."
   :config
   (defun kei/minibuffer-backward-updir ()
     "Delete char before point or go up a directory.
-Must be bound to `minibuffer-local-filename-completion-map'."
+     Must be bound to `minibuffer-local-filename-completion-map'."
     (interactive)
     (if (and (eq (char-before) ?/)
              (eq (kei/minibuffer--completion-category) 'file))
@@ -882,13 +883,11 @@ Must be bound to `minibuffer-local-filename-completion-map'."
     "Determine beginning of completion."
     (if (window-minibuffer-p)
         (minibuffer-prompt-end)
-      (nth 0 completion-in-region--data)))
-
-  :hook
-  (after-init-hook . icomplete-mode))
+      (nth 0 completion-in-region--data))))
 
 (use-package icomplete-vertical
   :ensure t
+  :demand t
   :bind
   (:map icomplete-minibuffer-map
         ("C-t" . icomplete-vertical-toggle))
@@ -923,6 +922,7 @@ Must be bound to `minibuffer-local-filename-completion-map'."
 ;;; Consult
 (use-package consult
   :ensure t
+  :disabled t
   :custom
   (completion-in-region-function 'consult-completion-in-region)
   ;; Replace bindings. Lazily loaded due by `use-package'.
@@ -957,37 +957,7 @@ Must be bound to `minibuffer-local-filename-completion-map'."
          ("M-s u" . consult-focus-lines)
          ("M-s s" . consult-isearch)
          ;; Other bindings
-         ("M-y" . consult-yank-pop))
-
-  ;; The :init configuration is always executed (Not lazy!)
-  :init
-  (defun find-fd (&optional dir initial)
-    (interactive "P")
-    (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
-      (consult-find dir initial)))
-
-  ;; Optionally configure the register preview function. This gives a
-  ;; consistent display for both `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0
-        register-preview-function #'consult-register-preview)
-
-  ;; Optionally tweak the register preview window.
-  ;; * Sort the registers
-  ;; * Hide the mode line
-  ;; * Resize the window, such that the contents fit exactly
-  (advice-add #'register-preview :around
-              (lambda (fun buffer &optional show-empty)
-                (let ((register-alist (seq-sort #'car-less-than-car register-alist)))
-                  (funcall fun buffer show-empty))
-                (when-let (win (get-buffer-window buffer))
-                  (with-selected-window win
-                    (setq-local mode-line-format nil)
-                    (setq-local window-min-height 1)
-                    (fit-window-to-buffer)))))
-  :config
-  (setf (alist-get #'consult-completion-in-region consult-config)
-        '(:completion-styles (basic))))
+         ("M-y" . consult-yank-pop)))
 
 
 ;;; Pdf
@@ -1312,8 +1282,8 @@ questions.  Else use completion to select the tab to switch to."
              (tab-next))
             (t
              (icomplete-vertical-do ()
-               (tab-bar-switch-to-tab
-                (completing-read "Select tab: " tabs nil t)))))))
+                                    (tab-bar-switch-to-tab
+                                     (completing-read "Select tab: " tabs nil t)))))))
 
   :bind (("C-x t t" . kei/tab-bar-select-tab-dwim)
          ("C-x t n" . tab-new)
