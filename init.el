@@ -2005,6 +2005,7 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (dashboard-startup-banner 'official)
   (dashboard-center-content t)
+  (dashboard-set-footer nil)
   (dashboard-items '((recents  . 5)
                      ;; (bookmarks . 5)
                      ;; (registers . 5)
