@@ -809,19 +809,19 @@ search started."
 
 (use-package geiser-mode
   :custom
-  (geiser-active-implementations '(guile))
+  (geiser-active-implementations '(guile racket))
   :bind
   (:map geiser-mode-map
-        ("C-C e e" . geiser-eval-last-sexp)
-        ("C-C e d" . geiser-eval-definition)
-        ("C-C e b" . geiser-eval-buffer)
-        ("C-C m e" . geiser-expand-last-sexp)
-        ("C-C m d" . geiser-expand-definition)
-        ("C-C m r" . geiser-expand-region)
-        ("C-C y"   . geiser-insert-lambda)
-        ("C-C r b" . switch-to-geiser)
-        ("C-C r q" . geiser-repl-exit)
-        ("C-C r c" . geiser-repl-clear-buffer)))
+        ("C-c e e" . geiser-eval-last-sexp)
+        ("C-c e d" . geiser-eval-definition)
+        ("C-c e b" . geiser-eval-buffer)
+        ("C-c m e" . geiser-expand-last-sexp)
+        ("C-c m d" . geiser-expand-definition)
+        ("C-c m r" . geiser-expand-region)
+        ("C-c y"   . geiser-insert-lambda)
+        ("C-c r b" . switch-to-geiser)
+        ("C-c r q" . geiser-repl-exit)
+        ("C-c r c" . geiser-repl-clear-buffer)))
 
 ;; REVIEW Do I really need this?
 (use-package geiser-guile
