@@ -1071,7 +1071,7 @@ search started."
 (use-package company
   :ensure t
   :custom
-  (company-backends '((company-capf company-dabbrev-code company-files)))
+  (company-backends '((company-dabbrev-code company-capf company-dabbrev company-files)))
   :bind
   (:map company-active-map
         ("C-j" . company-select-next)
@@ -1105,7 +1105,7 @@ Returns the vterm buffer."
     (interactive "P")
     (+vterm--configure-project-root-and-display
      arg
-     (lambda()
+     (lambda ()
        (let ((buffer-name
               (format "*vterm-popup:%s*"
                       (if (bound-and-true-p persp-mode)
@@ -1144,7 +1144,7 @@ Returns the vterm buffer."
     (interactive "P")
     (+vterm--configure-project-root-and-display
      arg
-     (lambda()
+     (lambda ()
        (require 'vterm)
        ;; HACK forces vterm to redraw, fixing strange artefacting in the tty.
        (save-window-excursion
@@ -1429,8 +1429,9 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c c" . cider-repl-clear-buffer)
         ;; ("C-k" . cider-repl-previous-input )
         ;; ("C-j" . cider-repl-next-input)
-        ("C-p" . cider-repl-previous-input )
-        ("C-n" . cider-repl-next-input))
+        ;; ("C-p" . cider-repl-previous-input)
+        ;; ("C-n" . cider-repl-next-input)
+        )
   :custom
   ;; (cider-repl-pop-to-buffer-on-connect 'display-only)
   (cider-repl-pop-to-buffer-on-connect nil)
@@ -1451,8 +1452,9 @@ questions.  Else use completion to select the tab to switch to."
   (add-hook 'before-save-hook #'cider-format-buffer t t)
   :bind
   (:map clojure-mode-map
-        ("C-c r" . cider-connect-clj)
-        ("C-c c" . cider-jack-in)))
+        ("C-c c b" . cider-connect-clj)
+        ("C-c c f" . cider-connect-cljs)
+        ("C-c c c" . cider-jack-in)))
 
 (use-package nrepl-client
   :defer t
@@ -1460,6 +1462,33 @@ questions.  Else use completion to select the tab to switch to."
   (nrepl-connected-hook . (lambda () (switch-to-buffer-other-frame (cider-current-repl))))
   :custom
   (nrepl-hide-special-buffers t))
+
+;;; REVIEW
+;; (use-package clj-refactor
+;;   :ensure t)
+
+;; (use-package anakondo
+;;   :ensure t
+;;   :hook
+;;   (clojure-mode-hook . anakondo-minor-mode)
+;;   (clojurescript-mode-hook . anakondo-minor-mode)
+;;   (clojurec-mode-hook . anakondo-minor-mode))
+
+;; (use-package flycheck-clj-kondo
+;;   :ensure t)
+
+
+;;; Project specific
+(defun qbp/stop ()
+  (interactive)
+  (let ((default-directory "~/freshcode/qbp/master/platform-dev/demo/"))
+    (shell-command "docker-compose stop clojure")))
+
+(defun qbp/run ()
+  (interactive)
+  (let ((default-directory "~/freshcode/qbp/master/platform-dev/demo/"))
+    (qbp/stop)
+    (async-shell-command "make start/quick/repl")))
 
 ;;; Debugger
 ;; (use-package dap-mode
