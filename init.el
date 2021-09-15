@@ -1870,8 +1870,9 @@ questions.  Else use completion to select the tab to switch to."
                         (org-agenda-files :maxlevel . 4)
                         ("archive.org" :maxlevel . 2)))
   :config
-  ;; (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
-  ;; (add-to-list 'org-latex-default-packages-alist '("ukrainian,russian,english" "babel" t))
+  (add-to-list 'org-latex-default-packages-alist '("" "cmap" t))
+  (add-to-list 'org-latex-default-packages-alist '("ukrainian,russian,english" "babel" t))
+  (add-to-list 'org-latex-default-packages-alist '("T2A" "fontenc" t))
 
   (defun org-get-level-face (n)
     "Get the right face for match N in font-lock matching of headlines."
