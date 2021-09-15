@@ -823,8 +823,17 @@ search started."
         ("C-c r q" . geiser-repl-exit)
         ("C-c r c" . geiser-repl-clear-buffer)))
 
-;; REVIEW Do I really need this?
+(use-package macrostep-geiser
+  :ensure t
+  :after (geiser-mode geiser-repl)
+  :hook
+  ((geiser-mode-hook
+    geiser-repl-mode-hook) . macrostep-geiser-setup))
+
 (use-package geiser-guile
+  :ensure t)
+
+(use-package geiser-racket
   :ensure t)
 
 ;;; TODO https://git.sr.ht/~sokolov/geiser-eros
