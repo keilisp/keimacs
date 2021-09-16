@@ -392,6 +392,7 @@ search started."
   :hook
   (after-init-hook . evil-mode)
   :config
+  (setq evil-insert-state-cursor '(bar . 1))
   (evil-mode)
   (evil-escape-mode)
   ;; (evil-set-leader 'motion (kbd "SPC"))
