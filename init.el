@@ -1297,8 +1297,8 @@ questions.  Else use completion to select the tab to switch to."
              (tab-next))
             (t
              (icomplete-vertical-do ()
-                                    (tab-bar-switch-to-tab
-                                     (completing-read "Select tab: " tabs nil t)))))))
+               (tab-bar-switch-to-tab
+                (completing-read "Select tab: " tabs nil t)))))))
 
   :bind (("C-x t t" . kei/tab-bar-select-tab-dwim)
          ("C-x t n" . tab-new)
@@ -2046,10 +2046,11 @@ questions.  Else use completion to select the tab to switch to."
   (dashboard-startup-banner 'official)
   (dashboard-center-content t)
   (dashboard-set-footer nil)
-  (dashboard-items '((recents  . 5)
+  (dashboard-items '(
+                     ;; (recents  . 5)
                      ;; (bookmarks . 5)
                      ;; (registers . 5)
-                     (projects . 5)
+                     ;; (projects . 5)
                      (agenda . 5)))
   :config
   (defun dashboard-insert-agenda (&rest _)
