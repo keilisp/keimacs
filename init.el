@@ -36,6 +36,16 @@
 (use-package quelpa
   :ensure t
   :defer t
+  :init
+  (defun quelpa-build--checkout-sourcehut (name config dir)
+    "Check package NAME with config CONFIG out of gitlab into DIR."
+    (let ((url (format "https://git.sr.ht/~%s" (plist-get config :repo))))
+      (quelpa-build--checkout-git name (plist-put (copy-sequence config) :url url) dir)))
+
+  (defun quelpa-build--checkout-sourcehut-ssh (name config dir)
+    "Check package NAME with config CONFIG out of gitlab into DIR."
+    (let ((url (format "git@git.sr.ht:~%s" (plist-get config :repo))))
+      (quelpa-build--checkout-git name (plist-put (copy-sequence config) :url url) dir)))
   :custom
   (quelpa-update-melpa-p nil "Don't update the MELPA git repo."))
 
@@ -816,6 +826,9 @@ search started."
         ("C-c e e" . geiser-eval-last-sexp)
         ("C-c e d" . geiser-eval-definition)
         ("C-c e b" . geiser-eval-buffer)
+        ("C-c e r" . geiser-eval-region)
+        ("C-c d d" . geiser-doc-symbol-at-point)
+        ("C-c d m" . geiser-repl--doc-module)
         ("C-c m e" . geiser-expand-last-sexp)
         ("C-c m d" . geiser-expand-definition)
         ("C-c m r" . geiser-expand-region)
@@ -837,10 +850,15 @@ search started."
 (use-package geiser-racket
   :ensure t)
 
-;;; TODO https://git.sr.ht/~sokolov/geiser-eros
-;; (use-package geiser-eros
-;;   :hook
-;;   (geiser-mode-hook . geiser-eros-mode))
+;;; https://git.sr.ht/~sokolov/geiser-eros
+(use-package geiser-eros
+  :ensure t
+  :quelpa
+  (geiser-eros
+   :repo "sokolov/geiser-eros"
+   :fetcher sourcehut)
+  :hook
+  (geiser-mode-hook . geiser-eros-mode))
 
 
 ;;; Icomplete
