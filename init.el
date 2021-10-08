@@ -76,6 +76,13 @@
   :config
   (fnhh-mode 1))
 
+;;; Modernized package menu
+(use-package paradox
+  :ensure t
+  :defer 1
+  :config
+  (paradox-enable))
+
 ;;;; Utils
 (defun kei/notify-send (title message)
   "Display a desktop notification by shelling MESSAGE with TITLE out to `notify-send'."
@@ -2061,7 +2068,8 @@ questions.  Else use completion to select the tab to switch to."
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
-  (dashboard-startup-banner 'official)
+  ;; (dashboard-startup-banner 'official)
+  (dashboard-startup-banner "~/pix/doom/M-x_butterfly.png")
   (dashboard-center-content t)
   (dashboard-set-footer nil)
   (dashboard-items '(
