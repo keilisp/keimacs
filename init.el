@@ -402,6 +402,7 @@ search started."
   (evil-split-window-below t)
   (evil-vsplit-window-right t)
   (evil-disable-insert-state-bindings t)
+  (evil-want-C-i-jump nil)
   ;; (evil-echo-state nil)
   (evil-undo-system 'undo-fu)
   (evil-search-module 'evil-search)
@@ -1368,7 +1369,7 @@ questions.  Else use completion to select the tab to switch to."
            clojurescript-mode-hook
            clojurec-mode-hook
            ) . lsp)
-         (lsp-mode . lsp-enable-whick-key-integration)))
+         (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
   :ensure t
