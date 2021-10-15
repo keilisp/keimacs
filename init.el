@@ -822,12 +822,12 @@ search started."
 (use-package scheme
   :bind
   (:map scheme-mode-map
-        ("C-c c c" . geiser-connect)
-        ("C-c c r" . run-geiser)))
+        ("C-c C c" . geiser-connect)
+        ("C-c C r" . run-geiser)))
 
 (use-package geiser-mode
   :custom
-  (geiser-active-implementations '(guile racket))
+  (geiser-active-implementations '(racket guile))
   :bind
   (:map geiser-mode-map
         ("C-c e e" . geiser-eval-last-sexp)
@@ -1475,12 +1475,13 @@ questions.  Else use completion to select the tab to switch to."
 (use-package clojure-mode
   :ensure t
   :config
-  (add-hook 'before-save-hook #'cider-format-buffer t t)
+  ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
   :bind
   (:map clojure-mode-map
-        ("C-c c b" . cider-connect-clj)
-        ("C-c c f" . cider-connect-cljs)
-        ("C-c c c" . cider-jack-in)))
+        ("C-c r b" . cider-connect-clj)
+        ("C-c r f" . cider-connect-cljs)
+        ("C-c r c" . cider-jack-in)))
 
 (use-package nrepl-client
   :defer t
@@ -1573,9 +1574,9 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c c c" . rustic-compile)
         ("C-c c r" . rustic-recompile)
         ("C-c c s" . rustic-compile-send-input)
-        ("C-c i b" . rustic-format-buffer)
-        ("C-c i f" . rustic-format-file)
-        ("C-c i w" . rustic-cargo-fmt)
+        ("C-c f b" . rustic-format-buffer)
+        ("C-c f f" . rustic-format-file)
+        ("C-c f w" . rustic-cargo-fmt)
         ;; TODO install cargo-edit
         ("C-c e a" . rustic-cargo-add)
         ("C-c e r" . rustic-cargo-rm)
