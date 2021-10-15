@@ -2097,7 +2097,7 @@ questions.  Else use completion to select the tab to switch to."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
   ;; (dashboard-startup-banner 'official)
-  (dashboard-startup-banner "~/pix/doom/M-x_butterfly.png")
+  (dashboard-startup-banner "~/pix/doom/M-x_butterfly_smaller.png")
   (dashboard-center-content t)
   (dashboard-set-footer nil)
   (dashboard-items '(
