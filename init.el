@@ -1766,8 +1766,8 @@ questions.  Else use completion to select the tab to switch to."
   (LaTeX-mode-hook . latex-preview-pane-mode)
   :bind
   (:map LaTeX-mode-map
-        ("C-c v u" . latex-preview-pane-update)
-        ("C-c v s" . latex-preview-pane-mode)))
+        ("C-c u u" . latex-preview-pane-update)
+        ("C-c u s" . latex-preview-pane-mode)))
 
 (use-package company-auctex
   :ensure t
@@ -1797,31 +1797,31 @@ questions.  Else use completion to select the tab to switch to."
   ;; (:map magit-mode-map
   ;;       ("<tab>" . magit-section-toggle))
   ("C-c p m" . magit-project-status)
-  ("C-c a a" . magit-stage-file)       ; the closest analog to git add
-  ("C-c a b" . magit-blame)
-  ("C-c a B" . magit-branch)
-  ("C-c a c" . magit-checkout)
-  ("C-c a C" . magit-commit)
-  ("C-c a d" . magit-diff)
-  ("C-c a D" . magit-discard)
-  ("C-c a f" . magit-fetch)
-  ("C-c a g" . vc-git-grep)
-  ("C-c a G" . magit-gitignore)
-  ("C-c a i" . magit-init)
-  ("C-c a l" . magit-log)
-  ("C-c a m" . magit)
-  ("C-c a M" . magit-merge)
-  ("C-c a n" . magit-notes-edit)
-  ("C-c a p" . magit-pull-branch)
-  ("C-c a P" . magit-push-current)
-  ("C-c a r" . magit-reset)
-  ("C-c a R" . magit-rebase)
-  ("C-c a s" . magit-status)
-  ("C-c a S" . magit-stash)
-  ("C-c a t" . magit-tag)
-  ("C-c a T" . magit-tag-delete)
-  ("C-c a u" . magit-unstage)
-  ("C-c a U" . magit-update-index))
+  ("C-c v a" . magit-stage-file)       ; the closest analog to git add
+  ("C-c v b" . magit-blame)
+  ("C-c v B" . magit-branch)
+  ("C-c v c" . magit-checkout)
+  ("C-c v C" . magit-commit)
+  ("C-c v d" . magit-diff)
+  ("C-c v D" . magit-discard)
+  ("C-c v f" . magit-fetch)
+  ("C-c v g" . vc-git-grep)
+  ("C-c v G" . magit-gitignore)
+  ("C-c v i" . magit-init)
+  ("C-c v l" . magit-log)
+  ("C-c v m" . magit)
+  ("C-c v M" . magit-merge)
+  ("C-c v n" . magit-notes-edit)
+  ("C-c v p" . magit-pull-branch)
+  ("C-c v P" . magit-push-current)
+  ("C-c v r" . magit-reset)
+  ("C-c v R" . magit-rebase)
+  ("C-c v s" . magit-status)
+  ("C-c v S" . magit-stash)
+  ("C-c v t" . magit-tag)
+  ("C-c v T" . magit-tag-delete)
+  ("C-c v u" . magit-unstage)
+  ("C-c v U" . magit-update-index))
 
 (use-package evil-collection-magit
   :disabled t
