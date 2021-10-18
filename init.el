@@ -57,6 +57,7 @@
 ;;; use-package custom-update
 ;; To be able update lists in custom
 (use-package use-package-custom-update
+  :ensure t
   :quelpa
   (use-package-custom-update
    :repo "a13/use-package-custom-update"
@@ -71,6 +72,7 @@
 
 ;;; This one tries to speed up Emacs startup a little bit
 (use-package fnhh
+  :ensure t
   :quelpa
   (fnhh :repo "a13/fnhh" :fetcher github)
   :config
@@ -664,6 +666,7 @@ search started."
   (olivetti-body-width 95))
 
 (use-package font-lock+
+  :ensure t
   :defer t
   :quelpa
   (font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
@@ -802,7 +805,7 @@ search started."
         ("C-c e d" . eval-defun)
         ("C-c e p" . eval-print-last-sexp)
         ("C-c e r" . eval-region)
-        ("C-c d d" . describe-function)))
+        ("C-c h d" . describe-function)))
 
 (use-package eros
   :ensure t
@@ -835,8 +838,8 @@ search started."
         ("C-c e d" . geiser-eval-definition)
         ("C-c e b" . geiser-eval-buffer)
         ("C-c e r" . geiser-eval-region)
-        ("C-c d d" . geiser-doc-symbol-at-point)
-        ("C-c d m" . geiser-repl--doc-module)
+        ("C-c h d" . geiser-doc-symbol-at-point)
+        ("C-c h m" . geiser-repl--doc-module)
         ("C-c m e" . geiser-expand-last-sexp)
         ("C-c m d" . geiser-expand-definition)
         ("C-c m r" . geiser-expand-region)
@@ -1347,6 +1350,7 @@ questions.  Else use completion to select the tab to switch to."
   (prog-mode-hook  . yas-minor-mode))
 
 (use-package doom-snippets
+  :ensure t
   :quelpa
   (doom-snippets
    :repo "hlissner/doom-snippets"
@@ -1418,14 +1422,14 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c e f" . cider-load-all-files)
         ("C-c e n" . cider-eval-ns-form)
         ("C-c e N" . cider-ns-refresh)
-        ("C-c d d" . cider-doc)
-        ("C-c d j" . cider-javadoc)
-        ("C-c d c" . cider-clojuredocs)
-        ("C-c d a" . cider-apropos)
-        ("C-c d A" . cider-apropos-documentation)
-        ("C-c d n" . cider-browse-ns)
-        ("C-c d s" . cider-browse-spec)
-        ("C-c d S" . cider-browse-spec-all)
+        ("C-c h d" . cider-doc)
+        ("C-c h j" . cider-javadoc)
+        ("C-c h c" . cider-clojuredocs)
+        ("C-c h a" . cider-apropos)
+        ("C-c h A" . cider-apropos-documentation)
+        ("C-c h n" . cider-browse-ns)
+        ("C-c h s" . cider-browse-spec)
+        ("C-c h S" . cider-browse-spec-all)
         ("C-c n e" . cider-pprint-eval-last-sexp)
         ("C-c n E" . cider-pprint-eval-last-sexp-to-comment)
         ("C-c n d" . cider-pprint-eval-defun-at-point)
@@ -1626,14 +1630,14 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r o" . sly-mrepl-clear-recent-output)
         ("C-c r x" . sly-interrup)
                                         ; sly-doc-map
-        ("C-c d l" . sly-documentation-lookup)
-        ("C-c d s" . sly-describe-symbol)
-        ("C-c d f" . sly-describe-function)
-        ("C-c d a" . sly-apropos)
-        ("C-c d A" . sly-apropos-all)
-        ("C-c d h" . sly-hyperspec-lookup)
-        ("C-c d F" . hyperspec-lookup-format)
-        ("C-c d R" . hyperspec-lookup-reader-macro)
+        ("C-c h l" . sly-documentation-lookup)
+        ("C-c h s" . sly-describe-symbol)
+        ("C-c h f" . sly-describe-function)
+        ("C-c h a" . sly-apropos)
+        ("C-c h A" . sly-apropos-all)
+        ("C-c h h" . sly-hyperspec-lookup)
+        ("C-c h F" . hyperspec-lookup-format)
+        ("C-c h R" . hyperspec-lookup-reader-macro)
         ("C-c e u" . sly-undefine-function)
         ("C-c e i" . sly-interactive-eval)
         ("C-c e e" . sly-eval-last-expression)
@@ -1710,7 +1714,7 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :bind
   (:map nix-mode-map
-        ("C-c d" . helm-nixos-options)))
+        ("C-c h" . helm-nixos-options)))
 ;; ("C-c d" . ivy-nixos-options)))
 
 ;;; Direnv (lorri)
