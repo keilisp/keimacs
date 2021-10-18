@@ -1051,11 +1051,27 @@ search started."
   :hook
   (prog-mode-hook . rainbow-delimiters-mode))
 
+
+;; Changed evil-goggles to quelpa fetch from my fork with evil-cleverparens support.
+;; As it seems that edkovlev is not really maintaining it anymore.
+
+;; (use-package evil-goggles
+;;   :ensure t
+;;   :custom
+;;   (evil-goggles-duration 0.150)
+;;   ;; (evil-goggles-enable-delete nil)
+;;   :config
+;;   (evil-goggles-mode)
+;;   (evil-goggles-use-diff-faces))
+
 (use-package evil-goggles
   :ensure t
+  :quelpa
+  (evil-goggles
+   :repo "keilisp/evil-goggles"
+   :fetcher github)
   :custom
   (evil-goggles-duration 0.150)
-  (evil-goggles-enable-delete nil)
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
