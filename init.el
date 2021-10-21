@@ -623,7 +623,14 @@ search started."
 ;;; Helpful
 (use-package helpful
   :ensure t
-  :defer t)
+  :defer t
+  :bind
+  (:map global-map
+        ("C-h f" . helpful-callable)
+        ("C-h v" . helpful-variable)
+        ("C-h k" . helpful-key)
+        ("C-h F" . helpful-function)
+        ("C-h C" . helpful-command)))
 
 
 ;;; Reverse-im
