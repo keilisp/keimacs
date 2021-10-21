@@ -1063,11 +1063,23 @@ search started."
 ;;   :hook
 ;;   (prog-mode-hook . prism-mode))
 
-(use-package rainbow-delimiters
-  :ensure t
-  :hook
-  (prog-mode-hook . rainbow-delimiters-mode))
+;;; Dimming parentheses
+;; (use-package paren-face
+;;   :ensure t
+;;   :hook
+;;   (after-init-hook . global-paren-face-mode))
 
+;; (defface paren-face
+;;   '((((class color) (background dark))
+;;      (:foreground "grey20"))
+;;     (((class color) (background light))
+;;      (:foreground "grey80")))
+;;   "Face used to dim parentheses.")
+
+;; (add-hook 'emacs-lisp-mode-hook
+;;  	      (lambda ()
+;;  	        (font-lock-add-keywords nil
+;;  				                    '(("(\\|)" . 'paren-face)))))
 
 ;; Changed evil-goggles to quelpa fetch from my fork with evil-cleverparens support.
 ;; As it seems that edkovlev is not really maintaining it anymore.
