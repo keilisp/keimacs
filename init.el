@@ -805,6 +805,8 @@ search started."
   :custom
   (eval-expression-print-level t)
   (eval-expression-print-length t)
+  :hook
+  (after-save-hook . check-parens)
   :bind
   (:map emacs-lisp-mode-map
         ("C-c e e" . eval-last-sexp)
@@ -812,7 +814,15 @@ search started."
         ("C-c e d" . eval-defun)
         ("C-c e p" . eval-print-last-sexp)
         ("C-c e r" . eval-region)
-        ("C-c h d" . describe-function)))
+        ("C-c e t" . toggle-debug-on-error)
+        ("C-c h d" . describe-function)
+        ("C-c h e" . view-echo-area-messages)))
+
+(use-package macrostep
+  :ensure t
+  :bind
+  (:map emacs-lisp-mode-map
+        ("C-c m e" . macrostep-expand)))
 
 (use-package eros
   :ensure t
