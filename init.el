@@ -566,6 +566,13 @@ search started."
   :init
   (advice-add 'evil-cp-set-additional-bindings :around #'do-not-map-M-s-and-M-d))
 
+;;; Aggressive indent
+(use-package aggressive-indent
+  :disabled t
+  :ensure t
+  :hook
+  (prog-mode-hook . aggressive-indent-mode))
+
 (use-package undo-fu
   :ensure t)
 
