@@ -1543,7 +1543,7 @@ questions.  Else use completion to select the tab to switch to."
   (:map clojure-mode-map
         ("C-c r b" . cider-connect-clj)
         ("C-c r f" . cider-connect-cljs)
-        ("C-c r c" . cider-jack-in)))
+        ("C-c r j" . cider-jack-in)))
 
 (use-package nrepl-client
   :defer t
@@ -1552,9 +1552,36 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (nrepl-hide-special-buffers t))
 
-;;; REVIEW
-;; (use-package clj-refactor
-;;   :ensure t)
+;; TODO maybe use there functions from clojure-mode (C-c C-r)
+(use-package clj-refactor
+  :ensure t
+  :hook
+  ((clojure-mode-hook
+    clojurec-mode-hook
+    clojurescript-mode-hook) . clj-refactor-mode)
+  :bind
+  (:map clojure-mode-map
+        ("C-c r t t" . cljr-thread)
+        ("C-c r t l" . cljr-thread-last-all)
+        ("C-c r t f" . cljr-thread-first-all)
+        ("C-c r t u" . cljr-unwind)
+        ("C-c r t a" . cljr-unwind-all)
+        ("C-c r c i" . cljr-cycle-if)
+        ("C-c r c p" . cljr-cycle-privacy)
+        ("C-c r c t" . cljr-cycle-thread)
+        ("C-c r e f" . cljr-extract-function)
+        ("C-c r e d" . cljr-extract-def)
+        ("C-c r l i" . cljr-introduce-let)
+        ("C-c r l e" . cljr-expand-let)
+        ("C-c r l m" . cljr-move-to-let)
+        ("C-c r l r" . cljr-remove-let)
+        ("C-c r a" . cljr-add-missing-libspec)
+        ("C-c r d" . cljr-destructure-keys)
+        ("C-c r [" . clojure-convert-collection-to-vector)
+        ("C-c r {" . clojure-convert-collection-to-map)
+        ("C-c r (" . clojure-convert-collection-to-list)
+        ("C-c r '" . clojure-convert-collection-to-quoted-list)
+        ("C-c r #" . clojure-convert-collection-to-set)))
 
 ;; (use-package anakondo
 ;;   :ensure t
