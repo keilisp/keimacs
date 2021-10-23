@@ -1129,6 +1129,12 @@ search started."
   :hook
   (after-init-hook . lisp-extra-font-lock-global-mode))
 
+;;; Ripgrep
+(use-package rg
+  :ensure t
+  :config
+  (rg-enable-default-bindings))
+
 ;;;; Projectile
 (use-package projectile
   :defer 0.2
