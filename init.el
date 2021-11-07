@@ -1,8 +1,5 @@
 ;;; -*- lexical-binding: t; -*-
 
-;; TODO ssh setup [[https://github.com/tarsius/keychain-environment/blob/master/keychain-environment.el#L27-L48][Keychain]]
-;; TODO org startup folded
-
 (eval-and-compile
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t)
@@ -31,19 +28,18 @@
 (eval-when-compile
   (require 'use-package))
 
-
 ;;; quelpa
 (use-package quelpa
   :ensure t
   :defer t
   :init
   (defun quelpa-build--checkout-sourcehut (name config dir)
-    "Check package NAME with config CONFIG out of gitlab into DIR."
+    "Check package NAME with config CONFIG out of sourcehut into DIR."
     (let ((url (format "https://git.sr.ht/~%s" (plist-get config :repo))))
       (quelpa-build--checkout-git name (plist-put (copy-sequence config) :url url) dir)))
 
   (defun quelpa-build--checkout-sourcehut-ssh (name config dir)
-    "Check package NAME with config CONFIG out of gitlab into DIR."
+    "Check package NAME with config CONFIG out of sourcehut into DIR."
     (let ((url (format "git@git.sr.ht:~%s" (plist-get config :repo))))
       (quelpa-build--checkout-git name (plist-put (copy-sequence config) :url url) dir)))
   :custom
@@ -147,9 +143,9 @@ See `display-line-numbers' for what these values mean."
 
   ;; Treat underscore as a part of a word in code
   (add-hook 'prog-mode-hook
-            (lambda () (modify-syntax-entry ?_ "w")))
+            #'(lambda () (modify-syntax-entry ?_ "w")))
   (add-hook 'prog-mode-hook
-            (lambda () (modify-syntax-entry ?- "w")))
+            #'(lambda () (modify-syntax-entry ?- "w")))
   :bind
   (("C-c k n" . kei/toggle-line-numbers)
    ("C-c k u" . insert-char)
@@ -497,12 +493,14 @@ search started."
 (use-package evil-multiedit
   :defer 0.2
   :ensure t
+  ;; :custom
+  ;; (evil-digit-bound-motions '(evil-beginning-of-visual-line))
   :bind
   (:map evil-motion-state-map
-        ("M-d" . evil-multiedit-match-symbol-and-next)
-        ("M-D" . evil-multiedit-match-symbol-and-prev)
-        ("M-R" . evil-multiedit-match-all)
-        ("C-M-d" . evil-multiedit-restore)))
+		("M-d" . evil-multiedit-match-symbol-and-next)
+		("M-D" . evil-multiedit-match-symbol-and-prev)
+		("M-R" . evil-multiedit-match-all)
+		("C-M-d" . evil-multiedit-restore)))
 
 ;; Smartparens
 (use-package smartparens
@@ -814,6 +812,7 @@ search started."
   :custom
   (eval-expression-print-level t)
   (eval-expression-print-length t)
+  ;; (lisp-indent-function 'common-lisp-indent-function)
   :hook
   (after-save-hook . check-parens)
   :bind
@@ -1251,9 +1250,9 @@ Returns the vterm buffer."
       (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
     (let* ((project-root default-directory)
            (default-directory
-             (if arg
-                 default-directory
-               project-root)))
+            (if arg
+                default-directory
+              project-root)))
       (setenv "PROOT" project-root)
       (prog1 (funcall display-fn)
         (+vterm--change-directory-if-remote))))
@@ -1420,11 +1419,11 @@ questions.  Else use completion to select the tab to switch to."
 ;;; LSP
 (use-package lsp-mode
   :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
   :config
   ;; lsp-managed for some reason (idk, all hooks seems legit) changes indent-region behavior.
   (add-hook 'lsp-mode-hook #'(lambda () (lsp-managed-mode -1)))
+  :custom
+  (lsp-keymap-prefix "C-c l")
   :hook (((c-mode
            cc-mode
            c++-mode
@@ -1433,8 +1432,7 @@ questions.  Else use completion to select the tab to switch to."
            js2-mode
            clojure-mode-hook
            clojurescript-mode-hook
-           clojurec-mode-hook
-           ) . lsp)
+           clojurec-mode-hook) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
@@ -1545,7 +1543,7 @@ questions.  Else use completion to select the tab to switch to."
   (clojure-indent-style 'align-arguments)
   :config
   ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  ;; (add-hook 'before-save-hook #'lsp-format-buffer t t)
   :bind
   (:map clojure-mode-map
         ("C-c r b" . cider-connect-clj)
