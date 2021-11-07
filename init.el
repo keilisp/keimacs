@@ -554,6 +554,8 @@ search started."
       (funcall f)))
   :custom
   (evil-cleverparens-use-s-and-S nil)
+  (evil-cleverparens-swap-move-by-word-and-symbol t)
+  (evil-cleverparens-indent-afterwards nil)
   :hook
   ((emacs-lisp-mode-hook
     lisp-mode-hook
