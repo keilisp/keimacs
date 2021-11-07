@@ -2198,6 +2198,18 @@ questions.  Else use completion to select the tab to switch to."
   (org-roam-directory
    (file-truename "~/org/roam/")))
 
+;; FIXME [https://github.com/Somelauw/evil-org-mode/issues/93]
+
+;; (when (not (boundp 'evil-redirect-digit-argument))
+;;   (defmacro evil-redirect-digit-argument (map keys target)
+;;      `(define-key ,map ,keys ,target)))
+
+(fset 'evil-redirect-digit-argument 'ignore)
+
+(add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
+(evil-define-key 'motion 'evil-org-mode
+  (kbd "0") 'evil-org-beginning-of-line)
+
 (use-package evil-org
   :ensure t
   :after org
