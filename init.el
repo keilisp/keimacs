@@ -1422,6 +1422,9 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :init
   (setq lsp-keymap-prefix "C-c l")
+  :config
+  ;; lsp-managed for some reason (idk, all hooks seems legit) changes indent-region behavior.
+  (add-hook 'lsp-mode-hook #'(lambda () (lsp-managed-mode -1)))
   :hook (((c-mode
            cc-mode
            c++-mode
