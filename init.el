@@ -1593,18 +1593,52 @@ questions.  Else use completion to select the tab to switch to."
 ;; (use-package flycheck-clj-kondo
 ;;   :ensure t)
 
+;;;;;;;;;;;;;;;;;;;;
+;;; QBP specific ;;;
+;;;;;;;;;;;;;;;;;;;;
 
-;;; Project specific
-(defun qbp/stop ()
+;;; Back-end
+(defun kei/qbp-backend-stop ()
   (interactive)
-  (let ((default-directory "~/freshcode/qbp/master/platform-dev/demo/"))
-    (shell-command "docker-compose stop clojure")))
+  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
+	(shell-command "docker-compose stop clojure")))
 
-(defun qbp/run ()
+(defun kei/qbp-backend-quick-run ()
   (interactive)
-  (let ((default-directory "~/freshcode/qbp/master/platform-dev/demo/"))
-    (qbp/stop)
-    (async-shell-command "make start/quick/repl")))
+  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
+	(kei/qbp-backend-stop)
+	(async-shell-command "make up clojure/cider/repl")))
+
+(defun kei/qbp-backend-full-run ()
+  (interactive)
+  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
+	(kei/qbp-backend-stop)
+	(async-shell-command "make start/full/repl")))
+
+(defun kei/qbp-clj-repl ()
+  (interactive)
+  (let ((repl-dir "~/freshcode/qbp/qbp/backend2/")
+		(repl-host "localhost")
+		(repl-port "3012"))
+    ;; FIXME
+	(cider-connect-clj '(:host "localhost"
+						       :port        "3012"
+						       :project-dir "~/freshcode/qbp/qbp/backend2/"))))
+
+;;; Front-end
+(defun kei/qbp-frontend-run ()
+  (interactive)
+  (let ((default-directory "~/freshcode/qbp/qbp/frontend/"))
+	(async-shell-command "FIGWHEEL_SERVER_PORT=3499 NREPL_PORT=8333 lein cider")))
+
+(defun kei/qbp-cljs-repl ()
+  (interactive)
+  (let ((repl-dir "~/freshcode/qbp/qbp/frontend/")
+		(repl-host "localhost")
+		(repl-port "8333"))
+	(cider-connect-cljs '(:host "localhost"
+						        :port        "8333"
+						        :project-dir "~/freshcode/qbp/qbp/frontend"))))
 
 ;;; Debugger
 ;; (use-package dap-mode
