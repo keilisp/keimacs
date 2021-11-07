@@ -1536,6 +1536,8 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package clojure-mode
   :ensure t
+  :custom
+  (clojure-indent-style 'align-arguments)
   :config
   ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
