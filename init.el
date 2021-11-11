@@ -2122,7 +2122,7 @@ questions.  Else use completion to select the tab to switch to."
                            "~/org/university.org"
                            "~/org/birthdays.org"
                            "~/org/habits.org"
-                           "~/org/bookmarks.org"
+                           ;; "~/org/bookmarks.org"
                            "~/org/life.org"))
 
   (setq org-agenda-custom-commands
