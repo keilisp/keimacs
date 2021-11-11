@@ -1444,6 +1444,10 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (compilation-scroll-output t))
 
+;;;; SQL
+(use-package edbi
+  :ensure t)
+
 ;;;; Clojure
 (use-package flymake-kondor
   :ensure t
