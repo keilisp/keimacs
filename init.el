@@ -1126,6 +1126,7 @@ search started."
   (after-init-hook . global-so-long-mode))
 
 (use-package lisp-extra-font-lock
+  :disabled t
   :ensure t
   :hook
   (after-init-hook . lisp-extra-font-lock-global-mode))
