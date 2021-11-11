@@ -636,6 +636,8 @@ search started."
 ;;; Reverse-im
 (use-package reverse-im
   :ensure t
+  :bind
+  ("M-T" . reverse-im-translate-word)
   :init
   :custom (reverse-im-input-methods '("russian-computer"))
   :config (reverse-im-mode t))
