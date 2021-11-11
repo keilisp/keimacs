@@ -1559,6 +1559,7 @@ questions.  Else use completion to select the tab to switch to."
 
 ;; TODO maybe use there functions from clojure-mode (C-c C-r)
 (use-package clj-refactor
+  :disabled t
   :ensure t
   :hook
   ((clojure-mode-hook
