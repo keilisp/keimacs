@@ -140,11 +140,6 @@ See `display-line-numbers' for what these values mean."
                  (`nil "disabled")
                  (_ (symbol-name next))))))
 
-  ;; Treat underscore as a part of a word in code
-  (add-hook 'prog-mode-hook
-            #'(lambda () (modify-syntax-entry ?_ "w")))
-  (add-hook 'prog-mode-hook
-            #'(lambda () (modify-syntax-entry ?- "w")))
   :bind
   (("C-c k n" . kei/toggle-line-numbers)
    ("C-c k u" . insert-char)
@@ -154,7 +149,14 @@ See `display-line-numbers' for what these values mean."
    ("<C-left>" . enlarge-window-horizontally)
    ("<C-down>" . shrink-window)
    ("<C-up>" . enlarge-window)
-   ("<C-right>" . shrink-window-horizontally)))
+   ("<C-right>" . shrink-window-horizontally))
+  :hook
+  ;; Treat underscore as a part of a word in code FIXME
+  ((prog-mode-hook
+    cider-repl-mode-hook
+    sly-mrepl-hook) . (lambda () (progn
+                              (modify-syntax-entry ?- "w")
+                              (modify-syntax-entry ?_ "w")))))
 
 ;;; Isearch
 (use-package isearch
