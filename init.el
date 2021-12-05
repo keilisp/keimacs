@@ -1448,8 +1448,15 @@ questions.  Else use completion to select the tab to switch to."
   (compilation-scroll-output t))
 
 ;;;; SQL
-(use-package edbi
-  :ensure t)
+
+(use-package ejc-sql
+  :ensure t
+  :hook
+  (ejc-sql-connected-hook . (lambda () 
+                              (ejc-set-fetch-size nil)
+                              (ejc-set-max-rows nil)
+                              (ejc-set-column-width-limit 80)
+                              (ejc-set-use-unicode t))))
 
 ;;;; Clojure
 (use-package flymake-kondor
@@ -1637,6 +1644,14 @@ questions.  Else use completion to select the tab to switch to."
 	(cider-connect-clj '(:host "localhost"
 						       :port        "3012"
 						       :project-dir "~/freshcode/qbp/qbp/backend2/"))))
+
+(ejc-create-connection
+   "qbp_bdm_demo_dev_v2"
+   :classpath (cider-jar-find-or-fetch "mysql" "mysql-connector-java" "5.1.44")
+   :subprotocol "mysql"
+   :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
+   :user "root"
+   :password "root")
 
 ;;; Front-end
 (defun kei/qbp-frontend-run ()
