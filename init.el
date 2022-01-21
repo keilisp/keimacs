@@ -2242,6 +2242,37 @@ questions.  Else use completion to select the tab to switch to."
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package hledger-mode
+  :ensure t
+  :custom
+  (hledger-jfile "~/dox/finance/2022.journal")
+  (hledger-currency-string "₴")
+  :mode ("\\.journal\\'" "\\.hledger\\'" "\\.dat\\'" )
+  :preface
+  (defun hledger/next-entry ()
+    "Move to next entry and pulse."
+    (interactive)
+    (hledger-next-or-new-entry)
+    (hledger-pulse-momentary-current-entry))
+
+  (defun hledger/prev-entry ()
+    "Move to last entry and pulse."
+    (interactive)
+    (hledger-backward-entry)
+    (hledger-pulse-momentary-current-entry))
+
+  :bind (("C-c j" . hledger-run-command)
+         :map hledger-mode-map
+         ("C-c e" . hledger-jentry)
+         ("C-c *" . hledger-toggle-star)
+         ("M-p" . hledger/prev-entry)
+         ("M-n" . hledger/next-entry)))
+
+(use-package flycheck-hledger
+  :ensure t
+  :after (flycheck ledger-mode))
+
+
 ;; Dashboard
 ;; ALWAYS IN THE END!
 (use-package dashboard
