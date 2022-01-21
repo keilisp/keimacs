@@ -378,9 +378,9 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka"))))
-  (fixed-pitch ((t (:font "Iosevka"))))
-  (variable-pitch ((t (:font "Iosevka")))))
+  (default ((t (:font "Iosevka" :height 90))))
+  (fixed-pitch ((t (:font "Iosevka" :height 90))))
+  (variable-pitch ((t (:font "Iosevka" :height 90)))))
 
 (use-package unicode-fonts
   :ensure t
