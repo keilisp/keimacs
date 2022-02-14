@@ -2069,7 +2069,8 @@ questions.  Else use completion to select the tab to switch to."
                    ("listen" . ?l) ("read"  . ?r)
                    ("emacs"  . ?e) ("gtd"   . ?t)
                    ("write"  . ?w) ("idea"  . ?i)
-                   ("en")          ("life" . ?d)))
+                   ("en")          ("life" . ?d)
+                   ("guix"  . ?x)))
   (org-startup-folded 'overview)
   (org-ellipsis "↩")
   (org-direcotry "~/org")
@@ -2191,6 +2192,10 @@ questions.  Else use completion to select the tab to switch to."
 
 	      ("e" tags "+emacs"
 	       ((org-agenda-overriding-header "Things to hack on emacs")
+	        (org-agenda-files org-agenda-files)))
+
+	      ("x" tags "+guix"
+	       ((org-agenda-overriding-header "Things to hack on guix")
 	        (org-agenda-files org-agenda-files)))
 
 	      ("n" tags "+nixos"
