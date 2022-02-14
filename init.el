@@ -2248,6 +2248,29 @@ questions.  Else use completion to select the tab to switch to."
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package org-edna
+  :ensure t)
+
+(use-package org-gtd
+  :ensure t
+  :after org
+  :quelpa (org-gtd :fetcher github :repo "trevoke/org-gtd.el"
+                   :branch "2.0.0" :upgrade t)
+  :demand t
+  :custom
+  (org-gtd-directory "~/org/gtd/")
+  (org-edna-use-inheritance t)
+  :config
+  (org-edna-mode)
+  :bind
+  (("C-c d c" . org-gtd-capture)
+   ("C-c d e" . org-gtd-engage)
+   ("C-c d p" . org-gtd-process-inbox)
+   ("C-c d n" . org-gtd-show-all-next)
+   ("C-c d s" . org-gtd-show-stuck-projects)
+   :map org-gtd-process-map
+   ("C-c d c" . org-gtd-choose)))
+
 (use-package hledger-mode
   :ensure t
   :custom
