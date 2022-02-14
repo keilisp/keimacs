@@ -1488,6 +1488,16 @@ questions.  Else use completion to select the tab to switch to."
   (cider-overlays-use-font-lock t)
   (cider-save-file-on-load t)
   (cider-font-lock-dynamically '(macro core function var))
+  :config
+  (defun kei/cider-insert-last-sexp-in-repl-with-ns ()
+    (interactive)
+    (call-interactively #'cider-repl-set-ns)
+    (call-interactively #'cider-insert-last-sexp-in-repl))
+
+  (defun kei/cider-insert-defun-in-repl-with-ns ()
+    (interactive)
+    (call-interactively #'cider-repl-set-ns)
+    (call-interactively #'cider-insert-defun-in-repl))
   :bind
   (:map cider-mode-map
         ("C-c x"   . cider-interrupt)
@@ -1495,8 +1505,10 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r q" . cider-quit)
         ("C-c e u" . cider-undef)
         ("C-c e e" . cider-eval-last-sexp)
+        ("C-c e E" . kei/cider-insert-last-sexp-in-repl-with-ns)
         ("C-c e b" . cider-eval-buffer)
         ("C-c e d" . cider-eval-defun-at-point)
+        ("C-c e D" . kei/cider-insert-defun-in-repl-with-ns)
         ("C-c e r" . cider-eval-region)
         ("C-c e t" . cider-eval-defun-up-to-point)
         ("C-c e f" . cider-load-all-files)
