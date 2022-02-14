@@ -85,7 +85,6 @@
   "Display a desktop notification by shelling MESSAGE with TITLE out to `notify-send'."
   (call-process-shell-command (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 
-
 ;;; Interface tweaks
 (use-package emacs
   :defer t
@@ -157,6 +156,7 @@ See `display-line-numbers' for what these values mean."
     sly-mrepl-hook) . (lambda () (progn
                               (modify-syntax-entry ?- "w")
                               (modify-syntax-entry ?_ "w")
+                              (modify-syntax-entry ?* "w")
                               (modify-syntax-entry ?? "w")
                               (modify-syntax-entry ?! "w")))))
 
