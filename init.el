@@ -482,7 +482,7 @@ search started."
   :ensure t
   :bind
   (:map evil-motion-state-map
-        ("gC" . evil-commentary-yank))
+        ("g C" . evil-commentary-yank))
   :hook
   (evil-mode-hook . evil-commentary-mode))
 
@@ -1571,7 +1571,11 @@ questions.  Else use completion to select the tab to switch to."
   (:map clojure-mode-map
         ("C-c r b" . cider-connect-clj)
         ("C-c r f" . cider-connect-cljs)
-        ("C-c r j" . cider-jack-in)))
+        ("C-c r j" . cider-jack-in)
+        :map evil-normal-state-map
+        ("# j" . clojure-toggle-ignore)
+        ("# f" . clojure-toggle-ignore-surrounding-form)
+        ("# d" . clojure-toggle-ignore-defun)))
 
 (use-package nrepl-client
   :defer t
