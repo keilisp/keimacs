@@ -249,6 +249,7 @@ search started."
                                   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
 (use-package recentf
+  :disabled
   :defer 0.1
   :custom
   (recentf-auto-cleanup 30)
