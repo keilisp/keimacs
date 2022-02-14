@@ -200,6 +200,7 @@ search started."
 
 ;;; Ripgrep
 (use-package rg
+  :ensure t
   :bind
   (:map search-map
         ("g" . rg))
