@@ -1427,9 +1427,11 @@ questions.  Else use completion to select the tab to switch to."
   :defer 0.2
   :ensure t
   :custom
-  (yas-prompt-functions '(yas-completing-prompt))
+  ;; (yas-prompt-functions '(yas-completing-prompt))
+  (yas-snippet-dirs '("~/.config/emacs/snippets"))
   :config
   (yas-reload-all)
+  (setq yas-snippet-dirs '("~/.config/emacs/snippets"))
   :hook
   (prog-mode-hook  . yas-minor-mode))
 

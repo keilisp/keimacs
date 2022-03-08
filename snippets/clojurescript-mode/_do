@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: _ (do ...)
+# key: _d
+# --
+_ (do
+    $0
+    )
