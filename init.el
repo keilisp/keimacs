@@ -380,9 +380,10 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka" :height 90))))
-  (fixed-pitch ((t (:font "Iosevka" :height 90))))
-  (variable-pitch ((t (:font "Iosevka" :height 90)))))
+  (default ((t (:font "Iosevka" :height 120))))
+  (fixed-pitch ((t (:font "Iosevka" :height 120))))
+  (variable-pitch ((t (:font "Iosevka" :height 120))))
+  (mode-line ((t (:font "Iosevka" :height 100)))))
 
 (use-package unicode-fonts
   :ensure t
