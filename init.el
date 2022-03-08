@@ -1502,6 +1502,8 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t)
 
 (use-package cider-mode
+  :init
+  (advice-add 'cider-insert-last-sexp-in-repl :around #'evil-collection-cider-last-sexp)
   :custom
   (cider-font-lock-dynamically nil)
   (cider-font-lock-reader-conditionals nil)
@@ -1509,15 +1511,9 @@ questions.  Else use completion to select the tab to switch to."
   (cider-save-file-on-load t)
   (cider-font-lock-dynamically '(macro core function var))
   :config
-  (defun kei/cider-insert-last-sexp-in-repl-with-ns ()
+  (defun cider-insert-last-sexp-in-repl-and-eval ()
     (interactive)
-    (call-interactively #'cider-repl-set-ns)
-    (call-interactively #'cider-insert-last-sexp-in-repl))
-
-  (defun kei/cider-insert-defun-in-repl-with-ns ()
-    (interactive)
-    (call-interactively #'cider-repl-set-ns)
-    (call-interactively #'cider-insert-defun-in-repl))
+    (cider-insert-last-sexp-in-repl t))
   :bind
   (:map cider-mode-map
         ("C-c x"   . cider-interrupt)
@@ -1525,7 +1521,8 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r q" . cider-quit)
         ("C-c e u" . cider-undef)
         ("C-c e e" . cider-eval-last-sexp)
-        ("C-c e E" . kei/cider-insert-last-sexp-in-repl-with-ns)
+        ("C-c e E" . cider-insert-last-sexp-in-repl-and-eval)
+        ("C-c e i" . cider-insert-last-sexp-in-repl)
         ("C-c e b" . cider-eval-buffer)
         ("C-c e d" . cider-eval-defun-at-point)
         ("C-c e D" . kei/cider-insert-defun-in-repl-with-ns)
