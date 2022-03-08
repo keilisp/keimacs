@@ -1484,6 +1484,10 @@ questions.  Else use completion to select the tab to switch to."
                               (ejc-set-column-width-limit 80)
                               (ejc-set-use-unicode t))))
 
+;;;; JABA
+(use-package lsp-java
+  :ensure t)
+
 ;;;; Clojure
 (use-package flymake-kondor
   :ensure t
