@@ -1202,6 +1202,7 @@ search started."
 (use-package vterm
   :ensure t
   :config
+  ;; (evil-set-initial-state 'vterm-mode 'emacs)
   (setq vterm-buffer-name "vterm")
   (setq vterm-toggle-fullscreen-p nil)
   (add-to-list 'display-buffer-alist
