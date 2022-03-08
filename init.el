@@ -574,6 +574,7 @@ search started."
   (evil-cleverparens-use-s-and-S nil)
   (evil-cleverparens-swap-move-by-word-and-symbol t)
   (evil-cleverparens-indent-afterwards nil)
+  (evil-cleverparens-use-regular-insert t)
   :hook
   ((emacs-lisp-mode-hook
     lisp-mode-hook
