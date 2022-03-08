@@ -763,7 +763,7 @@ search started."
 (use-package doom-modeline
   :ensure t
   :custom
-  (doom-modeline-height 15)
+  (doom-modeline-height 10)
   ;; (doom-modeline-enable-word-count t)
   :init
   (doom-modeline-mode 1)
