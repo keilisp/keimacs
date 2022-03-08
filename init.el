@@ -1068,8 +1068,7 @@ search started."
 (use-package hl-line
   :ensure t
   :hook
-  (dired-mode-hook . hl-line-mode)
-  (prog-mode-hook . hl-line-mode))
+  (after-init-hook . global-hl-line-mode))
 
 (use-package page-break-lines
   :ensure t
