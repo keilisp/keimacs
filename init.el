@@ -1457,9 +1457,11 @@ questions.  Else use completion to select the tab to switch to."
            sh-mode
            js-mode
            js2-mode
-           clojure-mode-hook
-           clojurescript-mode-hook
-           clojurec-mode-hook) . lsp)
+           java-mode
+           ;; clojure-mode-hook
+           ;; clojurescript-mode-hook
+           ;; clojurec-mode-hook
+           ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
