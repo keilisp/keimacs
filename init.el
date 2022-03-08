@@ -394,7 +394,8 @@ search started."
 (use-package frame
   :defer t
   :custom
-  (blink-cursor-mode nil))
+  (cursor-type '(hbar . 1))
+  (blink-cursor-mode t))
 
 ;;; Evil
 (use-package evil
@@ -411,12 +412,25 @@ search started."
   (evil-undo-system 'undo-fu)
   (evil-search-module 'evil-search)
   (evil-respect-visual-line-mode t)
+  (evil-insert-state-cursor '(bar . 1))
+  (evil-emacs-state-cursor '(hbar . 1))
+  (evil-normal-state-cursor '(hbar . 1))
+  (evil-visual-state-cursor '(hbar . 2))
+  (evil-motion-state-cursor '(hbar . 2))
+  (evil-replace-state-cursor '(hbar . 2))
+  (evil-operator-state-cursor '(hbar . 2))
   :hook
   (after-init-hook . evil-mode)
   :config
-  (setq evil-insert-state-cursor '(bar . 1))
   (evil-mode)
   (evil-escape-mode)
+  (setq evil-insert-state-cursor '(bar . 1))
+  (setq evil-emacs-state-cursor '(hbar . 1))
+  (setq evil-normal-state-cursor '(hbar . 1))
+  (setq evil-visual-state-cursor '(hbar . 2))
+  (setq evil-motion-state-cursor '(hbar . 2))
+  (setq evil-replace-state-cursor '(hbar . 2))
+  (setq evil-operator-state-cursor '(hbar . 2))
   ;; (evil-set-leader 'motion (kbd "SPC"))
   ;; (evil-set-leader 'motion (kbd ",") t)
 
