@@ -627,7 +627,8 @@ search started."
                                  visual
                                  multiedit
                                  emacs
-                                 motion)))
+                                 motion))
+  (evil-escape-excluded-major-modes '(vterm-mode)))
 
 ;; (define-key evil-insert-state-map "о" #'kei/maybe-exit)
 
