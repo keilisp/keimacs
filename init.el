@@ -2293,7 +2293,7 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :after org
   :quelpa (org-gtd :fetcher github :repo "trevoke/org-gtd.el"
-                   :branch "2.0.0" :upgrade t)
+                   :branch "main" :upgrade t)
   :demand t
   :custom
   (org-gtd-directory "~/org/gtd/")
