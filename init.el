@@ -1978,6 +1978,7 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :custom
   (magit-log-margin '(t age-abbreviated magit-log-margin-width t 7))
+  (magit-diff-refine-hunk t)
   :bind
   ;; (:map magit-mode-map
   ;;       ("<tab>" . magit-section-toggle))
