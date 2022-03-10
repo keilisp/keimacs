@@ -1600,6 +1600,7 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (clojure-indent-style 'align-arguments)
   :config
+  (clojure-toplevel-inside-comment-form t)
   ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
   ;; (add-hook 'before-save-hook #'lsp-format-buffer t t)
   :bind
