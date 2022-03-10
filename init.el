@@ -1599,10 +1599,11 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :custom
   (clojure-indent-style 'align-arguments)
-  :config
   (clojure-toplevel-inside-comment-form t)
-  ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
-  ;; (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  :hook
+  (clojure-mode-hook . (lambda () (setq-local comment-column 0)))
+  ;; (before-save-hook . #'cider-format-buffer)
+  ;; (before-save-hook . #'lsp-format-buffer)
   :bind
   (:map clojure-mode-map
         ("C-c r b" . cider-connect-clj)
