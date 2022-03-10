@@ -1665,34 +1665,6 @@ questions.  Else use completion to select the tab to switch to."
 ;;; QBP specific ;;;
 ;;;;;;;;;;;;;;;;;;;;
 
-;;; Back-end
-(defun kei/qbp-backend-stop ()
-  (interactive)
-  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
-	(shell-command "docker-compose stop clojure")))
-
-(defun kei/qbp-backend-quick-run ()
-  (interactive)
-  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
-	(kei/qbp-backend-stop)
-	(async-shell-command "make up clojure/cider/repl")))
-
-(defun kei/qbp-backend-full-run ()
-  (interactive)
-  (let ((default-directory "~/freshcode/qbp/qbp/demo/"))
-	(kei/qbp-backend-stop)
-	(async-shell-command "make start/full/repl")))
-
-(defun kei/qbp-clj-repl ()
-  (interactive)
-  (let ((repl-dir "~/freshcode/qbp/qbp/backend2/")
-		(repl-host "localhost")
-		(repl-port "3012"))
-    ;; FIXME
-	(cider-connect-clj '(:host "localhost"
-						       :port        "3012"
-						       :project-dir "~/freshcode/qbp/qbp/backend2/"))))
-
 (ejc-create-connection
    "qbp_bdm_demo_dev_v2"
    :classpath (cider-jar-find-or-fetch "mysql" "mysql-connector-java" "5.1.44")
@@ -1700,21 +1672,6 @@ questions.  Else use completion to select the tab to switch to."
    :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
    :user "root"
    :password "root")
-
-;;; Front-end
-(defun kei/qbp-frontend-run ()
-  (interactive)
-  (let ((default-directory "~/freshcode/qbp/qbp/frontend/"))
-	(async-shell-command "FIGWHEEL_SERVER_PORT=3499 NREPL_PORT=8333 lein cider")))
-
-(defun kei/qbp-cljs-repl ()
-  (interactive)
-  (let ((repl-dir "~/freshcode/qbp/qbp/frontend/")
-		(repl-host "localhost")
-		(repl-port "8333"))
-	(cider-connect-cljs '(:host "localhost"
-						        :port        "8333"
-						        :project-dir "~/freshcode/qbp/qbp/frontend"))))
 
 ;;; Debugger
 ;; (use-package dap-mode
