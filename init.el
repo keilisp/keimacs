@@ -1524,6 +1524,13 @@ questions.  Else use completion to select the tab to switch to."
   (defun cider-insert-last-sexp-in-repl-and-eval ()
     (interactive)
     (cider-insert-last-sexp-in-repl t))
+
+  ;; FIXME insert-last-sexp is faster than cider-repl-set-ns???
+  (defun cider-repl-set-ns-insert-last-sexp-and-eval ()
+    (interactive)
+    (call-interactively #'cider-repl-set-ns)
+    (sit-for 0.1) ;; HACK 
+    (cider-insert-last-sexp-in-repl-and-eval))
   :bind
   (:map cider-mode-map
         ("C-c x"   . cider-interrupt)
@@ -1531,8 +1538,9 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r q" . cider-quit)
         ("C-c e u" . cider-undef)
         ("C-c e e" . cider-eval-last-sexp)
-        ("C-c e E" . cider-insert-last-sexp-in-repl-and-eval)
+        ("C-c e E" . cider-repl-set-ns-insert-last-sexp-and-eval)
         ("C-c e i" . cider-insert-last-sexp-in-repl)
+        ("C-c e I" . cider-insert-last-sexp-in-repl-and-eval)
         ("C-c e b" . cider-eval-buffer)
         ("C-c e d" . cider-eval-defun-at-point)
         ("C-c e D" . kei/cider-insert-defun-in-repl-with-ns)
