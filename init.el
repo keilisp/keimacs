@@ -397,6 +397,11 @@ search started."
   (cursor-type '(hbar . 1))
   (blink-cursor-mode t))
 
+(use-package beacon
+  :ensure t
+  :hook
+  (after-init-hook . beacon-mode))
+
 ;;; Evil
 (use-package evil
   :ensure t
