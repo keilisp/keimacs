@@ -1061,7 +1061,9 @@ search started."
   :custom
   (pdf-view-display-size 'fit-height)
   :config
-  (pdf-tools-install))
+  (pdf-tools-install)
+  :hook
+  (pdf-view-mode-hook . (lambda () (blink-cursor-mode 0))))
 
 (use-package pdf-view-restore
   :ensure t
