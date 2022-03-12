@@ -383,7 +383,8 @@ search started."
   (default ((t (:font "Iosevka" :height 120))))
   (fixed-pitch ((t (:font "Iosevka" :height 120))))
   (variable-pitch ((t (:font "Iosevka" :height 120))))
-  (mode-line ((t (:font "Iosevka" :height 100)))))
+  (mode-line ((t (:font "Iosevka" :height 100))))
+  (mode-line-inactive ((t (:font "Iosevka" :height 100)))))
 
 (use-package unicode-fonts
   :ensure t
