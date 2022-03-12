@@ -883,8 +883,8 @@ search started."
 (use-package scheme
   :bind
   (:map scheme-mode-map
-        ("C-c C c" . geiser-connect)
-        ("C-c C r" . run-geiser)))
+        ("C-c r C" . geiser-connect)
+        ("C-c r r" . run-geiser)))
 
 (use-package geiser-mode
   :custom
@@ -895,6 +895,7 @@ search started."
         ("C-c e d" . geiser-eval-definition)
         ("C-c e b" . geiser-eval-buffer)
         ("C-c e r" . geiser-eval-region)
+        ("C-c e i" . geiser-eval-interrupt)
         ("C-c h d" . geiser-doc-symbol-at-point)
         ("C-c h m" . geiser-repl--doc-module)
         ("C-c m e" . geiser-expand-last-sexp)
