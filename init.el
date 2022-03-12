@@ -1533,7 +1533,7 @@ questions.  Else use completion to select the tab to switch to."
   (defun cider-repl-set-ns-insert-last-sexp-and-eval ()
     (interactive)
     (call-interactively #'cider-repl-set-ns)
-    (sit-for 0.1) ;; HACK 
+    (sit-for 0.05) ;; HACK 
     (cider-insert-last-sexp-in-repl-and-eval))
   :bind
   (:map cider-mode-map
