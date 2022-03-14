@@ -457,7 +457,6 @@ search started."
              (window-configuration-to-register '_)
              (delete-other-windows))))
 
-
   :bind
   ( ; Is there a better way? (maybe use doom advice)
    :map evil-motion-state-map
@@ -1164,12 +1163,6 @@ search started."
   :ensure t
   :hook
   (after-init-hook . lisp-extra-font-lock-global-mode))
-
-;;; Ripgrep
-(use-package rg
-  :ensure t
-  :config
-  (rg-enable-default-bindings))
 
 ;;;; Projectile
 (use-package projectile
