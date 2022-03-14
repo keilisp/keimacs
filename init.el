@@ -380,11 +380,11 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka" :height 120))))
-  (fixed-pitch ((t (:font "Iosevka" :height 120))))
-  (variable-pitch ((t (:font "Iosevka" :height 120))))
-  (mode-line ((t (:font "Iosevka" :height 100))))
-  (mode-line-inactive ((t (:font "Iosevka" :height 100)))))
+  (default ((t (:font "Iosevka" :height 100))))
+  (fixed-pitch ((t (:font "Iosevka" :height 100))))
+  (variable-pitch ((t (:font "Iosevka" :height 100))))
+  (mode-line ((t (:font "Iosevka" :height 90))))
+  (mode-line-inactive ((t (:font "Iosevka" :height 90)))))
 
 (use-package unicode-fonts
   :ensure t
