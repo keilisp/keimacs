@@ -201,6 +201,8 @@ search started."
 ;;; Ripgrep
 (use-package rg
   :ensure t
+  :config
+  (rg-enable-default-bindings)
   :bind
   (:map search-map
         ("g" . rg))
@@ -358,7 +360,7 @@ search started."
         (forward-line 2))
       (rename-buffer (concat "*Scratch for " mode "*") t)))
   :hook (scratch-create-buffer-hook . kei/scratch-buffer-setup)
-  :bind ("C-c s" . scratch))
+  :bind ("C-c k s" . scratch))
 
 ;;; Winner
 (use-package winner
