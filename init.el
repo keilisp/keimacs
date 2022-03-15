@@ -213,9 +213,8 @@ search started."
 (use-package files
   :hook
   (before-save . delete-trailing-whitespace)
-
   :custom
-  (require-final-newline t)
+  ;; (require-final-newline t)
   ;; backup settings
   (backup-by-copying t)
   (delete-old-versions t)
@@ -224,7 +223,6 @@ search started."
   (version-control t)
   (confirm-kill-emacs #'yes-or-no-p)
   :config
-
   (defun kei/find-file-in-org ()
     "Search for a file in `org'."
     (interactive)
