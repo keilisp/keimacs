@@ -1614,6 +1614,8 @@ questions.  Else use completion to select the tab to switch to."
   (clojure-mode-hook . (lambda () (setq-local comment-column 0)))
   ;; (before-save-hook . #'cider-format-buffer)
   ;; (before-save-hook . #'lsp-format-buffer)
+  :custom-face
+  (clojure-keyword-face ((t (:slant italic :inherit font-lock-constant-face))))
   :bind
   (:map clojure-mode-map
         ("C-c r b" . cider-connect-clj)
