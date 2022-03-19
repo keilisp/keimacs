@@ -1679,6 +1679,10 @@ questions.  Else use completion to select the tab to switch to."
 (use-package ess
   :ensure t)
 
+;; Docker
+(use-package docker-tramp
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;; QBP specific ;;;
 ;;;;;;;;;;;;;;;;;;;;
