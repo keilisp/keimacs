@@ -201,7 +201,7 @@ search started."
 ;;; Ripgrep
 (use-package rg
   :ensure t
-  :config
+  :init
   (rg-enable-default-bindings)
   :bind
   (:map search-map
@@ -571,7 +571,7 @@ search started."
   (defun do-not-map-M-s-and-M-d (f)
     (let ((evil-cp-additional-bindings
            (progn
-             ;; (assoc-delete-all "M-s" evil-cp-additional-bindings)
+             (assoc-delete-all "M-s" evil-cp-additional-bindings)
              (assoc-delete-all "M-D" evil-cp-additional-bindings)
              (assoc-delete-all "M-d" evil-cp-additional-bindings))))
       (funcall f)))
