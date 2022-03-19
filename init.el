@@ -400,6 +400,8 @@ search started."
 
 (use-package beacon
   :ensure t
+  :bind
+  (("C-x j" . beacon-blink))
   :hook
   (after-init-hook . beacon-mode))
 
