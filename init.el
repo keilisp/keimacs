@@ -1493,6 +1493,7 @@ questions.  Else use completion to select the tab to switch to."
 
 ;;;; Clojure
 (use-package flymake-kondor
+  :disabled
   :ensure t
   :hook
   ((clojure-mode-hook
