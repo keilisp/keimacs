@@ -1675,6 +1675,10 @@ questions.  Else use completion to select the tab to switch to."
 ;; (use-package flycheck-clj-kondo
 ;;   :ensure t)
 
+;;; R 
+(use-package ess
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;; QBP specific ;;;
 ;;;;;;;;;;;;;;;;;;;;
