@@ -2456,14 +2456,75 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org-roam
   :ensure t
   :bind (("C-c o C" . org-roam-capture)
-         :map org-roam-mode-map
-         (("C-c n l" . org-roam)
-          ("C-c n f" . org-roam-find-file)
-          ("C-c n u" . org-roam-buffer-update)
-          ("C-c n g" . org-roam-graph))
-         :map org-mode-map
-         ("C-c n i" . org-roam-insert)
-         ("C-c n I" . org-roam-insert-immediate))
+         ("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n u" . org-roam-buffer-update)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n r" . org-roam-ref-add)
+         ;; :map org-mode-map
+         ;; ("C-c n i" . org-roam-insert)
+         ;; ("C-c n I" . org-roam-insert-immediate)
+         )
+  :config
+  (setq org-roam-directory
+        (file-truename "~/org/roam/"))
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (org-roam-db-autosync-mode)
+
+  (cl-defmethod org-roam-node-type ((node org-roam-node))
+    "Return the TYPE of NODE."
+    (condition-case nil
+        (file-name-nondirectory
+         (directory-file-name
+          (file-name-directory
+           (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (error "")))
+  (setq org-roam-mode-section-functions
+        (list #'org-roam-backlinks-section
+              #'org-roam-reflinks-section
+              #'org-roam-unlinked-references-section))
+  :custom
+  
+  (org-roam-node-display-template
+   (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  
+  (org-roam-capture-templates
+   '(("d" "default" plain "%?"
+      :if-new (file+head "main/${slug}.org"
+                         "#+title: ${title}\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("r" "reference" plain "%?"
+      :if-new
+      (file+head "reference/${title}.org" "#+title: ${title}\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("a" "article" plain "%?"
+      :if-new
+      (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("b" "book" plain "%?"
+      :if-new
+      (file+head "books/${title}.org" "#+title: ${title}\n#+filetags: :book:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("p" "project" plain "%?"
+      :if-new
+      (file+head "projects/${title}.org" "#+title: ${title}\n#+filetags: :project:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("t" "talk" plain "%?"
+      :if-new
+      (file+head "talks/${title}.org" "#+title: ${title}\n#+filetags: :talk:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("j" "job" plain "%?"
+      :if-new
+      (file+head "job/${title}.org" "#+title: ${title}\n")
+      :immediate-finish t
+      :unnarrowed t))))
   :custom
   ;; (org-roam-capture-templates
   ;;  `(0("b" "Bookmark" entry
