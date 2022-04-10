@@ -227,18 +227,23 @@ search started."
   (defun kei/find-file-in-org ()
     "Search for a file in `org'."
     (interactive)
-    (projectile-find-file-in-directory "~/org"))
+    (counsel-find-file "" "~/org/"))
 
   (defun kei/find-file-in-keimacs()
-    "Search for a file in `org'."
+    "Search for a file in `emacs'."
     (interactive)
-    (projectile-find-file-in-directory "~/.config/emacs"))
+    (counsel-find-file "" "~/.config/emacs/"))
+
+  (defun kei/find-file-in-nix()
+    "Search for a file in `nixos'."
+    (interactive)
+    (counsel-find-file "" "~/nix/nixos-config/"))
 
   :bind
   (:map global-map
         ("C-c f o" . kei/find-file-in-org)
         ("C-c f k" . kei/find-file-in-keimacs)
-        ("C-c f p" . kei/find-config-in-nix)
+        ("C-c f p" . kei/find-file-in-nix)
         ("C-c f m" . rename-file)
         ("C-c f D" . delete-file)
         ("C-c f c" . copy-file)
@@ -812,11 +817,9 @@ search started."
 ;; Minibuffer
 (use-package minibuffer
   :custom
-  (completion-cycle-threshold 1)
+  ;; (completion-cycle-threshold 1)
   (completion-styles '(partial-completion orderless))
-  (completion-show-help nil)
-  :bind
-  ("s-SPC" . completion-at-point))
+  (completion-show-help nil))
 
 (use-package minibuffer-eldef
   :hook
