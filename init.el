@@ -2525,23 +2525,17 @@ questions.  Else use completion to select the tab to switch to."
       (file+head "job/${title}.org" "#+title: ${title}\n")
       :immediate-finish t
       :unnarrowed t))))
-  :custom
-  ;; (org-roam-capture-templates
-  ;;  `(0("b" "Bookmark" entry
-  ;;      (file+olp "~/org/bookmarks.org")
-  ;;      "* [[%?][]] \n")
-  ;;     ("l" "Learn" entry
-  ;;      (file+olp "~/org/learning.org")
-  ;;      "\n* TODO [[%?][]] \n")
-  ;;     ("u" "University" entry
-  ;;      (file+olp+datetree "~/org/university.org")
-  ;;      "* TODO DEADLINE: %t %? :university:\n")
-  ;;     ("i" "Ideas" entry
-  ;;      (file+olp+datetree "~/org/ideas.org")
-  ;;      "* %T %? :idea:\n")))
 
-  (org-roam-directory
-   (file-truename "~/org/roam/")))
+(use-package deft
+  :ensure t
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-roam-directory))
 
 (use-package evil-org
   :ensure t
