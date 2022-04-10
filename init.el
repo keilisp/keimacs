@@ -215,7 +215,7 @@ search started."
   :hook
   (before-save . delete-trailing-whitespace)
   :custom
-  ;; (require-final-newline t)
+  (require-final-newline nil)
   ;; backup settings
   (backup-by-copying t)
   (delete-old-versions t)
