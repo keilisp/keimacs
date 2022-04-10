@@ -387,9 +387,9 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka" :height 100))))
-  (fixed-pitch ((t (:font "Iosevka" :height 100))))
-  (variable-pitch ((t (:font "Iosevka" :height 100))))
+  (default ((t (:font "Iosevka" :height 90))))
+  (fixed-pitch ((t (:font "Iosevka" :height 90))))
+  (variable-pitch ((t (:font "Iosevka" :height 90))))
   (mode-line ((t (:font "Iosevka" :height 90))))
   (mode-line-inactive ((t (:font "Iosevka" :height 90)))))
 
@@ -1025,8 +1025,8 @@ search started."
   ;; (ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
   (ivy-count-format "%d/%d " "Show anzu-like counter")
   (ivy-use-selectable-prompt t "Make the prompt line selectable")
-  ;; :custom-face
-  ;; (ivy-current-match ((t (:inherit 'hl-line))))
+  :custom-face
+  (ivy-current-match ((t (:inherit 'hl-line))))
   :bind
   (:map ivy-minibuffer-map
         ("C-j" . ivy-next-line)
