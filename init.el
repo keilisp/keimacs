@@ -2200,6 +2200,7 @@ questions.  Else use completion to select the tab to switch to."
          :map org-mode-map
          ("C-c '"   . org-edit-src-code)
          ("C-c o q" . org-set-tags-command)
+         ("C-c o i" . org-insert-structure-template)
          ("C-c o t" . org-todo)
          ("C-c o p" . org-set-property)
          ("C-c o P" . org-priority)
@@ -2212,15 +2213,27 @@ questions.  Else use completion to select the tab to switch to."
   (org-default-notes-file "~/org/todo.org")
   (org-hidden-keywords '(title author date startup))
   (org-hide-emphasis-markers t)
-  (org-tag-alist '(("study" . ?s) ("nixos"  . ?n)
-                   ("video" . ?v) ("prog"   . ?p)
-                   ("listen" . ?l) ("read"  . ?r)
-                   ("emacs"  . ?e) ("gtd"   . ?t)
-                   ("write"  . ?w) ("idea"  . ?i)
-                   ("en")          ("life" . ?d)
+  (org-todo-keywords '((sequence "TODO(t!/!)" "NEXT(n!/!)"
+                                 "STARTED(s!)" "|" "DONE(d!/!)")
+                       (type "PROJECT(p!/!)" "|" "DONE_PROJECT(D!/!)")
+                       (sequence "WAIT(w@/!)" "SOMEDAY(S!)" "|"
+                                 "CNCL(c@/!)")))
+  (org-tag-alist '(("study" . ?s)
+                   ("nixos"  . ?n)
+                   ("video" . ?v)
+                   ("prog"   . ?p)
+                   ("listen" . ?l)
+                   ("read"  . ?r)
+                   ("emacs"  . ?e)
+                   ("gtd"   . ?t)
+                   ("work"  . ?w)
+                   ("idea"  . ?i)
+                   ("en")
+                   ("life" . ?d)
                    ("guix"  . ?x)))
   (org-startup-folded 'overview)
-  (org-ellipsis "↩")
+  (org-ellipsis "...")
+  (org-pretty-entities t)
   (org-direcotry "~/org")
   ;; (org-adapt-indentation nil)
   (org-hide-leading-stars t)
@@ -2248,38 +2261,86 @@ questions.  Else use completion to select the tab to switch to."
        ((eq n 2) 'org-hide)
        (t (unless org-level-color-stars-only org-f)))))
 
+  (defun my/show-next-without-effort ()
+    (interactive)
+    (org-ql-search (org-agenda-files)
+                   '(and (todo "NEXT")
+                         (not (property "Effort")))))
+  
+  (defun my/generate-agenda-weekly-review ()
+    "Generate the agenda for the weekly review"
+    (interactive)
+    (let ((span-days 24)
+          (offset-past-days 10))
+      (message "Generating agenda for %s days starting %s days ago"
+               span-days offset-past-days)
+      (org-agenda-list nil (- (time-to-days (date-to-time
+                                             (current-time-string)))
+                              offset-past-days) 
+                       span-days)
+      (org-agenda-log-mode)
+      (goto-char (point-min))))
+
+  (defun my/search-random-someday ()
+    "Search all agenda files for SOMEDAY and jump to a random item"
+    (interactive)
+    (let* ((todos '("SOMEDAY"))
+           (searches (mapcar (lambda (x) (format "+TODO=\"%s\"" x)) todos))
+           (joint-search (string-join searches "|") )
+           (org-agenda-custom-commands '(("g" tags joint-search))))
+      (org-agenda nil "g")
+      (let ((nlines (count-lines (point-min) (point-max))))
+        (goto-line (random nlines)))))
+
+  (setq org-capture-templates `())
 
   (setq org-capture-templates
-	    `(("t" "Task" entry
-	       (file+olp "~/org/todo.org")
-	       "* TODO %t %? :gtd:\n")
-	      ("b" "Bookmark" entry
-	       (file+olp "~/org/bookmarks.org")
-	       "* [%?[][]] \n")
-	      ("s" "Study" entry
-	       (file+olp "~/org/learning.org")
-	       "\n* [%?[][]] :study: \n")
-	      ("r" "Read" entry
-	       (file+olp "~/org/learning.org")
-	       "\n* [%?[][]] :read: \n")
-	      ("v" "Video" entry
-	       (file+olp "~/org/learning.org")
-	       "\n* [%?[][]] :video: \n")
-	      ("l" "Listen" entry
-	       (file+olp "~/org/learning.org")
-	       "\n* [%?[][]] :listen: \n")
-	      ("p" "Prog" entry
-	       (file+olp "~/org/learning.org")
-	       "\n* [%?[][]] :prog: \n")
-	      ("i" "Idea" entry
-	       (file+olp+datetree "~/org/ideas.org")
-	       "* %T %? :idea:\n")))
+        `(
+          ;; ("i" "Inbox" entry
+          ;;  (file+olp "~/org/gtd/inbox.org")
+          ;;  "* TODO %?\n%U\n\n  %i"
+          ;;  :kill-buffer t)
+          ;; ("t" "Todo with link" entry
+          ;;  (file "~/org/gtd/inbox.org")
+          ;;  "* TODO %?\n%U\n\n  %i\n  %a"
+          ;;  :kill-buffer t)
+          ("t" "Todo" entry
+           (file+olp "~/org/todo.org")
+           "* TODO %t %? :gtd:\n")
+          ("w" "Work Todo" entry
+           (file+olp "~/org/todo.org")
+           "* TODO %t %? :work:\n")
+          ("b" "Bookmark" entry
+           (file+olp "~/org/bookmarks.org")
+           "* [%?[][]] \n")
+          ("s" "Study" entry
+           (file+olp "~/org/learning.org")
+           "\n* [%?[][]] :study: \n")
+          ("r" "Read" entry
+           (file+olp "~/org/learning.org")
+           "\n* [%?[][]] :read: \n")
+          ("v" "Video" entry
+           (file+olp "~/org/learning.org")
+           "\n* [%?[][]] :video: \n")
+          ("l" "Listen" entry
+           (file+olp "~/org/learning.org")
+           "\n* [%?[][]] :listen: \n")
+          ("p" "Prog" entry
+           (file+olp "~/org/learning.org")
+           "\n* [%?[][]] :prog: \n")
+          ("i" "Idea" entry
+           (file+olp+datetree "~/org/ideas.org")
+           "* %T %? :idea:\n")))
 
   ;; Save org-files after refile
   (advice-add 'org-refile :after
-	          (lambda (&rest _)
-	            (org-save-all-org-buffers))))
+              (lambda (&rest _)
+                (org-save-all-org-buffers))))
 
+(use-package org-habit
+  ;; :after org
+  :custom
+  (org-habit-show-habits-only-for-today t))
 
 ;; (use-package org-latex
 ;;   :config
