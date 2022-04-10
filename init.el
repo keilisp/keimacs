@@ -96,6 +96,7 @@
   (scroll-conservatively 101)
   (scroll-step 1)
   (scroll-margin)
+  ;; (truncate-lines t)
   (auto-window-vscroll nil)
   (tooltip-mode nil)
   (enable-recursive-minibuffers t)
@@ -1720,7 +1721,9 @@ questions.  Else use completion to select the tab to switch to."
   ;; (cider-repl-display-in-current-window t)
   ;; (cider-repl-buffer-size-limit 600)
   :init
-  (advice-add 'cider-repl--insert-banner :override #'ignore))
+  (advice-add 'cider-repl--insert-banner :override #'ignore)
+  :hook
+  (cider-repl-mode . (lambda () (setq truncate-lines t))))
 
 (use-package cider-completion
   :after cider-mode
