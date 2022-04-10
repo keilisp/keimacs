@@ -938,8 +938,150 @@ search started."
   (geiser-mode-hook . geiser-eros-mode))
 
 
+;;; Counsel
+(use-package counsel
+  ;; :disabled t
+  :ensure t
+  :custom
+  (ivy-initial-inputs-alist
+   '((counsel-minor . "^+")
+     (counsel-package . "^+")
+     (counsel-org-capture . "^")
+     (counsel-M-x . "")
+     (counsel-describe-symbol . "^")
+     (org-refile . "^")
+     (org-agenda-refile . "^")
+     (org-capture-refile . "^")
+     (Man-completion-table . "^")
+     (woman . "^")))
+  :bind
+  (([remap menu-bar-open] . counsel-tmm)
+   ([remap insert-char] . counsel-unicode-char)
+   ([remap isearch-forward] . counsel-grep-or-swiper)
+   ("C-x b" . counsel-switch-buffer)
+   ("C-x 5 b" . counsel-switch-buffer-other-window)
+   :map mode-specific-map
+   :prefix-map counsel-prefix-map
+   :prefix "c"
+   ("a" . counsel-apropos)
+   ("b" . counsel-bookmark)
+   ("B" . counsel-bookmarked-directory)
+   ("c w" . counsel-colors-web)
+   ("c e" . counsel-colors-emacs)
+   ("d" . counsel-dired-jump)
+   ("f" . counsel-file-jump)
+   ("F" . counsel-faces)
+   ("g" . counsel-org-goto)
+   ("h" . counsel-command-history)
+   ("H" . counsel-minibuffer-history)
+   ("i" . counsel-imenu)
+   ("j" . counsel-find-symbol)
+   ("l" . counsel-locate)
+   ("L" . counsel-find-library)
+   ("m" . counsel-mark-ring)
+   ("o" . counsel-outline)
+   ("O" . counsel-find-file-extern)
+   ("p" . counsel-package)
+   ("r" . counsel-recentf)
+   ("s g" . counsel-grep)
+   ("s r" . counsel-rg)
+   ("s s" . counsel-ag)
+   ("t" . counsel-org-tag)
+   ("v" . counsel-set-variable)
+   ("w" . counsel-wmctrl)
+   :map help-map
+   ("F" . counsel-describe-face))
+  ;; :custom
+  ;; (counsel-grep-base-command
+  ;;  "rg -i -M 120 --no-heading --line-number --color never %s %s")
+  ;; (counsel-search-engines-alist
+  ;;  '((google
+  ;;     "http://suggestqueries.google.com/complete/search"
+  ;;     "https://www.google.com/search?q="
+  ;;     counsel--search-request-data-google)
+  ;;    (ddg
+  ;;     "https://duckduckgo.com/ac/"
+  ;;     "https://duckduckgo.com/html/?q="
+  ;;     counsel--search-request-data-ddg)))
+  :init
+  (counsel-mode))
+
+;;; Swiper
+(use-package swiper
+  :ensure t)
+
+(use-package smex
+  :ensure t)
+
+;;; Ivy
+(use-package ivy
+  :ensure t
+  ;; :disabled t
+  :custom
+  ;; (ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+  (ivy-count-format "%d/%d " "Show anzu-like counter")
+  (ivy-use-selectable-prompt t "Make the prompt line selectable")
+  ;; :custom-face
+  ;; (ivy-current-match ((t (:inherit 'hl-line))))
+  :bind
+  (:map ivy-minibuffer-map
+        ("C-j" . ivy-next-line)
+        ("C-n" . ivy-next-line)
+        ("<down>" . ivy-next-line)
+        ("C-k" . ivy-previous-line)
+        ("C-p" . ivy-previous-line)
+        ("<up>" . ivy-previous-line)
+        ("C-l" . ivy-alt-done)
+        ;; ("<right>" . ivy-alt-done)
+        ("<right>" . forward-char)
+        ("<return>" . ivy-done)
+        ("C-<return>" . ivy-immediate-done)
+        ("C-w" . backward-kill-word)
+        ("<tab>" . ivy-partial-or-done)
+   :map ivy-switch-buffer-map
+        ("C-j" . ivy-next-line)
+        ("C-n" . ivy-next-line)
+        ("<down>" . ivy-next-line)
+        ("C-k" . ivy-previous-line)
+        ("C-p" . ivy-previous-line)
+        ("<up>" . ivy-previous-line)
+        ("C-l" . ivy-alt-done)
+        ;; ("<right>" . ivy-alt-done)
+        ("<right>" . forward-char)
+        ("<return>" . ivy-done)
+        ("C-<return>" . ivy-immediate-done)
+        ("C-w" . backward-kill-word)
+        ("<tab>" . ivy-partial-or-done))
+  :config
+  (add-to-list 'ivy-re-builders-alist '(t . orderless-ivy-re-builder))
+  (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight))
+  (ivy-mode t))
+
+(use-package all-the-icons-ivy
+  ;; :defer t
+  :ensure t
+  ;; :after ivy
+  ;; :custom
+  ;; (all-the-icons-ivy-buffer-commands '() "Don't use for buffers.")
+  :init
+  (all-the-icons-ivy-setup))
+
+;; (use-package ivy-rich
+;;   :disabled t
+;;   :ensure t
+;;   :config
+;;   (ivy-rich-mode 1))
+
+;; (use-package ivy-prescient
+;;   :ensure t
+;;   :custom
+;;   (ivy-prescient-retain-classic-highlighting t)
+;;   :config
+;;   (ivy-prescient-mode 1))
+
 ;;; Icomplete
 (use-package icomplete
+  :disabled t
   :after minibuffer
   :custom
   (icomplete-in-buffer t)
@@ -991,6 +1133,7 @@ search started."
       (nth 0 completion-in-region--data))))
 
 (use-package icomplete-vertical
+  :disabled t
   :ensure t
   :demand t
   :bind
@@ -1010,8 +1153,10 @@ search started."
 
 ;;; Orderless
 (use-package orderless
+  ;; :disabled t
   :ensure t
-  :after icomplete
+  ;; :after icomplete
+  :after ivy
   :preface
   (defun orderless-literal-dispatcher (p _ _)
     (when (string-prefix-p "=" p)
@@ -1024,48 +1169,7 @@ search started."
   (orderless-style-dispatchers '(orderless-literal-dispatcher
                                  orderless-sli-dispatcher)))
 
-;;; Consult
-(use-package consult
-  :ensure t
-  :disabled t
-  :custom
-  (completion-in-region-function 'consult-completion-in-region)
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings (mode-specific-map)
-         ("C-c h" . consult-history)
-         ("C-c b" . consult-bookmark)
-         ;; ("C-c k" . consult-kmacro)
-         ;; C-x bindings (ctl-x-map)
-         ("C-x M-:" . consult-complex-command)
-         ("C-x b" . consult-buffer)
-         ("C-x 4 b" . consult-buffer-other-window)
-         ("C-x 5 b" . consult-buffer-other-frame)
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)
-         ("C-M-#" . consult-register)
-         ;; M-g bindings (goto-map)
-         ("M-g g" . consult-goto-line)
-         ("M-g M-g" . consult-goto-line)
-         ("M-g o" . consult-outline)
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-project-imenu) ;; Alternative: consult-imenu
-         ("M-g e" . consult-error)
-         ("M-g E" . consult-compile-error)
-         ;; M-s bindings (search-map)
-         ("M-s g" . consult-ripgrep) ;; Alternatives: consult-grep, consult-git-ripgrep
-         ("M-s f" . consult-find) ;; Alternatives: consult-locate, find-fd
-         ("M-s l" . consult-line)
-         ("M-s m" . consult-multi-occur)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ("M-s s" . consult-isearch)
-         ;; Other bindings
-         ("M-y" . consult-yank-pop)))
-
-
-;;; Pdf
+;;; PDF
 (use-package pdf-tools
   :ensure t
   :custom
@@ -1175,7 +1279,7 @@ search started."
 
 ;;;; Projectile
 (use-package projectile
-  :defer 0.2
+  ;; :defer 0.2
   :ensure t
   :init (projectile-mode +1)
   :bind
@@ -1188,8 +1292,14 @@ search started."
      projectile-root-top-down
      projectile-root-bottom-up
      projectile-root-top-down-recurring))
-  (projectile-completion-system 'default))
+  (projectile-completion-system 'ivy))
 
+(use-package counsel-projectile
+  :disabled t
+  :ensure t
+  :after counsel projectile
+  :config
+  (counsel-projectile-mode))
 
 ;;;; Autocompletion
 ;;; Company
@@ -2009,6 +2119,7 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (magit-log-margin '(t age-abbreviated magit-log-margin-width t 7))
   (magit-diff-refine-hunk t)
+  (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
   :bind
   ;; (:map magit-mode-map
   ;;       ("<tab>" . magit-section-toggle))
