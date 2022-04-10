@@ -2007,14 +2007,12 @@ questions.  Else use completion to select the tab to switch to."
   (:map nix-mode-map
         ("C-c u" . nix-update-fetch)))
 
-;;; TODO Get rid of ivy/helm dependency
-;; (use-package ivy-nixos-options
-(use-package helm-nixos-options
+(use-package ivy-nixos-options
+  :disabled t
   :ensure t
   :bind
   (:map nix-mode-map
-        ("C-c h" . helm-nixos-options)))
-;; ("C-c d" . ivy-nixos-options)))
+        ("C-c d" . ivy-nixos-options)))
 
 ;;; Direnv (lorri)
 (use-package direnv
@@ -2188,6 +2186,10 @@ questions.  Else use completion to select the tab to switch to."
   :config
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
+(use-package org-ql
+  :quelpa (org-ql :fetcher github :repo "alphapapa/org-ql"
+                  :files (:defaults (:exclude "helm-org-ql.el")))
+  :after org)
 
 (use-package org
   :hook
