@@ -2454,8 +2454,9 @@ questions.  Else use completion to select the tab to switch to."
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
-  ;; (dashboard-startup-banner 'official)
-  (dashboard-startup-banner "~/pix/doom/M-x_butterfly_smaller.png")
+  (dashboard-startup-banner (or (when (file-exists-p "~/pix/doom/M-x_butterfly_smaller.png")
+                                  "~/pix/doom/M-x_butterfly_smaller.png")
+                                'official))
   (dashboard-center-content t)
   (dashboard-set-footer nil)
   (dashboard-items '(
