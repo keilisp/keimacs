@@ -2365,58 +2365,88 @@ questions.  Else use completion to select the tab to switch to."
                            "~/org/bookmarks.org"
                            "~/org/life.org"))
 
+  ;; (setq org-agenda-files '("~/org/"))
+
   (setq org-agenda-custom-commands
-	    '(("g" tags "+gtd"
-	       ((org-agenda-overriding-header "Things to get done")
-	        (org-agenda-files org-agenda-files)))
+        '(("d" "Daily Action List"
+           ((agenda ""
+                    ((org-agenda-span 1)
+                     (org-agenda-sorting-strategy
+                      '((agenda time-up category-up tag-up))))
+                    (org-deadline-warning-days 7))))
 
-          ("p" tags "+prog"
-	       ((org-agenda-overriding-header "Things to learn on practice")
-	        (org-agenda-files org-agenda-files)))
+          ("j" . "Job Todo")
+          ("jj" tags "+work+TODO=\"TODO\"")
+          ("jn" "Job" tags "+work+TODO=\"NEXT\"|+work+TODO=\"STARTED\"")
 
-	      ("s" tags "+study"
-	       ((org-agenda-overriding-header "Things to study")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("g" "Inbox" tags "+gtd"
+          ;;  ((org-agenda-overriding-header "Things to get done")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("w" tags "+write"
-	       ((org-agenda-overriding-header "Things that include writing")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("p" "Practice" tags "+prog"
+          ;;  ((org-agenda-overriding-header "Things to learn on practice")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("d" tags "+life"
-	       ((org-agenda-overriding-header "Things to todo in longer distance")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("s" "Projects" tags "+study"
+          ;;  ((org-agenda-overriding-header "Things to study")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("l" tags "+listen"
-	       ((org-agenda-overriding-header "Things to listen")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("w" tags "+write"
+          ;;  ((org-agenda-overriding-header "Things that include writing")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("v" tags "+video-prog"
-	       ((org-agenda-overriding-header "Things to watch without practice")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("d" "Life" tags "+life"
+          ;;  ((org-agenda-overriding-header "Things to todo in longer distance")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("V" tags "+video+prog"
-	       ((org-agenda-overriding-header "Things to watch and practice")
-	        (org-agenda-files org-agenda-files)))
+          ("l" "Listen"
+           tags "+listen"
+           ((org-agenda-overriding-header "Things to listen")
+            (org-agenda-files org-agenda-files)))
 
-	      ("r" tags "+read"
-	       ((org-agenda-overriding-header "Things to read")
-	        (org-agenda-files org-agenda-files)))
+          ("v" "Watch"
+           tags "+video"
+           ((org-agenda-overriding-header "Things to watch")
+            (org-agenda-files org-agenda-files)))
 
-	      ("e" tags "+emacs"
-	       ((org-agenda-overriding-header "Things to hack on emacs")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("V" tags "+video+prog"
+          ;;  ((org-agenda-overriding-header "Things to watch and practice")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("x" tags "+guix"
-	       ((org-agenda-overriding-header "Things to hack on guix")
-	        (org-agenda-files org-agenda-files)))
+          ("r" "Read"
+           tags "+read"
+           ((org-agenda-overriding-header "Things to read")
+            (org-agenda-files org-agenda-files)))
 
-	      ("n" tags "+nixos"
-	       ((org-agenda-overriding-header "Things to hack on nixos")
-	        (org-agenda-files org-agenda-files)))
+          ;; ("e" tags "+emacs"
+          ;;  ((org-agenda-overriding-header "Things to hack on emacs")
+          ;;   (org-agenda-files org-agenda-files)))
 
-	      ("u" tags "+university"
-	       ((org-agenda-overriding-header "Things for university")
-	        (org-agenda-files org-agenda-files)))))
+          ;; ("x" tags "+guix"
+          ;;  ((org-agenda-overriding-header "Things to hack on guix")
+          ;;   (org-agenda-files org-agenda-files)))
+
+          ;; ("n" tags "+nixos"
+          ;;  ((org-agenda-overriding-header "Things to hack on nixos")
+          ;;   (org-agenda-files org-agenda-files)))
+
+          ("u" "Univerisy"
+           tags "+university"
+           ((org-agenda-overriding-header "Things for university")
+            (org-agenda-files org-agenda-files)))
+
+          ("P" "Stuck Projects"
+           ((org-ql-block '(and (todo "PROJECT")
+                                (or (not (descendants))
+                                    (and (not (descendants 
+                                               (or (todo "STARTED") (todo "NEXT"))))
+                                         (descendants 
+                                          (and (or (todo "TODO") (todo "WAITING")) 
+                                               (not (deadline)) 
+                                               (not (scheduled)))))
+                                    (not (descendants (or (todo "NEXT") (todo "TODO") 
+                                                          (todo "WAITING") 
+                                                          (todo "STARTED")))))))))))
 
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
