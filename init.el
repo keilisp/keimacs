@@ -158,7 +158,8 @@ See `display-line-numbers' for what these values mean."
                               (modify-syntax-entry ?_ "w")
                               (modify-syntax-entry ?* "w")
                               (modify-syntax-entry ?? "w")
-                              (modify-syntax-entry ?! "w")))))
+                              (modify-syntax-entry ?! "w")
+                              (modify-syntax-entry ?> "w")))))
 
 ;;; Isearch
 (use-package isearch
