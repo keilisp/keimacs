@@ -840,6 +840,11 @@ search started."
   :hook
   (after-init-hook . savehist-mode))
 
+;; Hook for only checking parens in Lisp modes
+(defun lisp-check-parens-after-save-hook ()
+  (when (bound-and-true-p lisp-mode)
+      ;; (eq major-mode 'lisp-mode)
+    (check-parens)))
 
 ;;;; Emacs Lisp
 (use-package elisp-mode
@@ -848,7 +853,8 @@ search started."
   (eval-expression-print-length t)
   ;; (lisp-indent-function 'common-lisp-indent-function)
   :hook
-  (after-save-hook . check-parens)
+  ;; (after-save-hook . check-parens)
+  (after-save-hook . lisp-check-parens-after-save-hook)
   :bind
   (:map emacs-lisp-mode-map
         ("C-c e e" . eval-last-sexp)
