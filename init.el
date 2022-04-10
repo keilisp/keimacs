@@ -1635,6 +1635,8 @@ questions.  Else use completion to select the tab to switch to."
 (use-package cider-mode
   :init
   (advice-add 'cider-insert-last-sexp-in-repl :around #'evil-collection-cider-last-sexp)
+  (advice-add 'cider-pprint-eval-last-sexp :around #'evil-collection-cider-last-sexp)
+  (advice-add 'cider-pprint-eval-last-sexp-to-comment :around #'evil-collection-cider-last-sexp)
   :custom
   (cider-font-lock-dynamically nil)
   (cider-font-lock-reader-conditionals nil)
@@ -1735,6 +1737,7 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t
   :custom
   (clojure-indent-style 'align-arguments)
+  ;; (clojure-indent-style 'always-align)
   (clojure-toplevel-inside-comment-form t)
   :hook
   (clojure-mode-hook . (lambda () (setq-local comment-column 0)))
