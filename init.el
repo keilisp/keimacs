@@ -2565,6 +2565,7 @@ questions.  Else use completion to select the tab to switch to."
    ("C-c d p" . org-gtd-process-inbox)
    ("C-c d n" . org-gtd-show-all-next)
    ("C-c d s" . org-gtd-show-stuck-projects)
+   ("C-c d A" . org-gtd-archive-completed-items)
    :map org-gtd-process-map
    ("C-c d c" . org-gtd-choose)))
 
