@@ -737,6 +737,7 @@ search started."
           (telega-root-mode all-the-icons-material "contacts" :v-adjust 0.0))))
 
 (use-package all-the-icons-dired
+  :disabled t
   :ensure t
   :hook
   (dired-mode-hook . all-the-icons-dired-mode))
@@ -1064,7 +1065,7 @@ search started."
 (use-package all-the-icons-ivy
   ;; :defer t
   :ensure t
-  ;; :after ivy
+  :after ivy
   ;; :custom
   ;; (all-the-icons-ivy-buffer-commands '() "Don't use for buffers.")
   :init
