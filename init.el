@@ -115,6 +115,12 @@
                          (right-fringe . 0)))
   (user-full-name "Druk Oleksandr")
 
+  ;; emacs 28.1
+  (completions-detailed t)
+  (next-error-message-highlight t)
+  (help-enable-symbol-autoload t)
+  (describe-bindings-outline t)
+
   :config
   (defun kei/toggle-line-numbers ()
     "Toggle line numbers.
@@ -334,8 +340,8 @@ search started."
   :defer t
   :preface
   (provide 'subr)
-  :init
-  (advice-add 'yes-or-no-p :override #'y-or-n-p))
+  :custom
+  (use-short-answers t)) ; emacs 28.1
 
 ;;; Startup
 (use-package startup
@@ -780,6 +786,7 @@ search started."
   :custom
   (doom-modeline-height 10)
   ;; (doom-modeline-enable-word-count t)
+  ;; (mode-line-compact t) ; emacs 28.1
   :init
   (doom-modeline-mode 1)
   (display-time-mode 1)) ; Clock in modeline
@@ -869,6 +876,10 @@ search started."
         ("C-c e r" . eval-region)
         ("C-c e t" . toggle-debug-on-error)
         ("C-c h d" . describe-function)
+        ("C-c h v" . describe-variable)
+        ("C-c h x" . describe-command) ; emacs 28.1
+        ("C-c h k" . describe-keymap) ; emacs 28.1
+        ("C-c h s" . shortdoc-display-group) ; emacs 28.1
         ("C-c h e" . view-echo-area-messages)))
 
 (use-package macrostep
