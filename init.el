@@ -1922,6 +1922,23 @@ questions.  Else use completion to select the tab to switch to."
 (use-package lua-mode
   :ensure t)
 
+;;; Fennel
+(use-package fennel-mode
+  :ensure t
+  :bind
+  (:map fennel-mode-map
+        ("C-c r c" . fennel-repl)
+        ("C-c f f" . fennel-format)
+        ("C-c e e" . lisp-eval-last-sexp)
+        ("C-c e d" . lisp-eval-defun)
+        ("C-c e e" . lisp-eval-region)
+        ("C-c e b" . fennel-reload)
+        ("C-c m m" . fennel-macroexpand)
+        ("C-c h d" . fennel-show-documentation)
+        ("C-c h v" . fennel-show-variable-documentation)
+        ("C-c h a" . fennel-show-arglist)
+        ("C-c h c" . fennel-show-compilation)))
+
 ;;; Common Lisp
 (use-package sly
   :ensure t
