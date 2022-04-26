@@ -1951,7 +1951,7 @@ questions.  Else use completion to select the tab to switch to."
   ;;                      (save-excursion (sly)))))
   :bind
   (:map sly-mode-map
-                                        ; sly-mrepl-mode-map
+        ;; sly-mrepl-mode-map
         ("C-c r b" . sly)
         ("C-c r c" . sly-connect)
         ("C-c r r" . sly-mrepl)
@@ -1960,7 +1960,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r C" . sly-mrepl-clear-repl)
         ("C-c r o" . sly-mrepl-clear-recent-output)
         ("C-c r x" . sly-interrup)
-                                        ; sly-doc-map
+        ;; sly-doc-map
         ("C-c h l" . sly-documentation-lookup)
         ("C-c h s" . sly-describe-symbol)
         ("C-c h f" . sly-describe-function)
@@ -1997,7 +1997,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c I"   . sly-inspect)
         ("C-c t t" . sly-trace-dialog-toggle-trace)
         ("C-c t T" . sly-trace-dialog)
-                                        ; sly-who-map
+        ;; sly-who-map
         ("C-c w u" . sly-edit-uses)
         ("C-c w c" . sly-who-calls)
         ("C-c w C" . sly-calls-who)
