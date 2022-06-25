@@ -736,6 +736,16 @@ search started."
   :bind (:map flyspell-mode-map
               ("C-c $" . flyspell-correct-at-point)))
 
+(use-package flycheck
+  :ensure t
+  :hook
+  (prog-mode . flycheck-mode))
+
+(use-package flycheck-grammarly
+  :defer t
+  :quelpa
+  (flycheck-grammarly :repo "jcs-elpa/flycheck-grammarly"  :fetcher github))
+
 ;;; Fancy
 (use-package olivetti
   :ensure t
