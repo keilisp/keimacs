@@ -671,6 +671,12 @@ search started."
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
+;; Free-keys
+(use-package free-keys
+  :ensure t
+  :defer t
+  :commands free-keys)
+
 ;;; Helpful
 (use-package helpful
   :ensure t
