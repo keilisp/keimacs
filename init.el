@@ -661,6 +661,8 @@ search started."
 ;;; Which-key
 (use-package which-key
   :ensure t
+  :custom
+  (which-key-show-transient-maps t)
   :config
   (which-key-mode))
 
@@ -1640,9 +1642,9 @@ questions.  Else use completion to select the tab to switch to."
            js-mode
            js2-mode
            java-mode
-           ;; clojure-mode-hook
-           ;; clojurescript-mode-hook
-           ;; clojurec-mode-hook
+           clojure-mode-hook
+           clojurescript-mode-hook
+           clojurec-mode-hook
            ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
@@ -1868,6 +1870,13 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r '" . clojure-convert-collection-to-quoted-list)
         ("C-c r #" . clojure-convert-collection-to-set)))
 
+;; https://ag91.github.io/blog/2022/06/09/make-adding-a-clojure-require-more-interactive-with-cider-and-cljr/
+;; (defun my/make-cljr-add-use-snippet-interactive ()
+;;   (setq-local cljr--add-use-snippet "[${1:$$(yas-choose-value (ignore-errors (cider-sync-request:ns-list)))} :refer ${2:[$3]}]"))
+
+;; (add-hook 'cider-mode-hook 'my/make-cljr-add-use-snippet-interactive)
+;;;;
+
 ;; (use-package anakondo
 ;;   :ensure t
 ;;   :hook
@@ -1891,12 +1900,12 @@ questions.  Else use completion to select the tab to switch to."
 ;;;;;;;;;;;;;;;;;;;;
 
 (ejc-create-connection
-   "qbp_bdm_demo_dev_v2"
-   :classpath (cider-jar-find-or-fetch "mysql" "mysql-connector-java" "5.1.44")
-   :subprotocol "mysql"
-   :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
-   :user "root"
-   :password "root")
+ "qbp_bdm_demo_dev_v2"
+ :classpath (cider-jar-find-or-fetch "mysql" "mysql-connector-java" "5.1.44")
+ :subprotocol "mysql"
+ :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
+ :user "root"
+ :password "root")
 
 ;;; Debugger
 ;; (use-package dap-mode
@@ -2358,9 +2367,9 @@ questions.  Else use completion to select the tab to switch to."
   (defun my/show-next-without-effort ()
     (interactive)
     (org-ql-search (org-agenda-files)
-                   '(and (todo "NEXT")
-                         (not (property "Effort")))))
-  
+      '(and (todo "NEXT")
+            (not (property "Effort")))))
+
   (defun my/generate-agenda-weekly-review ()
     "Generate the agenda for the weekly review"
     (interactive)
@@ -2545,13 +2554,59 @@ questions.  Else use completion to select the tab to switch to."
   (org-agenda-skip-deadline-if-done . nil)
   (org-agenda-span 10))
 
+(use-package org-super-agenda
+  :ensure t)
+
+;; (let ((org-super-agenda-groups
+;;        '(;; Each group has an implicit boolean OR operator between its selectors.
+;;          (:name "Today"  ; Optionally specify section name
+;;                 :time-grid t  ; Items that appear on the time grid
+;;                 :todo "TODAY")  ; Items that have this TODO keyword
+;;          (:name "Important"
+;;                 ;; Single arguments given alone
+;;                 :tag "bills"
+;;                 :priority "A")
+;;          ;; Set order of multiple groups at once
+;;          (:order-multi (2 (:name "Shopping in town"
+;;                                  ;; Boolean AND group matches items that match all subgroups
+;;                                  :and (:tag "shopping" :tag "@town"))
+;;                           (:name "Food-related"
+;;                                  ;; Multiple args given in list with implicit OR
+;;                                  :tag ("food" "dinner"))
+;;                           (:name "Personal"
+;;                                  :habit t
+;;                                  :tag "personal")
+;;                           (:name "Space-related (non-moon-or-planet-related)"
+;;                                  ;; Regexps match case-insensitively on the entire entry
+;;                                  :and (:regexp ("space" "NASA")
+;;                                                ;; Boolean NOT also has implicit OR between selectors
+;;                                                :not (:regexp "moon" :tag "planet")))))
+;;          ;; Groups supply their own section names when none are given
+;;          (:todo "WAITING" :order 8)  ; Set order of this section
+;;          (:todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
+;;                 ;; Show this group at the end of the agenda (since it has the
+;;                 ;; highest number). If you specified this group last, items
+;;                 ;; with these todo keywords that e.g. have priority A would be
+;;                 ;; displayed in that group instead, because items are grouped
+;;                 ;; out in the order the groups are listed.
+;;                 :order 9)
+;;          (:priority<= "B"
+;;                       ;; Show this section after "Today" and "Important", because
+;;                       ;; their order is unspecified, defaulting to 0. Sections
+;;                       ;; are displayed lowest-number-first.
+;;                       :order 1)
+;;          ;; After the last group, the agenda will display items that didn't
+;;          ;; match any of these groups, with the default order position of 99
+;;          )))
+;;   (org-agenda nil "a"))
+
 (use-package org-roam
   :ensure t
   :bind (("C-c o C" . org-roam-capture)
          ("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
-         ("C-c n u" . org-roam-buffer-update)
+         ("C-c n u" . org-roam-buffer-refresh)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n r" . org-roam-ref-add)
          ;; :map org-mode-map
