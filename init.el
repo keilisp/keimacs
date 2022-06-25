@@ -1642,6 +1642,25 @@ questions.  Else use completion to select the tab to switch to."
 (use-package lsp-java
   :ensure t)
 
+(use-package log4j-mode
+  :ensure t)
+
+;;;; Hideview for toggling code or log blocks
+(use-package hideshow
+  :bind (("C-c TAB" . hs-toggle-hiding)
+         ("C-c C-+" . hs-show-all))
+  :hook
+  (prog-mode-hook . hs-minor-mode)
+  :custom
+  (hs-special-modes-alist .
+                          (mapcar 'purecopy
+                                  '((c-mode "{" "}" "/[*/]" nil nil)
+                                    (c++-mode "{" "}" "/[*/]" nil nil)
+                                    (java-mode "{" "}" "/[*/]" nil nil)
+                                    (js-mode "{" "}" "/[*/]" nil)
+                                    (json-mode "{" "}" "/[*/]" nil)
+                                    (javascript-mode  "{" "}" "/[*/]" nil)))))
+
 ;;;; Clojure
 (use-package flymake-kondor
   :disabled
