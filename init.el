@@ -2650,7 +2650,27 @@ questions.  Else use completion to select the tab to switch to."
   (deft-recursive t)
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
-  (deft-directory org-roam-directory))
+  (deft-directory org-roam-directory)
+  :config
+  ;; thx https://github.com/jrblevin/deft/issues/75#issuecomment-905031872
+  (defun my/deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+  If `deft-use-filename-as-title' is nil, the title is taken to
+  be the first non-empty line of the FILE.  Else the base name of the FILE is
+  used as title."
+    (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
+      (if begin
+          (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
+        (deft-base-filename file))))
+  
+  (advice-add 'deft-parse-title :override #'my/deft-parse-title)
+  
+  (setq deft-strip-summary-regexp
+        (concat "\\("
+                "[\n\t]" ;; blank
+                "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
+                "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+                "\\)")))
 
 (use-package evil-org
   :ensure t
