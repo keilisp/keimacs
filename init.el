@@ -2615,6 +2615,9 @@ questions.  Else use completion to select the tab to switch to."
   (org-edna-use-inheritance t)
   :config
   (org-edna-mode)
+  (advice-add 'org-gtd--refile :after
+              (lambda (&rest _)
+                (org-save-all-org-buffers)))
   :bind
   (("C-c d c" . org-gtd-capture)
    ("C-c d e" . org-gtd-engage)
