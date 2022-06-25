@@ -1334,8 +1334,36 @@ search started."
   (counsel-projectile-mode))
 
 ;;;; Autocompletion
+;;; Corfu
+(use-package corfu
+  :disabled t
+  :ensure t
+  ;; TAB-and-Go customizations
+  :custom
+  (corfu-auto t)
+  (corfu-auto-prefix 2)     ; Enable auto completion
+  (corfu-auto-delay 0.0)    ; Enable auto completion
+  (corfu-quit-at-boundary t)
+  (corfu-echo-documentation 0.25)   ; Enable auto completion
+  (corfu-preselect-first nil)
+  (corfu-cycle t)             ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect-first nil) ;; Disable candidate preselection
+
+  ;; Use TAB for cycling, default is `corfu-complete'.
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("C-j" . corfu-next)
+        ("C-k" . corfu-previous)
+        ([backtab] . corfu-previous))
+
+  :hook
+  (after-init-hook . global-corfu-mode))
+
 ;;; Company
 (use-package company
+  ;; :disabled t
   :ensure t
   :custom
   (company-backends '((company-dabbrev-code company-capf company-dabbrev company-files)))
