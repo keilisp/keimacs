@@ -2800,7 +2800,11 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package flycheck-hledger
   :ensure t
-  :after (flycheck ledger-mode))
+  ;; :config
+  ;; (add-to-list 'flycheck-checkers 'hledger)
+  :after (flycheck hledger-mode)
+  :hook
+  (hledger-mode-hook . flycheck-mode))
 
 
 ;; Dashboard
