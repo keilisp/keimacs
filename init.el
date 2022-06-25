@@ -663,6 +663,14 @@ search started."
   :config
   (which-key-mode))
 
+;; Keyfreq
+(use-package keyfreq
+  :defer 0.1
+  :ensure t
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
 ;;; Helpful
 (use-package helpful
   :ensure t
