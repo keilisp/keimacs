@@ -422,24 +422,17 @@ search started."
 (use-package evil
   :ensure t
   :custom
-  (evil-want-Y-yank-to-eol t)
-  (evil-want-integration t)
+  ;; (evil-want-Y-yank-to-eol t)
+  ;; (evil-want-integration t)
   (evil-want-keybinding nil)
-  (evil-split-window-below t)
-  (evil-vsplit-window-right t)
-  (evil-disable-insert-state-bindings t)
-  (evil-want-C-i-jump nil)
-  ;; (evil-echo-state nil)
+  ;; (evil-split-window-below t)
+  ;; (evil-vsplit-window-right t)
+  ;; (evil-disable-insert-state-bindings t)
+  ;; (evil-want-C-i-jump nil)
+  ;; ;; (evil-echo-state nil)
   (evil-undo-system 'undo-fu)
-  (evil-search-module 'evil-search)
-  (evil-respect-visual-line-mode t)
-  (evil-insert-state-cursor '(bar . 1))
-  (evil-emacs-state-cursor '(hbar . 1))
-  (evil-normal-state-cursor '(hbar . 1))
-  (evil-visual-state-cursor '(hbar . 2))
-  (evil-motion-state-cursor '(hbar . 2))
-  (evil-replace-state-cursor '(hbar . 2))
-  (evil-operator-state-cursor '(hbar . 2))
+  ;; (evil-search-module 'evil-search)
+  ;; (evil-respect-visual-line-mode t)
   :hook
   (after-init-hook . evil-mode)
   :config
@@ -452,8 +445,16 @@ search started."
   (setq evil-motion-state-cursor '(hbar . 2))
   (setq evil-replace-state-cursor '(hbar . 2))
   (setq evil-operator-state-cursor '(hbar . 2))
-  ;; (evil-set-leader 'motion (kbd "SPC"))
-  ;; (evil-set-leader 'motion (kbd ",") t)
+
+  (setq evil-want-Y-yank-to-eol t)
+  (setq evil-want-integration t)
+  ;; (setq evil-want-keybinding nil)
+  (setq evil-split-window-below t)
+  (setq evil-vsplit-window-right t)
+  (setq evil-disable-insert-state-bindings t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-search-module 'evil-search)
+  (setq evil-respect-visual-line-mode t)
 
   (defun custom-evil-force-normal-state ()
     "Delegate to evil-force-normal-state but also clear search highlighting"
@@ -869,7 +870,7 @@ search started."
 ;; Hook for only checking parens in Lisp modes
 (defun lisp-check-parens-after-save-hook ()
   (when (bound-and-true-p lisp-mode)
-      ;; (eq major-mode 'lisp-mode)
+    ;; (eq major-mode 'lisp-mode)
     (check-parens)))
 
 ;;;; Emacs Lisp
@@ -1068,7 +1069,7 @@ search started."
         ("C-<return>" . ivy-immediate-done)
         ("C-w" . backward-kill-word)
         ("<tab>" . ivy-partial-or-done)
-   :map ivy-switch-buffer-map
+        :map ivy-switch-buffer-map
         ("C-j" . ivy-next-line)
         ("C-n" . ivy-next-line)
         ("<down>" . ivy-next-line)
@@ -1083,8 +1084,8 @@ search started."
         ("C-w" . backward-kill-word)
         ("<tab>" . ivy-partial-or-done))
   :config
-  (add-to-list 'ivy-re-builders-alist '(t . orderless-ivy-re-builder))
-  (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight))
+  ;; (add-to-list 'ivy-re-builders-alist '(t . orderless-ivy-re-builder))
+  ;; (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight))
   (ivy-mode t))
 
 (use-package all-the-icons-ivy
@@ -1317,6 +1318,7 @@ search started."
   :custom
   (projectile-project-search-path (cddr (directory-files "~/code/" t)))
   (projectile-require-project-root nil)
+  (projectile-sort-order 'recentf)
   (projectile-project-root-files-functions
    '(projectile-root-local
      projectile-root-top-down
@@ -1428,9 +1430,9 @@ Returns the vterm buffer."
       (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
     (let* ((project-root default-directory)
            (default-directory
-            (if arg
-                default-directory
-              project-root)))
+             (if arg
+                 default-directory
+               project-root)))
       (setenv "PROOT" project-root)
       (prog1 (funcall display-fn)
         (+vterm--change-directory-if-remote))))
@@ -1562,8 +1564,8 @@ questions.  Else use completion to select the tab to switch to."
              (tab-next))
             (t
              (icomplete-vertical-do ()
-               (tab-bar-switch-to-tab
-                (completing-read "Select tab: " tabs nil t)))))))
+                                    (tab-bar-switch-to-tab
+                                     (completing-read "Select tab: " tabs nil t)))))))
 
   :bind (("C-x t t" . kei/tab-bar-select-tab-dwim)
          ("C-x t n" . tab-new)
@@ -1630,7 +1632,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package ejc-sql
   :ensure t
   :hook
-  (ejc-sql-connected-hook . (lambda () 
+  (ejc-sql-connected-hook . (lambda ()
                               (ejc-set-fetch-size nil)
                               (ejc-set-max-rows nil)
                               (ejc-set-column-width-limit 80)
@@ -1678,7 +1680,7 @@ questions.  Else use completion to select the tab to switch to."
   (defun cider-repl-set-ns-insert-last-sexp-and-eval ()
     (interactive)
     (call-interactively #'cider-repl-set-ns)
-    (sit-for 0.05) ;; HACK 
+    (sit-for 0.05) ;; HACK
     (cider-insert-last-sexp-in-repl-and-eval))
   :bind
   (:map cider-mode-map
@@ -1692,7 +1694,6 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c e I" . cider-insert-last-sexp-in-repl-and-eval)
         ("C-c e b" . cider-eval-buffer)
         ("C-c e d" . cider-eval-defun-at-point)
-        ("C-c e D" . kei/cider-insert-defun-in-repl-with-ns)
         ("C-c e r" . cider-eval-region)
         ("C-c e t" . cider-eval-defun-up-to-point)
         ("C-c e f" . cider-load-all-files)
@@ -1830,7 +1831,7 @@ questions.  Else use completion to select the tab to switch to."
 ;; (use-package flycheck-clj-kondo
 ;;   :ensure t)
 
-;;; R 
+;;; R
 (use-package ess
   :ensure t)
 
@@ -2322,7 +2323,7 @@ questions.  Else use completion to select the tab to switch to."
                span-days offset-past-days)
       (org-agenda-list nil (- (time-to-days (date-to-time
                                              (current-time-string)))
-                              offset-past-days) 
+                              offset-past-days)
                        span-days)
       (org-agenda-log-mode)
       (goto-char (point-min))))
@@ -2406,7 +2407,8 @@ questions.  Else use completion to select the tab to switch to."
                            "~/org/birthdays.org"
                            "~/org/habits.org"
                            "~/org/bookmarks.org"
-                           "~/org/life.org"))
+                           "~/org/life.org"
+                           "~/org/gtd/org-gtd-tasks.org"))
 
   ;; (setq org-agenda-files '("~/org/"))
 
@@ -2481,14 +2483,14 @@ questions.  Else use completion to select the tab to switch to."
           ("P" "Stuck Projects"
            ((org-ql-block '(and (todo "PROJECT")
                                 (or (not (descendants))
-                                    (and (not (descendants 
+                                    (and (not (descendants
                                                (or (todo "STARTED") (todo "NEXT"))))
-                                         (descendants 
-                                          (and (or (todo "TODO") (todo "WAITING")) 
-                                               (not (deadline)) 
+                                         (descendants
+                                          (and (or (todo "TODO") (todo "WAITING"))
+                                               (not (deadline))
                                                (not (scheduled)))))
-                                    (not (descendants (or (todo "NEXT") (todo "TODO") 
-                                                          (todo "WAITING") 
+                                    (not (descendants (or (todo "NEXT") (todo "TODO")
+                                                          (todo "WAITING")
                                                           (todo "STARTED")))))))))))
 
   :custom
@@ -2523,15 +2525,25 @@ questions.  Else use completion to select the tab to switch to."
           (file-name-directory
            (file-relative-name (org-roam-node-file node) org-roam-directory))))
       (error "")))
-  (setq org-roam-mode-section-functions
-        (list #'org-roam-backlinks-section
-              #'org-roam-reflinks-section
-              #'org-roam-unlinked-references-section))
+  (setq org-roam-mode-sections
+        (list
+         #'org-roam-backlinks-section
+         #'org-roam-reflinks-section
+         #'org-roam-unlinked-references-section
+         )
+        )
   :custom
-  
+  ;; (org-roam-mode-section-functions
+  ;;  (list
+  ;;   #'org-roam-backlinks-section
+  ;;   #'org-roam-reflinks-section
+  ;;   ;; #'org-roam-unlinked-references-section
+  ;;   )
+  ;;  )
+
   (org-roam-node-display-template
    (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  
+
   (org-roam-capture-templates
    '(("d" "default" plain "%?"
       :if-new (file+head "main/${slug}.org"
