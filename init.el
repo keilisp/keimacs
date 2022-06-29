@@ -373,17 +373,10 @@ search started."
   :hook (scratch-create-buffer-hook . kei/scratch-buffer-setup)
   :bind ("C-c k s" . scratch))
 
-;;; Winner
-(use-package winner
-  :config
-  (winner-mode 1))
-
-
 ;;; Theme
 (let ((theme-file "~/.config/emacs/current-theme.el"))
   (when (file-exists-p theme-file)
     (load-file theme-file)))
-
 
 ;;; Faces
 ;; TODO
@@ -422,17 +415,8 @@ search started."
 (use-package evil
   :ensure t
   :custom
-  ;; (evil-want-Y-yank-to-eol t)
-  ;; (evil-want-integration t)
   (evil-want-keybinding nil)
-  ;; (evil-split-window-below t)
-  ;; (evil-vsplit-window-right t)
-  ;; (evil-disable-insert-state-bindings t)
-  ;; (evil-want-C-i-jump nil)
-  ;; ;; (evil-echo-state nil)
   (evil-undo-system 'undo-fu)
-  ;; (evil-search-module 'evil-search)
-  ;; (evil-respect-visual-line-mode t)
   :hook
   (after-init-hook . evil-mode)
   :config
@@ -529,7 +513,6 @@ search started."
   :hook
   (evil-local-mode-hook . evil-surround-mode))
 
-
 ;;; Evil-multiedit
 (use-package evil-multiedit
   :defer 0.2
@@ -609,13 +592,6 @@ search started."
   :init
   (advice-add 'evil-cp-set-additional-bindings :around #'do-not-map-M-s-and-M-d))
 
-;;; Aggressive indent
-(use-package aggressive-indent
-  :disabled t
-  :ensure t
-  :hook
-  (prog-mode-hook . aggressive-indent-mode))
-
 (use-package undo-fu
   :ensure t)
 
@@ -657,7 +633,6 @@ search started."
 ;; Fancy lambdas
 (global-prettify-symbols-mode t)
 
-
 ;;; Which-key
 (use-package which-key
   :ensure t
@@ -691,7 +666,6 @@ search started."
         ("C-h k" . helpful-key)
         ("C-h F" . helpful-function)
         ("C-h C" . helpful-command)))
-
 
 ;;; Reverse-im
 (use-package reverse-im
@@ -744,8 +718,8 @@ search started."
 (use-package flycheck-grammarly
   :defer t
   :quelpa
-  (flycheck-grammarly :repo "jcs-elpa/flycheck-grammarly"  :fetcher github))
-
+  (flycheck-grammarly :repo "jcs-elpa/flycheck-grammarly"
+                      :fetcher github))
 ;;; Fancy
 (use-package olivetti
   :ensure t
@@ -784,23 +758,6 @@ search started."
   :bind
   (:map global-map
         ("C-c k t"   . treemacs)))
-
-(use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
-
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
-
-(use-package treemacs-icons-dired
-  :after (treemacs dired)
-  :ensure t
-  :config (treemacs-icons-dired-mode))
-
-(use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
 
 ;;; TODO mb add to telega
 (use-package emojify
@@ -919,10 +876,6 @@ search started."
   :ensure t
   :hook
   (emacs-lisp-mode-hook . eros-mode))
-
-(use-package suggest
-  :ensure t
-  :defer t)
 
 (use-package ipretty
   :defer t
@@ -1109,82 +1062,6 @@ search started."
   :init
   (all-the-icons-ivy-setup))
 
-;; (use-package ivy-rich
-;;   :disabled t
-;;   :ensure t
-;;   :config
-;;   (ivy-rich-mode 1))
-
-;; (use-package ivy-prescient
-;;   :ensure t
-;;   :custom
-;;   (ivy-prescient-retain-classic-highlighting t)
-;;   :config
-;;   (ivy-prescient-mode 1))
-
-;;; Icomplete
-(use-package icomplete
-  :disabled t
-  :after minibuffer
-  :custom
-  (icomplete-in-buffer t)
-  (icomplete-delay-completions-threshold 0)
-  (icomplete-max-delay-chars 0)
-  (icomplete-compute-delay 0)
-  (icomplete-show-common-prefix nil)
-  (icomplete-show-matches-on-no-input t)
-  (icomplete-prospects-height 10)
-  :hook
-  (after-init-hook . icomplete-mode)
-  :bind
-  (:map icomplete-minibuffer-map
-        ("C-j" . icomplete-forward-completions)
-        ("C-n" . icomplete-forward-completions)
-        ("<down>" . icomplete-forward-completions)
-        ("C-k" . icomplete-backward-completions)
-        ("C-p" . icomplete-backward-completions)
-        ("<up>" . icomplete-backward-completions)
-        ("C-l" . icomplete-force-complete)
-        ("<right>" . icomplete-force-complete)
-        ("<return>" . icomplete-force-complete-and-exit)
-        ("<tab>" . icomplete-force-complete)
-        ("C-w" . kill-whole-line)
-        ("<backspace>" . kei/minibuffer-backward-updir))
-  :config
-  (defun kei/minibuffer-backward-updir ()
-    "Delete char before point or go up a directory.
-     Must be bound to `minibuffer-local-filename-completion-map'."
-    (interactive)
-    (if (and (eq (char-before) ?/)
-             (eq (kei/minibuffer--completion-category) 'file))
-        (save-excursion
-          (goto-char (1- (point)))
-          (when (search-backward "/" (point-min) t)
-            (delete-region (1+ (point)) (point-max))))
-      (call-interactively 'backward-delete-char)))
-
-  (defun kei/minibuffer--completion-category ()
-    "Return completion category."
-    (let* ((beg (kei/minibuffer--field-beg))
-           (md (completion--field-metadata beg)))
-      (alist-get 'category (cdr md))))
-
-  (defun kei/minibuffer--field-beg ()
-    "Determine beginning of completion."
-    (if (window-minibuffer-p)
-        (minibuffer-prompt-end)
-      (nth 0 completion-in-region--data))))
-
-(use-package icomplete-vertical
-  :disabled t
-  :ensure t
-  :demand t
-  :bind
-  (:map icomplete-minibuffer-map
-        ("C-t" . icomplete-vertical-toggle))
-  :hook
-  (icomplete-mode-hook . icomplete-vertical-mode))
-
 ;;; Marginalia
 (use-package marginalia
   :ensure t
@@ -1208,7 +1085,8 @@ search started."
     (when (string-prefix-p "-" p)
       `(orderless-strict-leading-initialism . ,(substring p 1))))
   :custom
-  (orderless-matching-styles '(orderless-flex orderless-regexp))
+  ;; (orderless-matching-styles '(orderless-flex orderless-regexp))
+  (orderless-matching-styles '(orderless-literal orderless-flex orderless-regexp))
   (orderless-style-dispatchers '(orderless-literal-dispatcher
                                  orderless-sli-dispatcher)))
 
@@ -1242,7 +1120,6 @@ search started."
     special-mode
     compilation-mode) . page-break-lines-mode))
 
-
 (use-package rainbow-mode
   :ensure t
   :hook
@@ -1253,42 +1130,6 @@ search started."
   :ensure t
   :hook
   (prog-mode-hook . rainbow-delimiters-mode))
-
-;; (use-package prism
-;;   :ensure t
-;;   :quelpa (prism :fetcher github :repo "alphapapa/prism.el")
-;;   :hook
-;;   (prog-mode-hook . prism-mode))
-
-;;; Dimming parentheses
-;; (use-package paren-face
-;;   :ensure t
-;;   :hook
-;;   (after-init-hook . global-paren-face-mode))
-
-;; (defface paren-face
-;;   '((((class color) (background dark))
-;;      (:foreground "grey20"))
-;;     (((class color) (background light))
-;;      (:foreground "grey80")))
-;;   "Face used to dim parentheses.")
-
-;; (add-hook 'emacs-lisp-mode-hook
-;;  	      (lambda ()
-;;  	        (font-lock-add-keywords nil
-;;  				                    '(("(\\|)" . 'paren-face)))))
-
-;; Changed evil-goggles to quelpa fetch from my fork with evil-cleverparens support.
-;; As it seems that edkovlev is not really maintaining it anymore.
-
-;; (use-package evil-goggles
-;;   :ensure t
-;;   :custom
-;;   (evil-goggles-duration 0.150)
-;;   ;; (evil-goggles-enable-delete nil)
-;;   :config
-;;   (evil-goggles-mode)
-;;   (evil-goggles-use-diff-faces))
 
 (use-package evil-goggles
   :quelpa
@@ -1314,12 +1155,6 @@ search started."
   :hook
   (after-init-hook . global-so-long-mode))
 
-(use-package lisp-extra-font-lock
-  :disabled t
-  :ensure t
-  :hook
-  (after-init-hook . lisp-extra-font-lock-global-mode))
-
 ;;;; Projectile
 (use-package projectile
   ;; :defer 0.2
@@ -1338,41 +1173,7 @@ search started."
      projectile-root-top-down-recurring))
   (projectile-completion-system 'ivy))
 
-(use-package counsel-projectile
-  :disabled t
-  :ensure t
-  :after counsel projectile
-  :config
-  (counsel-projectile-mode))
-
 ;;;; Autocompletion
-;;; Corfu
-(use-package corfu
-  :disabled t
-  :ensure t
-  ;; TAB-and-Go customizations
-  :custom
-  (corfu-auto t)
-  (corfu-auto-prefix 2)     ; Enable auto completion
-  (corfu-auto-delay 0.0)    ; Enable auto completion
-  (corfu-quit-at-boundary t)
-  (corfu-echo-documentation 0.25)   ; Enable auto completion
-  (corfu-preselect-first nil)
-  (corfu-cycle t)             ;; Enable cycling for `corfu-next/previous'
-  (corfu-preselect-first nil) ;; Disable candidate preselection
-
-  ;; Use TAB for cycling, default is `corfu-complete'.
-  :bind
-  (:map corfu-map
-        ("TAB" . corfu-next)
-        ([tab] . corfu-next)
-        ("C-j" . corfu-next)
-        ("C-k" . corfu-previous)
-        ([backtab] . corfu-previous))
-
-  :hook
-  (after-init-hook . global-corfu-mode))
-
 ;;; Company
 (use-package company
   ;; :disabled t
@@ -1524,7 +1325,6 @@ method to prepare vterm at the corresponding remote directory."
         ("b" . frog-jump-buffer)))
 
 ;;;; Lookup
-
 ;;; Google-this
 (use-package google-this
   :defer 0.1
@@ -1652,9 +1452,9 @@ questions.  Else use completion to select the tab to switch to."
            js-mode
            js2-mode
            java-mode
-           clojure-mode-hook
-           clojurescript-mode-hook
-           clojurec-mode-hook
+           ;; clojure-mode-hook
+           ;; clojurescript-mode-hook
+           ;; clojurec-mode-hook
            ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
@@ -1702,14 +1502,6 @@ questions.  Else use completion to select the tab to switch to."
                                     (javascript-mode  "{" "}" "/[*/]" nil)))))
 
 ;;;; Clojure
-(use-package flymake-kondor
-  :disabled
-  :ensure t
-  :hook
-  ((clojure-mode-hook
-    clojurec-mode-hook
-    clojurescript-mode-hook) . flymake-kondor-setup))
-
 (use-package eldoc
   :ensure t
   :defer t
@@ -1729,6 +1521,7 @@ questions.  Else use completion to select the tab to switch to."
   (cider-font-lock-reader-conditionals nil)
   (cider-overlays-use-font-lock t)
   (cider-save-file-on-load t)
+  (cider-switch-to-repl-on-insert nil)
   (cider-font-lock-dynamically '(macro core function var))
   :config
   (defun cider-insert-last-sexp-in-repl-and-eval ()
@@ -1811,7 +1604,7 @@ questions.  Else use completion to select the tab to switch to."
   :init
   (advice-add 'cider-repl--insert-banner :override #'ignore)
   :hook
-  (cider-repl-mode . (lambda () (setq truncate-lines t))))
+  (cider-repl-mode . #'toggle-truncate-lines))
 
 (use-package cider-completion
   :after cider-mode
@@ -1825,6 +1618,17 @@ questions.  Else use completion to select the tab to switch to."
   (clojure-indent-style 'align-arguments)
   ;; (clojure-indent-style 'always-align)
   (clojure-toplevel-inside-comment-form t)
+  ;; :config
+  ;; (define-clojure-indent
+  ;;   (pfor 1)
+  ;;   (if-let-failed? 'defun)
+  ;;   (if-let-ok? 'defun)
+  ;;   (when-let-failed? 'defun)
+  ;;   (when-failed 'defun)
+  ;;   (when-let-ok? 'defun)
+  ;;   (attempt-all 'defun)
+  ;;   (alet 'defun)
+  ;;   (mlet 'defun)))
   :hook
   (clojure-mode-hook . (lambda () (setq-local comment-column 0)))
   ;; (before-save-hook . #'cider-format-buffer)
@@ -1836,6 +1640,21 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r b" . cider-connect-clj)
         ("C-c r f" . cider-connect-cljs)
         ("C-c r j" . cider-jack-in)
+        ;; Refactoring
+        ("C-c r t t" . clojure-thread)
+        ("C-c r t l" . clojure-thread-last-all)
+        ("C-c r t f" . clojure-thread-first-all)
+        ("C-c r t u" . clojure-unwind)
+        ("C-c r t a" . clojure-unwind-all)
+        ("C-c r c i" . clojure-cycle-if)
+        ("C-c r c p" . clojure-cycle-privacy)
+        ("C-c r l i" . clojure-introduce-let)
+        ("C-c r l m" . clojure-move-to-let)
+        ("C-c r [" . clojure-convert-collection-to-vector)
+        ("C-c r {" . clojure-convert-collection-to-map)
+        ("C-c r (" . clojure-convert-collection-to-list)
+        ("C-c r '" . clojure-convert-collection-to-quoted-list)
+        ("C-c r #" . clojure-convert-collection-to-set)
         :map evil-normal-state-map
         ("# j" . clojure-toggle-ignore)
         ("# f" . clojure-toggle-ignore-surrounding-form)
@@ -1844,58 +1663,20 @@ questions.  Else use completion to select the tab to switch to."
 (use-package nrepl-client
   :defer t
   :hook
-  (nrepl-connected-hook . (lambda () (switch-to-buffer-other-frame (cider-current-repl))))
+  (nrepl-connected-hook . (lambda ()
+                            (switch-to-buffer-other-frame (cider-current-repl))))
   :custom
   (nrepl-hide-special-buffers t))
 
-;; TODO maybe use there functions from clojure-mode (C-c C-r)
-(use-package clj-refactor
-  :disabled t
+(use-package anakondo
   :ensure t
   :hook
-  ((clojure-mode-hook
-    clojurec-mode-hook
-    clojurescript-mode-hook) . clj-refactor-mode)
-  :bind
-  (:map clojure-mode-map
-        ("C-c r t t" . cljr-thread)
-        ("C-c r t l" . cljr-thread-last-all)
-        ("C-c r t f" . cljr-thread-first-all)
-        ("C-c r t u" . cljr-unwind)
-        ("C-c r t a" . cljr-unwind-all)
-        ("C-c r c i" . cljr-cycle-if)
-        ("C-c r c p" . cljr-cycle-privacy)
-        ("C-c r c t" . cljr-cycle-thread)
-        ("C-c r e f" . cljr-extract-function)
-        ("C-c r e d" . cljr-extract-def)
-        ("C-c r l i" . cljr-introduce-let)
-        ("C-c r l e" . cljr-expand-let)
-        ("C-c r l m" . cljr-move-to-let)
-        ("C-c r l r" . cljr-remove-let)
-        ("C-c r a" . cljr-add-missing-libspec)
-        ("C-c r d" . cljr-destructure-keys)
-        ("C-c r [" . clojure-convert-collection-to-vector)
-        ("C-c r {" . clojure-convert-collection-to-map)
-        ("C-c r (" . clojure-convert-collection-to-list)
-        ("C-c r '" . clojure-convert-collection-to-quoted-list)
-        ("C-c r #" . clojure-convert-collection-to-set)))
+  (clojure-mode-hook . anakondo-minor-mode)
+  (clojurescript-mode-hook . anakondo-minor-mode)
+  (clojurec-mode-hook . anakondo-minor-mode))
 
-;; https://ag91.github.io/blog/2022/06/09/make-adding-a-clojure-require-more-interactive-with-cider-and-cljr/
-;; (defun my/make-cljr-add-use-snippet-interactive ()
-;;   (setq-local cljr--add-use-snippet "[${1:$$(yas-choose-value (ignore-errors (cider-sync-request:ns-list)))} :refer ${2:[$3]}]"))
-
-;; (add-hook 'cider-mode-hook 'my/make-cljr-add-use-snippet-interactive)
-;;;;
-
-;; (use-package anakondo
-;;   :ensure t
-;;   :hook
-;;   (clojure-mode-hook . anakondo-minor-mode)
-;;   (clojurescript-mode-hook . anakondo-minor-mode)
-;;   (clojurec-mode-hook . anakondo-minor-mode))
-
-;; (use-package flycheck-clj-kondo
-;;   :ensure t)
+(use-package flycheck-clj-kondo
+  :ensure t)
 
 ;;; R
 (use-package ess
@@ -1916,32 +1697,6 @@ questions.  Else use completion to select the tab to switch to."
  :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
  :user "root"
  :password "root")
-
-;;; Debugger
-;; (use-package dap-mode
-;;   :defer t
-;;   :ensure t
-;;   ;; :init
-;;   ;; (dap-gdb-lldb-setup)
-;;   :custom
-;;   (dap-auto-configure-mode t                           "Automatically configure dap.")
-;;   (dap-auto-configure-features
-;;    '(sessions locals breakpoints expressions tooltip)  "Remove the button panel in the top.")
-;;   :config
-;;   (require 'dap-gdb-lldb)
-;;   :bind
-;;   (:map dap-mode-map
-;;         ("C-c d s" . dap-debug)
-;;         ("C-c d p" . dap-debug-last)
-;;         ("C-c d n" . dap-debug-last)
-;;         ("C-c d t" . dap-breakpoint-toggle)
-;;         ("C-c d c" . dap-breakpoint-condition)
-;;         ("C-c d h" . dap-breakpoint-hit-condition)
-;;         ("C-c d H" . dap-hydra)
-;;         ("C-c d l" . dap-breakpoint-log-message)
-;;         ("C-c d D" . dap-breakpoint-delete)
-;;         ("C-c d P" . dap-ui-breakpoints)))
-
 
 ;;;; CC
 (use-package ccls
@@ -1984,20 +1739,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c e o" . rustic-cargo-outdated)
         ("C-c t t" . rustic-cargo-test)
         ("C-c t r" . rustic-cargo-test-rerun)
-        ("C-c t c" . rustic-cargo-current-test)
-        ;;; FIXME gdb
-        ("C-c d g" . gdb)
-        ("C-c d W" . gdb-many-windows)
-        ("C-c d b" . gud-break)
-        ("C-c d d" . gud-remove)
-        ("C-c d r" . gud-remove)
-        ("C-c d R" . gud-refresh)
-        ("C-c d p" . gud-print)
-        ("C-c d n" . gud-next)
-        ("C-c d w" . gud-watch)
-        ("C-c d c" . gud-cont)
-        ("C-c d s" . gud-step)
-        ("C-c d x" . gud-finish)))
+        ("C-c t c" . rustic-cargo-current-test)))
 
 ;;; Lua (just for awesomewm)
 (use-package lua-mode
@@ -2114,18 +1856,6 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c r s" . nix-repl-shell)
         ("C-c U" . nix-unpack)))
 
-(use-package nix-update
-  :ensure t
-  :bind
-  (:map nix-mode-map
-        ("C-c u" . nix-update-fetch)))
-
-(use-package ivy-nixos-options
-  :disabled t
-  :ensure t
-  :bind
-  (:map nix-mode-map
-        ("C-c d" . ivy-nixos-options)))
 
 ;;; Direnv (lorri)
 (use-package direnv
@@ -2147,14 +1877,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package json-mode
   :ensure t)
 
-(use-package json-snatcher
-  :ensure t
-  :bind
-  (:map js-mode-map
-        ("C-c p" . jsons-print-path))
-  :hook '(js-mode js2-mode))
-
-;;;; JS & TS
+;;;; JS & TS FIXME
 ;; TODO mb config fully
 ;; + [[https://github.com/defunkt/coffee-mode][coffee-mode]]
 ;; + [[https://github.com/mooz/js2-mode][js2-mode]]
@@ -2222,12 +1945,6 @@ questions.  Else use completion to select the tab to switch to."
   (add-to-list 'company-backends 'company-math-symbols-unicode))
 
 ;;; Magit
-
-;; (use-package keychain-environment
-;;   :ensure t
-;;   :init
-;;   (keychain-refresh-environment))
-
 (use-package ssh-agency
   :ensure t)
 
@@ -2241,7 +1958,7 @@ questions.  Else use completion to select the tab to switch to."
   ;; (:map magit-mode-map
   ;;       ("<tab>" . magit-section-toggle))
   ("C-c p m" . magit-project-status)
-  ("C-c v a" . magit-stage-file)       ; the closest analog to git add
+  ("C-c v a" . magit-stage-file)
   ("C-c v b" . magit-blame)
   ("C-c v B" . magit-branch)
   ("C-c v c" . magit-checkout)
@@ -2408,16 +2125,7 @@ questions.  Else use completion to select the tab to switch to."
   (setq org-capture-templates `())
 
   (setq org-capture-templates
-        `(
-          ;; ("i" "Inbox" entry
-          ;;  (file+olp "~/org/gtd/inbox.org")
-          ;;  "* TODO %?\n%U\n\n  %i"
-          ;;  :kill-buffer t)
-          ;; ("t" "Todo with link" entry
-          ;;  (file "~/org/gtd/inbox.org")
-          ;;  "* TODO %?\n%U\n\n  %i\n  %a"
-          ;;  :kill-buffer t)
-          ("t" "Todo" entry
+        `(("t" "Todo" entry
            (file+olp "~/org/todo.org")
            "* TODO %t %? :gtd:\n")
           ("w" "Work Todo" entry
@@ -2490,26 +2198,6 @@ questions.  Else use completion to select the tab to switch to."
           ("jj" tags "+work+TODO=\"TODO\"")
           ("jn" "Job" tags "+work+TODO=\"NEXT\"|+work+TODO=\"STARTED\"")
 
-          ;; ("g" "Inbox" tags "+gtd"
-          ;;  ((org-agenda-overriding-header "Things to get done")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("p" "Practice" tags "+prog"
-          ;;  ((org-agenda-overriding-header "Things to learn on practice")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("s" "Projects" tags "+study"
-          ;;  ((org-agenda-overriding-header "Things to study")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("w" tags "+write"
-          ;;  ((org-agenda-overriding-header "Things that include writing")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("d" "Life" tags "+life"
-          ;;  ((org-agenda-overriding-header "Things to todo in longer distance")
-          ;;   (org-agenda-files org-agenda-files)))
-
           ("l" "Listen"
            tags "+listen"
            ((org-agenda-overriding-header "Things to listen")
@@ -2520,45 +2208,15 @@ questions.  Else use completion to select the tab to switch to."
            ((org-agenda-overriding-header "Things to watch")
             (org-agenda-files org-agenda-files)))
 
-          ;; ("V" tags "+video+prog"
-          ;;  ((org-agenda-overriding-header "Things to watch and practice")
-          ;;   (org-agenda-files org-agenda-files)))
-
           ("r" "Read"
            tags "+read"
            ((org-agenda-overriding-header "Things to read")
             (org-agenda-files org-agenda-files)))
 
-          ;; ("e" tags "+emacs"
-          ;;  ((org-agenda-overriding-header "Things to hack on emacs")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("x" tags "+guix"
-          ;;  ((org-agenda-overriding-header "Things to hack on guix")
-          ;;   (org-agenda-files org-agenda-files)))
-
-          ;; ("n" tags "+nixos"
-          ;;  ((org-agenda-overriding-header "Things to hack on nixos")
-          ;;   (org-agenda-files org-agenda-files)))
-
           ("u" "Univerisy"
            tags "+university"
            ((org-agenda-overriding-header "Things for university")
-            (org-agenda-files org-agenda-files)))
-
-          ("P" "Stuck Projects"
-           ((org-ql-block '(and (todo "PROJECT")
-                                (or (not (descendants))
-                                    (and (not (descendants
-                                               (or (todo "STARTED") (todo "NEXT"))))
-                                         (descendants
-                                          (and (or (todo "TODO") (todo "WAITING"))
-                                               (not (deadline))
-                                               (not (scheduled)))))
-                                    (not (descendants (or (todo "NEXT") (todo "TODO")
-                                                          (todo "WAITING")
-                                                          (todo "STARTED")))))))))))
-
+            (org-agenda-files org-agenda-files)))))
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil)
@@ -2618,11 +2276,7 @@ questions.  Else use completion to select the tab to switch to."
          ("C-c n g" . org-roam-graph)
          ("C-c n u" . org-roam-buffer-refresh)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n r" . org-roam-ref-add)
-         ;; :map org-mode-map
-         ;; ("C-c n i" . org-roam-insert)
-         ;; ("C-c n I" . org-roam-insert-immediate)
-         )
+         ("C-c n r" . org-roam-ref-add))
   :config
   (setq org-roam-directory
         (file-truename "~/org/roam/"))
@@ -2641,17 +2295,8 @@ questions.  Else use completion to select the tab to switch to."
         (list
          #'org-roam-backlinks-section
          #'org-roam-reflinks-section
-         #'org-roam-unlinked-references-section
-         )
-        )
+         #'org-roam-unlinked-references-section))
   :custom
-  ;; (org-roam-mode-section-functions
-  ;;  (list
-  ;;   #'org-roam-backlinks-section
-  ;;   #'org-roam-reflinks-section
-  ;;   ;; #'org-roam-unlinked-references-section
-  ;;   )
-  ;;  )
 
   (org-roam-node-display-template
    (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
@@ -2696,46 +2341,12 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org-roam-ui
   :ensure t
   :after org-roam
-  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-  ;;         a hookable mode anymore, you're advised to pick something yourself
-  ;;         if you don't care about startup time, use
   ;;  :hook (after-init . org-roam-ui-mode)
   :custom
   (org-roam-ui-sync-theme t)
   (org-roam-ui-follow t)
   (org-roam-ui-update-on-save t)
   (org-roam-ui-open-on-start t))
-
-(use-package deft
-  :ensure t
-  :after org
-  :bind
-  ("C-c n d" . deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory org-roam-directory)
-  :config
-  ;; thx https://github.com/jrblevin/deft/issues/75#issuecomment-905031872
-  (defun my/deft-parse-title (file contents)
-    "Parse the given FILE and CONTENTS and determine the title.
-  If `deft-use-filename-as-title' is nil, the title is taken to
-  be the first non-empty line of the FILE.  Else the base name of the FILE is
-  used as title."
-    (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
-      (if begin
-          (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
-        (deft-base-filename file))))
-  
-  (advice-add 'deft-parse-title :override #'my/deft-parse-title)
-  
-  (setq deft-strip-summary-regexp
-        (concat "\\("
-                "[\n\t]" ;; blank
-                "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
-                "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
-                "\\)")))
 
 (use-package evil-org
   :ensure t
@@ -2796,13 +2407,15 @@ questions.  Else use completion to select the tab to switch to."
          ("C-c e" . hledger-jentry)
          ("C-c *" . hledger-toggle-star)
          ("M-p" . hledger/prev-entry)
-         ("M-n" . hledger/next-entry)))
+         ("M-h" . hledger/prev-entry)
+         ("M-n" . hledger/next-entry)
+         ("M-l" . hledger/next-entry)))
 
 (use-package flycheck-hledger
   :ensure t
-  ;; :config
-  ;; (add-to-list 'flycheck-checkers 'hledger)
   :after (flycheck hledger-mode)
+  :config
+  (add-to-list 'flycheck-checkers 'hledger)
   :hook
   (hledger-mode-hook . flycheck-mode))
 
@@ -2819,9 +2432,10 @@ questions.  Else use completion to select the tab to switch to."
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
   :custom
-  (dashboard-startup-banner (or (when (file-exists-p "~/pix/doom/M-x_butterfly_smaller.png")
-                                  "~/pix/doom/M-x_butterfly_smaller.png")
-                                'official))
+  (dashboard-startup-banner (let ((file  "~/pix/doom/M-x_butterfly_smaller.png"))
+                              (or (when (file-exists-p file)
+                                    file)
+                                  'official)))
   (dashboard-center-content t)
   (dashboard-set-footer nil)
   (dashboard-items '(
