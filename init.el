@@ -2276,7 +2276,8 @@ questions.  Else use completion to select the tab to switch to."
          ("C-c n g" . org-roam-graph)
          ("C-c n u" . org-roam-buffer-refresh)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n r" . org-roam-ref-add))
+         ("C-c n r" . org-roam-ref-add)
+         ("C-c n a" . org-roam-alias-add))
   :config
   (setq org-roam-directory
         (file-truename "~/org/roam/"))
@@ -2291,11 +2292,92 @@ questions.  Else use completion to select the tab to switch to."
           (file-name-directory
            (file-relative-name (org-roam-node-file node) org-roam-directory))))
       (error "")))
+
+  (defun my/org-roam-get-references-without-backlinks ()
+    (remove-if #'null
+               (cl-loop for node in (org-roam-node-list)
+                        collect (if (and (null (org-roam-backlinks-get node))
+                                         (equal "reference" (org-roam-node-type node)))
+                                    node))))
+
+  (defun my/org-roam-references-without-backlinks-section ()
+    (interactive)
+    (let ((buffer (generate-new-buffer "Roam Nodes without backlinks")))
+      (switch-to-buffer buffer)
+      (erase-buffer)
+      (setq-local default-directory org-roam-buffer-current-directory)
+      (setq-local org-roam-directory org-roam-buffer-current-directory)
+      (magit-insert-section (org-roam)
+        (magit-insert-heading "Reference Nodes without backlinks:")
+        (dolist (node (my/org-roam-get-references-without-backlinks))
+          (org-roam-node-insert-section
+           :source-node node
+           :point 0            
+           :properties nil))
+        (insert ?\n))
+      (org-roam-mode)))
+
+  (defun my/org-roam-have-id-linkp (node)
+    (org-roam-with-file (org-roam-node-file node) t
+      (org-with-point-at 1
+        (let (result)
+          (while (re-search-forward org-link-any-re nil :no-error)
+            (backward-char)
+            (let* ((element (org-element-context))
+                   (type (org-element-type element))
+                   link bounds)
+              (cond
+               ((eq type 'link)
+                (setq link element))
+               ((and (member type org-roam-db-extra-links-elements)
+                     (not (member-ignore-case (org-element-property :key element)
+                                              (cdr (assoc type org-roam-db-extra-links-exclude-keys))))
+                     (setq bounds (org-in-regexp org-link-any-re))
+                     (setq link (buffer-substring-no-properties
+                                 (car bounds)
+                                 (cdr bounds))))))
+              (if (stringp link)
+                  (setq result t)
+                (cl-destructuring-bind (&key type &allow-other-keys) (cadr link)
+                  (if (equal "id" type)
+                      (setq result t))))))
+          result))))
+
+
+  (defun my/org-roam-get-nodes-without-id-links ()
+    (remove-if #'null
+               (cl-loop for node in (org-roam-node-list)
+                        collect (if (and (not (my/org-roam-have-id-linkp node))
+                                         (not (equal "reference" (org-roam-node-type node))))
+                                    node))))
+
+  (defun my/org-roam-nodes-without-id-links-section ()
+    (interactive)
+    (let ((buffer (generate-new-buffer "Roam Nodes without id links")))
+      (switch-to-buffer buffer)
+      (erase-buffer)
+      (setq-local default-directory org-roam-buffer-current-directory)
+      (setq-local org-roam-directory org-roam-buffer-current-directory)
+      (magit-insert-section (org-roam)
+        (magit-insert-heading "Nodes without id links:")
+        (dolist (node (my/org-roam-get-nodes-without-id-links))
+          (org-roam-node-insert-section
+           :source-node node
+           :point 0            
+           :properties nil))
+        (insert ?\n))
+      (org-roam-mode)))
+
+
   (setq org-roam-mode-sections
         (list
          #'org-roam-backlinks-section
          #'org-roam-reflinks-section
-         #'org-roam-unlinked-references-section))
+         #'org-roam-unlinked-references-section
+         ;; #'my/org-roam-references-without-backlinks-section
+         ))
+
+
   :custom
 
   (org-roam-node-display-template
