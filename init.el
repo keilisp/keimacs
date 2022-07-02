@@ -2318,7 +2318,7 @@ questions.  Else use completion to select the tab to switch to."
       (org-roam-mode)))
 
   (defun my/org-roam-have-id-linkp (node)
-    (org-roam-with-file (org-roam-node-file node) t
+    (org-roam-with-file (org-roam-node-file node) nil
       (org-with-point-at 1
         (let (result)
           (while (re-search-forward org-link-any-re nil :no-error)
