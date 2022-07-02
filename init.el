@@ -2305,8 +2305,6 @@ questions.  Else use completion to select the tab to switch to."
     (let ((buffer (generate-new-buffer "Roam Nodes without backlinks")))
       (switch-to-buffer buffer)
       (erase-buffer)
-      (setq-local default-directory org-roam-buffer-current-directory)
-      (setq-local org-roam-directory org-roam-buffer-current-directory)
       (magit-insert-section (org-roam)
         (magit-insert-heading "Reference Nodes without backlinks:")
         (dolist (node (my/org-roam-get-references-without-backlinks))
@@ -2356,8 +2354,6 @@ questions.  Else use completion to select the tab to switch to."
     (let ((buffer (generate-new-buffer "Roam Nodes without id links")))
       (switch-to-buffer buffer)
       (erase-buffer)
-      (setq-local default-directory org-roam-buffer-current-directory)
-      (setq-local org-roam-directory org-roam-buffer-current-directory)
       (magit-insert-section (org-roam)
         (magit-insert-heading "Nodes without id links:")
         (dolist (node (my/org-roam-get-nodes-without-id-links))
@@ -2376,7 +2372,6 @@ questions.  Else use completion to select the tab to switch to."
          #'org-roam-unlinked-references-section
          ;; #'my/org-roam-references-without-backlinks-section
          ))
-
 
   :custom
 
