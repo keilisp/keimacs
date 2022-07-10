@@ -386,11 +386,11 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka" :height 100))))
-  (fixed-pitch ((t (:font "Iosevka" :height 100))))
-  (variable-pitch ((t (:font "Iosevka" :height 100))))
-  (mode-line ((t (:font "Iosevka" :height 100))))
-  (mode-line-inactive ((t (:font "Iosevka" :height 100)))))
+  (default ((t (:font "Iosevka" :height 90))))
+  (fixed-pitch ((t (:font "Iosevka" :height 90))))
+  (variable-pitch ((t (:font "Iosevka" :height 90))))
+  (mode-line ((t (:font "Iosevka" :height 90))))
+  (mode-line-inactive ((t (:font "Iosevka" :height 90)))))
 
 (use-package unicode-fonts
   :ensure t
@@ -713,7 +713,7 @@ search started."
 (use-package flycheck
   :ensure t
   :hook
-  (prog-mode . flycheck-mode))
+  (prog-mode-hook . flycheck-mode))
 
 (use-package flycheck-grammarly
   :defer t
@@ -1179,7 +1179,7 @@ search started."
   ;; :disabled t
   :ensure t
   :custom
-  (company-backends '((company-dabbrev-code company-capf company-dabbrev company-files)))
+  (company-backends '((company-files company-dabbrev-code company-capf)))
   :bind
   (:map company-active-map
         ("C-j" . company-select-next)
