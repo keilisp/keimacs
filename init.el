@@ -2502,6 +2502,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package dashboard
   :ensure t
   :preface
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   (defun kei/dashboard-banner ()
     "Set a dashboard banner including information on package initialization
 			   time and garbage collections."""
