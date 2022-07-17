@@ -2334,8 +2334,7 @@ questions.  Else use completion to select the tab to switch to."
                      (setq link (buffer-substring-no-properties
                                  (car bounds)
                                  (cdr bounds))))))
-              (if (stringp link)
-                  (setq result t)
+              (when (not (stringp link))
                 (cl-destructuring-bind (&key type &allow-other-keys) (cadr link)
                   (if (equal "id" type)
                       (setq result t))))))
