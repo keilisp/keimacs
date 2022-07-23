@@ -1772,6 +1772,28 @@ questions.  Else use completion to select the tab to switch to."
   ;; (sly-mode-hook . (lambda ()
   ;;                    (unless (sly-connected-p)
   ;;                      (save-excursion (sly)))))
+;; REVIEW
+;;   :config
+;;   (defun sbcl-save-sly-and-die ()
+;;     "Save a sbcl image, even when running from inside Sly.
+;; This function should only be used in the *inferior-buffer* buffer,
+;; inside emacs."
+;;     (mapcar #'(lambda (x)
+;;                 (slynk::close-connection 
+;;                  x nil nil))
+;;             slynk::*connections*)
+;;     (dolist (thread (remove
+;;                      (slynk-backend::current-thread)
+;;                      (slynk-backend::all-threads)))
+;;       (slynk-backend::kill-thread thread))
+;;     (sleep 1)
+;;     (sb-ext:save-lisp-and-die #P"~/your-main-program.exe"
+;;                               :toplevel #'your-main-function-here
+;;                               :executable t
+;;                               :compression t))
+
+  ;; in *sly-inferior-lisp* buffer
+  (sbcl-save-sly-and-die)
   :bind
   (:map sly-mode-map
         ;; sly-mrepl-mode-map
