@@ -96,6 +96,7 @@
   (scroll-conservatively 101)
   (scroll-step 1)
   (scroll-margin)
+  (next-line-add-newlines t)
   ;; (truncate-lines t)
   (auto-window-vscroll nil)
   (tooltip-mode nil)
@@ -423,12 +424,12 @@ search started."
   (evil-mode)
   (evil-escape-mode)
   (setq evil-insert-state-cursor '(bar . 1))
-  (setq evil-emacs-state-cursor '(hbar . 1))
-  (setq evil-normal-state-cursor '(hbar . 1))
-  (setq evil-visual-state-cursor '(hbar . 2))
-  (setq evil-motion-state-cursor '(hbar . 2))
-  (setq evil-replace-state-cursor '(hbar . 2))
-  (setq evil-operator-state-cursor '(hbar . 2))
+  ;; (setq evil-emacs-state-cursor '(hbar . 1))
+  ;; (setq evil-normal-state-cursor '(hbar . 1))
+  ;; (setq evil-visual-state-cursor '(hbar . 2))
+  ;; (setq evil-motion-state-cursor '(hbar . 2))
+  ;; (setq evil-replace-state-cursor '(hbar . 2))
+  ;; (setq evil-operator-state-cursor '(hbar . 2))
 
   (setq evil-want-Y-yank-to-eol t)
   (setq evil-want-integration t)
@@ -448,7 +449,7 @@ search started."
       (evil-force-normal-state)
       (evil-ex-nohighlight)))
 
-;;; Maximize window
+  ;; Maximize window
   (defun toggle-maximize-buffer () "Maximize buffer"
          (interactive)
          (if (= 1 (length (window-list)))
@@ -570,7 +571,7 @@ search started."
   (defun do-not-map-M-s-and-M-d (f)
     (let ((evil-cp-additional-bindings
            (progn
-             (assoc-delete-all "M-s" evil-cp-additional-bindings)
+             ;; (assoc-delete-all "M-s" evil-cp-additional-bindings)
              (assoc-delete-all "M-D" evil-cp-additional-bindings)
              (assoc-delete-all "M-d" evil-cp-additional-bindings))))
       (funcall f)))
