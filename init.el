@@ -96,7 +96,7 @@
   (scroll-conservatively 101)
   (scroll-step 1)
   (scroll-margin)
-  (next-line-add-newlines t)
+  ;; (next-line-add-newlines t)
   ;; (truncate-lines t)
   (auto-window-vscroll nil)
   (tooltip-mode nil)
