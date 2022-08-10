@@ -1576,6 +1576,24 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c m m" . cider-macroexpand-1)
         ("C-c m M" . cider-macroexpand-all)))
 
+(defun my/cider-eval-changed-files (&optional extensions)
+  (interactive)
+  (let* ((extensions (if (null extensions)
+                         '("clj" "cljc" "cljs")
+                       extensions))
+         (magit-buffer (magit-status))
+         (rev (progn
+                (with-current-buffer magit-buffer
+                  (magit-copy-buffer-revision)
+                  (car kill-ring))))
+         (changed-files (magit-changed-files rev))
+         (project-root (magit-toplevel)))
+    (magit-mode-bury-buffer)
+    (cl-loop for file in changed-files
+             if (seq-contains-p extensions (file-name-extension file))
+             do (cider-load-file (concat project-root file)))))
+
+
 (use-package cider-eldoc
   :after cider-mode eldoc
   :custom
