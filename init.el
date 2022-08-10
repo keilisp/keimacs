@@ -2065,6 +2065,7 @@ questions.  Else use completion to select the tab to switch to."
          ("C-c '"   . org-edit-src-exit))
   :custom
   (org-default-notes-file "~/org/todo.org")
+  (org-tags-column 0)
   (org-hidden-keywords '(title author date startup))
   (org-hide-emphasis-markers t)
   (org-todo-keywords '((sequence "TODO(t!/!)" "NEXT(n!/!)"
@@ -2244,6 +2245,7 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil)
+  (org-agenda-tags-column 0)
   (org-agenda-span 10))
 
 (use-package org-super-agenda
