@@ -1457,6 +1457,8 @@ questions.  Else use completion to select the tab to switch to."
            ;; clojure-mode-hook
            ;; clojurescript-mode-hook
            ;; clojurec-mode-hook
+           haskell-mode
+           haskell-literate-mode
            ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
@@ -1717,6 +1719,11 @@ questions.  Else use completion to select the tab to switch to."
  :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
  :user "root"
  :password "root")
+
+
+;;;; Haskell
+(use-package haskell-mode
+  :ensure t)
 
 ;;;; CC
 (use-package ccls
