@@ -158,10 +158,17 @@ See `display-line-numbers' for what these values mean."
    ("<C-up>" . enlarge-window)
    ("<C-right>" . shrink-window-horizontally))
   :hook
-  ;; Treat underscore as a part of a word in code FIXME
-  ((prog-mode-hook
+  ;; FIXME This causes emacs to hang after typing {--} in haskell-mode
+  ((emacs-lisp-mode-hook
+    lisp-mode-hook
+    scheme-mode-hook
+    clojure-mode-hook
+    clojurec-mode-hook
+    clojurescript-mode-hook
+    lisp-interaction-mode-hook
     cider-repl-mode-hook
-    sly-mrepl-hook) . (lambda () (progn
+    sly-mrepl-hook
+    geiser-repl-mode-hook) . (lambda () (progn
                               (modify-syntax-entry ?- "w")
                               (modify-syntax-entry ?_ "w")
                               (modify-syntax-entry ?* "w")
