@@ -1730,7 +1730,9 @@ questions.  Else use completion to select the tab to switch to."
 
 ;;;; Haskell
 (use-package haskell-mode
-  :ensure t)
+  :ensure t
+  :hook
+  (haskell-mode . haskell-indent-mode))
 
 ;;;; CC
 (use-package ccls
