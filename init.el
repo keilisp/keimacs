@@ -2215,6 +2215,12 @@ questions.  Else use completion to select the tab to switch to."
   ;; Save org-files after refile
   (advice-add 'org-refile :after
               (lambda (&rest _)
+                (org-save-all-org-buffers)))
+  (advice-add 'org-todo :after
+              (lambda (&rest _)
+                (org-save-all-org-buffers)))
+  (advice-add 'org-agenda-todo :after
+              (lambda (&rest _)
                 (org-save-all-org-buffers))))
 
 (use-package org-habit
