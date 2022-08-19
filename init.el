@@ -1149,6 +1149,25 @@ search started."
   :hook
   (prog-mode-hook . rainbow-delimiters-mode))
 
+;;; Dimming parentheses
+(use-package paren-face
+  :disabled t
+  :ensure t
+  :config
+  (defface paren-face
+    '((((class color) (background dark))
+       (:foreground "grey20"))
+      (((class color) (background light))
+       (:foreground "grey80")))
+    "Face used to dim parentheses.")
+
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (font-lock-add-keywords nil
+                                      '(("(\\|)" . 'paren-face)))))
+  :hook
+  (after-init-hook . global-paren-face-mode))
+
 (use-package evil-goggles
   :quelpa
   (evil-goggles
