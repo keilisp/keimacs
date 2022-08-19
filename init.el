@@ -1732,7 +1732,19 @@ questions.  Else use completion to select the tab to switch to."
 (use-package haskell-mode
   :ensure t
   :hook
-  (haskell-mode . haskell-indent-mode))
+  ;; (haskell-mode . haskell-indent-mode)
+  (haskell-mode . subword-mode)
+  )
+
+(use-package hindent
+  :ensure t
+  :hook
+  (haskell-mode . hindent-mode))
+
+(use-package shm
+  :ensure t
+  :hook
+  (haskell-mode . structured-haskell-mode))
 
 ;;;; CC
 (use-package ccls
