@@ -80,6 +80,15 @@
   :config
   (paradox-enable))
 
+;; Convert between cases
+(use-package string-inflection
+  :ensure t
+  :bind
+  (("C-c k c c" . string-inflection-lower-camelcase)
+   ("C-c k c C" . string-inflection-camelcase)
+   ("C-c k c s" . string-inflection-underscore)
+   ("C-c k c k" . string-inflection-kebab-case)))
+
 ;;;; Utils
 (defun kei/notify-send (title message)
   "Display a desktop notification by shelling MESSAGE with TITLE out to `notify-send'."
