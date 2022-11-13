@@ -114,7 +114,8 @@
   (sentence-end-double-space nil)
   (column-number-mode t)
   (read-buffer-completion-ignore-case t)
-  (read-buffer-completion-ignore-case t)
+  (switch-to-buffer-obey-display-actions t)
+  (switch-to-buffer-in-dedicated-window 'pop)
   (resize-mini-frames nil)
   (resize-mini-windows nil)
   (default-frame-alist '((menu-bar-lines . 0)
@@ -156,11 +157,17 @@ See `display-line-numbers' for what these values mean."
                  (`nil "disabled")
                  (_ (symbol-name next))))))
 
+  (defun kei/toggle-window-dedication ()
+    "Toggles window dedication in the selected window."
+    (interactive)
+    (set-window-dedicated-p (selected-window)
+                            (not (window-dedicated-p (selected-window)))))
   :bind
   (("C-c k n" . kei/toggle-line-numbers)
    ("C-c k u" . insert-char)
    ("C-c k f" . make-frame)
    ("C-c k z" . olivetti-mode)
+   ("C-c k d" . kei/toggle-window-dedication)
    :map global-map
    ("<C-left>" . enlarge-window-horizontally)
    ("<C-down>" . shrink-window)
@@ -1233,6 +1240,14 @@ search started."
 (use-package vterm
   :ensure t
   :config
+
+  ;; Leave it here just in case
+  ;; (add-to-list 'display-buffer-alist
+  ;;    '("\\*vterm\\*" display-buffer-reuse-mode-window
+  ;;      ;; change to `t' to not reuse same window
+  ;;      (inhibit-same-window . nil)
+  ;;      (mode vterm-mode vterm-copy-mode)))
+
   ;; (evil-set-initial-state 'vterm-mode 'emacs)
   (setq vterm-buffer-name "vterm")
   (setq vterm-toggle-fullscreen-p nil)
