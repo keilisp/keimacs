@@ -1156,6 +1156,12 @@ search started."
   :hook
   (prog-mode-hook . rainbow-delimiters-mode))
 
+(use-package tree-sitter
+  :ensure t
+  :hook
+  (after-init-hook . global-tree-sitter-mode)
+  (tree-sitter-after-on-hook . tree-sitter-hl-mode))
+
 ;;; Dimming parentheses
 (use-package paren-face
   :disabled t
