@@ -2521,7 +2521,8 @@ questions.  Else use completion to select the tab to switch to."
       (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
       :immediate-finish t
       :unnarrowed t)
-     ("b" "book" plain "%?"
+     ("b" "book" plain
+      "* Data\n- Author: %?\n- Description: \n-Language: \n- Location: \n- Pages: \n- Read: \n- Review: \n- Reference: \n"
       :if-new
       (file+head "books/${title}.org" "#+title: ${title}\n#+filetags: :book:\n")
       :immediate-finish t
