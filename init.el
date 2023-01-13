@@ -900,7 +900,9 @@ search started."
 (use-package eros
   :ensure t
   :hook
-  (emacs-lisp-mode-hook . eros-mode))
+  (emacs-lisp-mode-hook . eros-mode)
+  :custom-face
+  (eros-result-overlay-face ((t (:box unspecified :inherit eros-result-overlay-face)))))
 
 (use-package ipretty
   :defer t
