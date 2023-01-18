@@ -902,7 +902,7 @@ search started."
   :hook
   (emacs-lisp-mode-hook . eros-mode)
   :custom-face
-  (eros-result-overlay-face ((t (:box unspecified :inherit eros-result-overlay-face)))))
+  (eros-result-overlay-face ((t (:box unspecified)))))
 
 (use-package ipretty
   :defer t
@@ -1579,13 +1579,39 @@ questions.  Else use completion to select the tab to switch to."
   (advice-add 'cider-pprint-eval-last-sexp :around #'evil-collection-cider-last-sexp)
   (advice-add 'cider-pprint-eval-last-sexp-to-comment :around #'evil-collection-cider-last-sexp)
   :custom
-  (cider-font-lock-dynamically nil)
   (cider-font-lock-reader-conditionals nil)
   (cider-overlays-use-font-lock t)
   (cider-save-file-on-load t)
   (cider-switch-to-repl-on-insert nil)
   (cider-font-lock-dynamically '(macro core function var))
+  (cider-repl-display-help-banner nil)
+  (cider-test-show-report-on-success t)
+  (cider-allow-jack-in-without-project t)
+  (cider-use-fringe-indicators nil)
+  (cider-auto-select-error-buffer t)
+  (cider-show-eval-spinner t)
+  (cider-enrich-classpath t)
+  (cider-repl-history-file (expand-file-name "~/.local/share/cider-history"))
+  (cider-clojure-cli-global-options "-J-XX:-OmitStackTraceInFastThrow")
+  ;; (cider-use-tooltips nil)
+  (cider-connection-message-fn #'cider-random-tip)
+  (cider-repl-prompt-function #'cider-repl-prompt-newline)
+  :custom-face
+  (cider-result-overlay-face ((t (:box unspecified))))
+  (cider-error-highlight-face ((t (:inherit flymake-error))))
+  (cider-warning-highlight-face ((t (:inherit flymake-warning))))
   :config
+  (defun cider-disable-linting ()
+    "Disable linting integrations for current buffer."
+    (when (bound-and-true-p flycheck-mode)
+      (flycheck-mode -1))
+    (when (bound-and-true-p flymake-mode)
+      (flymake-mode -1)))
+
+  (defun cider-repl-prompt-newline (namespace)
+    "Return a prompt string that mentions NAMESPACE with a newline."
+    (format "%s\nλ " namespace))
+
   (defun cider-insert-last-sexp-in-repl-and-eval ()
     (interactive)
     (cider-insert-last-sexp-in-repl t))
@@ -1638,6 +1664,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c m M" . cider-macroexpand-all)))
 
 (defun my/cider-eval-changed-files (&optional extensions)
+  "Eval every changed (git) clojure file in project."
   (interactive)
   (let* ((extensions (if (null extensions)
                          '("clj" "cljc" "cljs")
@@ -1682,8 +1709,8 @@ questions.  Else use completion to select the tab to switch to."
   (cider-repl-pop-to-buffer-on-connect nil)
   ;; (cider-repl-display-in-current-window t)
   ;; (cider-repl-buffer-size-limit 600)
-  :init
-  (advice-add 'cider-repl--insert-banner :override #'ignore)
+  ;; :init
+  ;; (advice-add 'cider-repl--insert-banner :override #'ignore)
   :hook
   (cider-repl-mode . #'toggle-truncate-lines))
 
