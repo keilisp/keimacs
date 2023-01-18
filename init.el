@@ -2621,7 +2621,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package hledger-mode
   :ensure t
   :custom
-  (hledger-jfile "~/dox/finance/2022.journal")
+  (hledger-jfile "~/dox/finance/main.journal")
   (hledger-currency-string "₴")
   :mode ("\\.journal\\'" "\\.hledger\\'" "\\.dat\\'" )
   :preface
