@@ -2593,6 +2593,7 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org-edna
   :ensure t)
 
+(setq org-gtd-update-ack "2.1.0")
 (use-package org-gtd
   :ensure t
   :after org
