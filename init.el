@@ -2551,9 +2551,27 @@ questions.  Else use completion to select the tab to switch to."
       :immediate-finish t
       :unnarrowed t)
      ("b" "book" plain
-      "* Data\n- Author: %?\n- Description: \n-Language: \n- Location: \n- Pages: \n- Read: \n- Review: \n- Reference: \n"
+      "* Data\n- Author: %?\n- Description: \n-Language: \n- Location: \n- Pages: \n- Status: \n- Reference: \n* Review \n"
       :if-new
       (file+head "books/${title}.org" "#+title: ${title}\n#+filetags: :book:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("f" "film" plain
+      "* Data\n- Author: %?\n- Type: \n- Status: \n* Review \n"
+      :if-new
+      (file+head "media/${title}.org" "#+title: ${title}\n#+filetags: :film:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("s" "series" plain
+      "* Data\n- Author: %?\n- Type: \n- Status: \n* Review \n"
+      :if-new
+      (file+head "media/${title}.org" "#+title: ${title}\n#+filetags: :series:\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("c" "comics" plain
+      "* Data\n- Author: %?\n- Type: \n- Status: \n* Review \n"
+      :if-new
+      (file+head "media/${title}.org" "#+title: ${title}\n#+filetags: :comics:\n")
       :immediate-finish t
       :unnarrowed t)
      ("p" "project" plain "%?"
