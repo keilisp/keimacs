@@ -2611,12 +2611,13 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org-edna
   :ensure t)
 
-(setq org-gtd-update-ack "2.1.0")
+;; FIXME `org-gtd-engage` fails on last version (2.3.1) with
+;; "string-pad: Wrong type argument: arrayp", pin 2.0.0 for now
+;; (setq org-gtd-update-ack "2.1.0")
 (use-package org-gtd
-  :ensure t
   :after org
   :quelpa (org-gtd :fetcher github :repo "trevoke/org-gtd.el"
-                   :branch "main" :upgrade t)
+                   :commit "2.0.0" :upgrade t)
   :demand t
   :custom
   (org-gtd-directory "~/org/gtd/")
