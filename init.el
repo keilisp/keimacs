@@ -2641,6 +2641,13 @@ questions.  Else use completion to select the tab to switch to."
    :map org-gtd-process-map
    ("C-c d c" . org-gtd-choose)))
 
+(use-package org-download
+  :ensure t
+  :custom
+  (org-download-image-dir "~/org/images/")
+  :bind
+  (("C-c o h" . org-download-clipboard)))
+
 (use-package citar
   :ensure t
   :custom
