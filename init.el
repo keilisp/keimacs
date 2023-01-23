@@ -2641,6 +2641,57 @@ questions.  Else use completion to select the tab to switch to."
    :map org-gtd-process-map
    ("C-c d c" . org-gtd-choose)))
 
+(use-package citar
+  :ensure t
+  :custom
+  (org-cite-global-bibliography '("~/org/biblio.bib"))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography)
+  (citar-notes-paths '("~/org/roam/papers"))
+  (citar-org-roam-subdir "papers")
+  (citar-symbols
+   `((file ,(all-the-icons-faicon "file-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+     (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+     (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+  (citar-symbol-separator "  ")
+  :bind (("C-c o b" . citar-insert-citation)
+         ("C-c o o" . citar-dwim)
+         :map minibuffer-local-map
+         ("M-b" . citar-insert-preset)))
+
+(use-package citar-org-roam
+  :ensure t
+  :after citar org-roam
+  :no-require
+  :config
+  (citar-org-roam-mode)
+  ;; Override the `citar-org-roam--create-capture-note` function and use our own template in it.
+  (defun kei/citar-org-roam--create-capture-note (citekey entry)
+    "Open or create org-roam node for CITEKEY and ENTRY."
+    ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
+    (message "TEST1")
+    (message citekey)
+    (message "TEST2")
+    (let ((title (citar-format--entry
+                  citar-org-roam-note-title-template entry)))
+      (org-roam-capture-
+       :templates
+       '(("p" "paper" plain "%?" :if-new
+          (file+head
+           "%(concat
+ (when citar-org-roam-subdir (concat citar-org-roam-subdir \"/\")) \"${citekey}.org\")"
+           "#+title: ${title}\n#+filetags: :paper:")
+          :immediate-finish t
+          :unnarrowed t))
+       :info (list :citekey citekey)
+       :node (org-roam-node-create :title title)
+       :props '(:finalize find-file))
+      (org-roam-ref-add (concat "@" citekey))))
+
+  (advice-add #'citar-org-roam--create-capture-note :override #'kei/citar-org-roam--create-capture-note))
+
 (use-package hledger-mode
   :ensure t
   :custom
