@@ -738,13 +738,17 @@ search started."
 (use-package flycheck
   :ensure t
   :hook
-  (prog-mode-hook . flycheck-mode))
+  ((prog-mode-hook text-mode-hook) . flycheck-mode))
 
 (use-package flycheck-grammarly
+  :after (flycheck grammarly)
   :defer t
   :quelpa
   (flycheck-grammarly :repo "jcs-elpa/flycheck-grammarly"
-                      :fetcher github))
+                      :fetcher github)
+  :init 
+  (flycheck-grammarly-setup))
+
 ;;; Fancy
 (use-package olivetti
   :ensure t
