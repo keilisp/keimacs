@@ -2319,6 +2319,24 @@ questions.  Else use completion to select the tab to switch to."
               (lambda (&rest _)
                 (org-save-all-org-buffers))))
 
+(use-package company-org-block
+  :ensure t
+  :custom
+  (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+  :hook
+  (org-mode-hook . (lambda ()
+                     (message "TEST")
+                     (setq-local company-backends '(company-org-block))
+                     (company-mode +1)))
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((clojure . t)
+     (latex . t)
+     (shell . t)
+     (scheme . t)
+     (emacs-lisp . nil))))
+
 (use-package org-habit
   ;; :after org
   :custom
