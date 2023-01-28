@@ -2349,6 +2349,24 @@ questions.  Else use completion to select the tab to switch to."
 (use-package org-src
   :custom (org-src-window-setup 'current-window))
 
+;; Recurring org-mode tasks.
+(use-package org-recur
+  :ensure t
+  :after org
+  :bind (
+         :map org-recur-mode-map
+         ("C-c o f" . org-recur-finish)
+
+         :map org-recur-agenda-mode-map
+         ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+         ("d" . org-recur-finish)
+         ("C-c o f" . org-recur-finish))
+  :hook ((org-mode-hook . org-recur-mode)
+         (org-agenda-mode-hook . org-recur-agenda-mode))
+  :custom
+  (org-recur-finish-done t)
+  (org-recur-finish-archive t))
+
 (use-package org-agenda
   :bind (("C-c o a" . org-agenda-list)
          ("C-c o A" . org-agenda)
@@ -2396,6 +2414,19 @@ questions.  Else use completion to select the tab to switch to."
            tags "+university"
            ((org-agenda-overriding-header "Things for university")
             (org-agenda-files org-agenda-files)))))
+
+  ;; Refresh org-agenda after rescheduling a task.
+  (defun org-agenda-refresh ()
+    "Refresh all `org-agenda' buffers."
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when (derived-mode-p 'org-agenda-mode)
+          (org-agenda-maybe-redo)))))
+
+  (defadvice org-schedule (after refresh-agenda activate)
+    "Refresh org-agenda."
+    (org-agenda-refresh))
+
   :custom
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil)
@@ -2404,49 +2435,6 @@ questions.  Else use completion to select the tab to switch to."
 
 (use-package org-super-agenda
   :ensure t)
-
-;; (let ((org-super-agenda-groups
-;;        '(;; Each group has an implicit boolean OR operator between its selectors.
-;;          (:name "Today"  ; Optionally specify section name
-;;                 :time-grid t  ; Items that appear on the time grid
-;;                 :todo "TODAY")  ; Items that have this TODO keyword
-;;          (:name "Important"
-;;                 ;; Single arguments given alone
-;;                 :tag "bills"
-;;                 :priority "A")
-;;          ;; Set order of multiple groups at once
-;;          (:order-multi (2 (:name "Shopping in town"
-;;                                  ;; Boolean AND group matches items that match all subgroups
-;;                                  :and (:tag "shopping" :tag "@town"))
-;;                           (:name "Food-related"
-;;                                  ;; Multiple args given in list with implicit OR
-;;                                  :tag ("food" "dinner"))
-;;                           (:name "Personal"
-;;                                  :habit t
-;;                                  :tag "personal")
-;;                           (:name "Space-related (non-moon-or-planet-related)"
-;;                                  ;; Regexps match case-insensitively on the entire entry
-;;                                  :and (:regexp ("space" "NASA")
-;;                                                ;; Boolean NOT also has implicit OR between selectors
-;;                                                :not (:regexp "moon" :tag "planet")))))
-;;          ;; Groups supply their own section names when none are given
-;;          (:todo "WAITING" :order 8)  ; Set order of this section
-;;          (:todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
-;;                 ;; Show this group at the end of the agenda (since it has the
-;;                 ;; highest number). If you specified this group last, items
-;;                 ;; with these todo keywords that e.g. have priority A would be
-;;                 ;; displayed in that group instead, because items are grouped
-;;                 ;; out in the order the groups are listed.
-;;                 :order 9)
-;;          (:priority<= "B"
-;;                       ;; Show this section after "Today" and "Important", because
-;;                       ;; their order is unspecified, defaulting to 0. Sections
-;;                       ;; are displayed lowest-number-first.
-;;                       :order 1)
-;;          ;; After the last group, the agenda will display items that didn't
-;;          ;; match any of these groups, with the default order position of 99
-;;          )))
-;;   (org-agenda nil "a"))
 
 (use-package org-roam
   :ensure t
