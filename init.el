@@ -2697,9 +2697,6 @@ questions.  Else use completion to select the tab to switch to."
   (defun kei/citar-org-roam--create-capture-note (citekey entry)
     "Open or create org-roam node for CITEKEY and ENTRY."
     ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
-    (message "TEST1")
-    (message citekey)
-    (message "TEST2")
     (let ((title (citar-format--entry
                   citar-org-roam-note-title-template entry)))
       (org-roam-capture-
