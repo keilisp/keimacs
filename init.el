@@ -2734,6 +2734,17 @@ questions.  Else use completion to select the tab to switch to."
     (hledger-backward-entry)
     (hledger-pulse-momentary-current-entry))
 
+  (defun kei/insert-yesterday-date ()
+    "Insert yesterday date at point."
+    (let* ((now (current-time))
+           (yesterday (time-subtract now (* 24 3600))))
+      (insert (format-time-string "%Y-%m-%d " yesterday))))
+
+  :init
+  ;; I usually ledger daily for yesterday because it makes more sense to me.
+  ;; I can spontaneously spend money after doing my daily agenda and forget to ledger it after
+  (advice-add 'hledger-insert-date :override #'kei/insert-yesterday-date)
+
   :bind (("C-c j" . hledger-run-command)
          :map hledger-mode-map
          ("C-c e" . hledger-jentry)
