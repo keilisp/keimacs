@@ -2327,7 +2327,6 @@ questions.  Else use completion to select the tab to switch to."
   (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
   :hook
   (org-mode-hook . (lambda ()
-                     (message "TEST")
                      (setq-local company-backends '(company-org-block))
                      (company-mode +1)))
   :config
