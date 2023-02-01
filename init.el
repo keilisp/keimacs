@@ -738,7 +738,9 @@ search started."
 (use-package flycheck
   :ensure t
   :hook
-  ((prog-mode-hook text-mode-hook) . flycheck-mode))
+  ((prog-mode-hook
+    ;; text-mode-hook
+    ) . flycheck-mode))
 
 (use-package flycheck-grammarly
   :after (flycheck grammarly)
