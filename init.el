@@ -2752,6 +2752,14 @@ questions.  Else use completion to select the tab to switch to."
   :hook
   (hledger-mode-hook . flycheck-mode))
 
+(use-package kbd-mode
+  :ensure t
+  :quelpa (kbd-mode :repo "kmonad/kbd-mode"
+                    :fetcher github )
+  :mode "\\.kbd\\'"
+  :commands kbd-mode
+  :custom
+  (kbd-mode-kill-kmonad "pkill -9 kmonad"))
 
 ;; Dashboard
 ;; ALWAYS IN THE END!
