@@ -1596,6 +1596,7 @@ questions.  Else use completion to select the tab to switch to."
   (cider-use-fringe-indicators nil)
   (cider-auto-select-error-buffer t)
   (cider-show-eval-spinner t)
+  (cider-show-error-buffer nil)
   (cider-enrich-classpath t)
   (cider-repl-history-file (expand-file-name "~/.local/share/cider-history"))
   (cider-clojure-cli-global-options "-J-XX:-OmitStackTraceInFastThrow")
@@ -1628,9 +1629,19 @@ questions.  Else use completion to select the tab to switch to."
     (call-interactively #'cider-repl-set-ns)
     (sit-for 0.05) ;; HACK
     (cider-insert-last-sexp-in-repl-and-eval))
+
+  (defun my/pop-cider-error ()
+    (interactive)
+    (if-let
+        ((cider-error
+          (get-buffer "*cider-error*")))
+        (pop-to-buffer cider-error)
+      (message
+       "No cider error buffer")))
   :bind
   (:map cider-mode-map
         ("C-c x"   . cider-interrupt)
+        ("C-c R"   . my/pop-cider-error)
         ("C-c r c" . cider-find-and-clear-repl-output)
         ("C-c r q" . cider-quit)
         ("C-c e u" . cider-undef)
