@@ -248,11 +248,11 @@ search started."
   :custom
   (require-final-newline nil)
   ;; backup settings
-  (backup-by-copying t)
+  (backup-by-copying nil)
   (delete-old-versions t)
-  (kept-new-versions 6)
-  (kept-old-versions 2)
-  (version-control t)
+  ;; (kept-new-versions 2)
+  ;; (kept-old-versions 2)
+  ;; (version-control t)
   (confirm-kill-emacs #'yes-or-no-p)
   :config
   (defun kei/find-file-in-org ()
@@ -698,7 +698,7 @@ search started."
   ;; :bind
   ;; ("M-T" . reverse-im-translate-word)
   :custom
-  (reverse-im-input-methods '("russian-computer"))
+  (reverse-im-input-methods '("ukrainian-computer"))
   :config
   (reverse-im-mode t))
 
@@ -1483,6 +1483,16 @@ questions.  Else use completion to select the tab to switch to."
   :hook
   (find-file . auto-insert))
 
+(use-package doom-snippets
+  :disabled t
+  :ensure t
+  :quelpa
+  (snippets
+   :repo "doomemacs/snippets"
+   :fetcher github
+   :files ("*" (:exclude ".*" "README.md")))
+  :after yasnippet)
+
 (use-package yasnippet
   :defer 0.2
   :ensure t
@@ -1494,15 +1504,6 @@ questions.  Else use completion to select the tab to switch to."
   (setq yas-snippet-dirs '("~/.config/emacs/snippets"))
   :hook
   (prog-mode-hook  . yas-minor-mode))
-
-(use-package doom-snippets
-  :ensure t
-  :quelpa
-  (doom-snippets
-   :repo "hlissner/doom-snippets"
-   :fetcher github
-   :files ("*" (:exclude ".*" "README.md")))
-  :after yasnippet)
 
 ;;; LSP
 (use-package lsp-mode
@@ -1518,9 +1519,9 @@ questions.  Else use completion to select the tab to switch to."
            js-mode
            js2-mode
            java-mode
-           ;; clojure-mode-hook
-           ;; clojurescript-mode-hook
-           ;; clojurec-mode-hook
+           clojure-mode-hook
+           clojurescript-mode-hook
+           clojurec-mode-hook
            haskell-mode
            haskell-literate-mode
            ) . lsp)
@@ -1681,7 +1682,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c m M" . cider-macroexpand-all)))
 
 (defun my/cider-eval-changed-files (&optional extensions)
-  "Eval every changed (git) clojure file in project."
+  "Eval every changed (git) clojure file with 'EXTENSIONS' in project."
   (interactive)
   (let* ((extensions (if (null extensions)
                          '("clj" "cljc" "cljs")
@@ -1808,8 +1809,8 @@ questions.  Else use completion to select the tab to switch to."
   :ensure t)
 
 ;; Docker
-(use-package docker-tramp
-  :ensure t)
+;; (use-package docker-tramp
+;;   :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; QBP specific ;;;
@@ -2347,7 +2348,7 @@ questions.  Else use completion to select the tab to switch to."
      (latex . t)
      (shell . t)
      (scheme . t)
-     (emacs-lisp . nil))))
+     (emacs-lisp . t))))
 
 (use-package org-habit
   ;; :after org
@@ -2474,7 +2475,7 @@ questions.  Else use completion to select the tab to switch to."
       (error "")))
 
   (defun my/org-roam-get-references-without-backlinks ()
-    (remove-if #'null
+    (cl-remove-if #'null
                (cl-loop for node in (org-roam-node-list)
                         collect (if (and (null (org-roam-backlinks-get node))
                                          (equal "reference" (org-roam-node-type node)))
@@ -2522,7 +2523,7 @@ questions.  Else use completion to select the tab to switch to."
 
 
   (defun my/org-roam-get-nodes-without-id-links ()
-    (remove-if #'null
+    (cl-remove-if #'null
                (cl-loop for node in (org-roam-node-list)
                         collect (if (and (not (my/org-roam-have-id-linkp node))
                                          (not (equal "reference" (org-roam-node-type node))))
@@ -2637,10 +2638,12 @@ questions.  Else use completion to select the tab to switch to."
 ;; FIXME `org-gtd-engage` fails on last version (2.3.1) with
 ;; "string-pad: Wrong type argument: arrayp", pin 2.0.0 for now
 ;; (setq org-gtd-update-ack "2.1.0")
+(setq org-gtd-update-ack "3.0.0")
 (use-package org-gtd
   :after org
   :quelpa (org-gtd :fetcher github :repo "trevoke/org-gtd.el"
-                   :commit "2.0.0" :upgrade t)
+                   ;; :commit "2.0.0"
+                   :upgrade t)
   :demand t
   :custom
   (org-gtd-directory "~/org/gtd/")
@@ -2657,8 +2660,8 @@ questions.  Else use completion to select the tab to switch to."
    ("C-c d n" . org-gtd-show-all-next)
    ("C-c d s" . org-gtd-show-stuck-projects)
    ("C-c d A" . org-gtd-archive-completed-items)
-   :map org-gtd-process-map
-   ("C-c d c" . org-gtd-choose)))
+   :map org-gtd-clarify-map
+   ("C-c d c" . org-gtd-organize)))
 
 (use-package org-download
   :ensure t
