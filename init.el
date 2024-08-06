@@ -109,6 +109,7 @@
   ;; (truncate-lines t)
   (auto-window-vscroll nil)
   (tooltip-mode nil)
+  (which-function-mode t)
   (enable-recursive-minibuffers t)
   (completion-ignore-case t)
   (sentence-end-double-space nil)
@@ -248,6 +249,7 @@ search started."
   :custom
   (require-final-newline nil)
   ;; backup settings
+  (make-backup-files nil)
   (backup-by-copying nil)
   (delete-old-versions t)
   ;; (kept-new-versions 2)
@@ -1512,6 +1514,35 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (lsp-keymap-prefix "C-c l")
   (lsp-enable-indentation nil) ;; lsp-format-region bruh
+  ;; (lsp-log-io nil)
+  ;; (lsp-diagnostics-provider :flymake)
+  ;; (lsp-completion-provider :none)
+  ;; (lsp-session-file (expand-file-name ".lsp-session" user-emacs-directory))
+  ;; (lsp-enable-xref t)
+  ;; (lsp-keep-workspace-alive nil)
+  ;; (lsp-idle-delay 0.5)
+  ;; (lsp-auto-configure nil)
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; (lsp-enable-file-watchers nil)
+  ;; (lsp-enable-on-type-formatting nil)
+  ;; (lsp-enable-symbol-highlighting nil)
+  ;; (lsp-enable-text-document-color nil)
+  ;; completion
+  ;; (lsp-completion-show-kind nil)
+  ;; headerline
+  ;; (lsp-headerline-breadcrumb-enable nil)
+  ;; (lsp-headerline-breadcrumb-enable-diagnostics nil)
+  ;; (lsp-headerline-breadcrumb-enable-symbol-numbers nil)
+  ;; (lsp-headerline-breadcrumb-icons-enable nil)
+  ;; modeline
+  ;; (lsp-modeline-code-actions-enable nil)
+  ;; (lsp-modeline-diagnostics-enable nil)
+  ;; (lsp-modeline-workspace-status-enable nil)
+  ;; (lsp-signature-doc-lines 1)
+  ;; lens
+  ;; (lsp-lens-enable t)
+  ;; semantic
+  ;; (lsp-semantic-tokens-enable nil)
   :hook (((c-mode
            cc-mode
            c++-mode
@@ -2773,6 +2804,9 @@ questions.  Else use completion to select the tab to switch to."
   :commands kbd-mode
   :custom
   (kbd-mode-kill-kmonad "pkill -9 kmonad"))
+
+(use-package unfill
+  :ensure t)
 
 ;; Dashboard
 ;; ALWAYS IN THE END!
