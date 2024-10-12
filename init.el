@@ -605,6 +605,10 @@ search started."
   (evil-cleverparens-swap-move-by-word-and-symbol t)
   (evil-cleverparens-indent-afterwards nil)
   (evil-cleverparens-use-regular-insert t)
+  :bind
+  ;; REVIEW stop working for some reason by itself
+  (:map evil-cleverparens-mode-map
+        ("M-[" . evil-cp-wrap-next-square))
   :hook
   ((emacs-lisp-mode-hook
     lisp-mode-hook
