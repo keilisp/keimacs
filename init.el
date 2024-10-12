@@ -838,7 +838,7 @@ search started."
 (use-package menu-bar
   :bind
   (:map ctl-x-map
-        ("K" . kill-this-buffer)))
+        ("K" . kill-current-buffer)))
 
 ;; Minibuffer
 (use-package minibuffer
