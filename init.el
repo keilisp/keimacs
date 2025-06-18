@@ -1560,6 +1560,7 @@ questions.  Else use completion to select the tab to switch to."
            haskell-mode
            haskell-literate-mode
            gdscript-mode
+           go-mode
            ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
@@ -1932,6 +1933,15 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c t t" . rustic-cargo-test)
         ("C-c t r" . rustic-cargo-test-rerun)
         ("C-c t c" . rustic-cargo-current-test)))
+
+;;;; Go
+(use-package go-mode
+  :ensure t
+  :hook
+  (go-mode-hook . (lambda ()
+                    (lsp-format-buffer)
+                    (lsp-organize-imports))))
+
 
 ;;; Lua (just for awesomewm)
 (use-package lua-mode
