@@ -2352,28 +2352,28 @@ questions.  Else use completion to select the tab to switch to."
 
   (setq org-capture-templates
         `(("t" "Todo" entry
-           (file+olp "~/org/todo.org")
+           (file+olp "~/org/todo.org" "Basket")
            "* TODO %t %? :gtd:\n")
           ("w" "Work Todo" entry
-           (file+olp "~/org/todo.org")
+           (file+olp "~/org/todo.org" "Basket")
            "* TODO %t %? :work:\n")
           ("b" "Bookmark" entry
-           (file+olp "~/org/bookmarks.org")
+           (file+olp "~/org/bookmarks.org" "Uncategorized")
            "* [%?[][]] \n")
           ("s" "Study" entry
-           (file+olp "~/org/learning.org")
+           (file+olp "~/org/learning.org" "Uncategorized")
            "\n* [%?[][]] :study: \n")
           ("r" "Read" entry
-           (file+olp "~/org/learning.org")
+           (file+olp "~/org/learning.org" "Uncategorized")
            "\n* [%?[][]] :read: \n")
           ("v" "Video" entry
-           (file+olp "~/org/learning.org")
+           (file+olp "~/org/learning.org" "Uncategorized")
            "\n* [%?[][]] :video: \n")
           ("l" "Listen" entry
-           (file+olp "~/org/learning.org")
+           (file+olp "~/org/learning.org" "Uncategorized")
            "\n* [%?[][]] :listen: \n")
           ("p" "Prog" entry
-           (file+olp "~/org/learning.org")
+           (file+olp "~/org/learning.org" "Uncategorized")
            "\n* [%?[][]] :prog: \n")
           ("i" "Idea" entry
            (file+olp+datetree "~/org/ideas.org")
