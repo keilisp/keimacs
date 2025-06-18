@@ -118,6 +118,7 @@
   (switch-to-buffer-obey-display-actions t)
   (switch-to-buffer-in-dedicated-window 'pop)
   (resize-mini-frames nil)
+  (ring-bell-function 'ignore)
   (resize-mini-windows nil)
   (default-frame-alist '((menu-bar-lines . 0)
                          (tool-bar-lines . 0)
@@ -2842,7 +2843,7 @@ questions.  Else use completion to select the tab to switch to."
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   (defun kei/dashboard-banner ()
     "Set a dashboard banner including information on package initialization
-			   time and garbage collections."""
+			   time and garbage collections."
     (setq dashboard-banner-logo-title
 	      (format "Emacs ready in %.2f seconds with %d garbage collections."
 		          (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
