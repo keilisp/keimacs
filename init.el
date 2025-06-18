@@ -1559,6 +1559,7 @@ questions.  Else use completion to select the tab to switch to."
            clojurec-mode-hook
            haskell-mode
            haskell-literate-mode
+           gdscript-mode
            ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration)))
 
@@ -1900,6 +1901,17 @@ questions.  Else use completion to select the tab to switch to."
                    (define-key c-mode-base-map (kbd "C-c d s") 'gud-step)
                    (define-key c-mode-base-map (kbd "C-c d x") 'gud-finish))))
 
+;;;; GDScript
+
+(use-package gdscript-mode
+  :quelpa (gdscript-mode
+           :fetcher github
+           :repo "godotengine/emacs-gdscript-mode")
+
+  :custom
+  (lsp-gdscript-port 6005)
+  (gdscript-godot-executable "godot4")
+  (gdscript-gdformat-save-and-format t))
 
 ;;;; Rust
 (use-package rustic
