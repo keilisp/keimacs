@@ -131,7 +131,7 @@
   ;; emacs 28.1
   (completions-detailed t)
   (next-error-message-highlight t)
-  (help-enable-symbol-autoload t)
+  ;; (help-enable-symbol-autoload t)
   (describe-bindings-outline t)
 
   :config
@@ -192,7 +192,10 @@ See `display-line-numbers' for what these values mean."
                               (modify-syntax-entry ?* "w")
                               (modify-syntax-entry ?? "w")
                               (modify-syntax-entry ?! "w")
-                              (modify-syntax-entry ?> "w")))))
+                              (modify-syntax-entry ?> "w"))))
+  (rust-mode-hook . (lambda ()
+                      (progn
+                        (modify-syntax-entry ?_ "w")))))
 
 ;;; Isearch
 (use-package isearch
@@ -438,6 +441,9 @@ search started."
   :hook
   (after-init-hook . beacon-mode))
 
+(use-package undo-fu
+  :ensure t)
+
 ;;; Evil
 (use-package evil
   :ensure t
@@ -555,9 +561,20 @@ search started."
 
 ;; Smartparens
 (use-package smartparens
+  :ensure t
   :hook
   (after-init-hook . smartparens-global-mode)
   (after-init-hook . show-smartparens-global-mode)
+  ((emacs-lisp-mode-hook
+    lisp-mode-hook
+    scheme-mode-hook
+    clojure-mode-hook
+    clojurec-mode-hook
+    clojurescript-mode-hook
+    lisp-interaction-mode-hook
+    cider-repl-mode-hook
+    sly-mrepl-hook
+    geiser-repl-mode-hook) . smartparens-mode)
   :config
   (sp-pair "`" nil :actions nil)
   (sp-pair "'" nil :actions nil)
@@ -570,7 +587,7 @@ search started."
     (indent-according-to-mode))
 
   (dolist (mode '(c-mode c++-mode css-mode objc-mode java-mode
-                         js2-mode json-mode
+                         js2-mode json-mode rust-mode
                          python-mode sh-mode web-mode))
     (sp-local-pair mode "{" nil :post-handlers
                    '((radian-enter-and-indent-sexp "RET")
@@ -592,7 +609,6 @@ search started."
 ;;; Evil-cleverparens
 (use-package evil-cleverparens
   :ensure t
-  :after lsp-mode
   :preface
   (defun do-not-map-M-s-and-M-d (f)
     (let ((evil-cp-additional-bindings
@@ -620,12 +636,9 @@ search started."
     lisp-interaction-mode-hook
     cider-repl-mode-hook
     sly-mrepl-hook
-    geiser-repl-mode-hook) . evil-cleverparens-mode )
+    geiser-repl-mode-hook) . evil-cleverparens-mode)
   :init
   (advice-add 'evil-cp-set-additional-bindings :around #'do-not-map-M-s-and-M-d))
-
-(use-package undo-fu
-  :ensure t)
 
 ;; jj --> esc
 (use-package evil-escape
@@ -1516,6 +1529,11 @@ questions.  Else use completion to select the tab to switch to."
 (use-package lsp-mode
   :ensure t
   :config
+  (delete 'lsp-terraform lsp-client-packages)
+  (with-eval-after-load 'lsp-mode
+    ;; disable terraform clients so lsp-terraform.el is never used
+    (setq lsp-disabled-clients
+          (append '(terraform-ls tfls) lsp-disabled-clients)))
   :custom
   (lsp-keymap-prefix "C-c l")
   (lsp-enable-indentation nil) ;; lsp-format-region bruh
@@ -1548,22 +1566,21 @@ questions.  Else use completion to select the tab to switch to."
   ;; (lsp-lens-enable t)
   ;; semantic
   ;; (lsp-semantic-tokens-enable nil)
-  :hook (((c-mode
-           cc-mode
-           c++-mode
-           sh-mode
-           js-mode
-           js2-mode
-           java-mode
-           clojure-mode-hook
-           clojurescript-mode-hook
-           clojurec-mode-hook
-           haskell-mode
-           haskell-literate-mode
-           gdscript-mode
-           go-mode
-           ) . lsp)
-         (lsp-mode . lsp-enable-which-key-integration)))
+  :hook ((c-mode-hook
+          cc-mode-hook
+          c++-mode-hook
+          sh-mode-hook
+          js-mode-hook
+          js2-mode-hook
+          java-mode-hook
+          rust-mode-hook
+          clojure-mode-hook
+          clojurescript-mode-hook
+          clojurec-mode-hook
+          haskell-mode-hook
+          haskell-literate-mode-hook
+          gdscript-mode-hook
+          go-mode-hook) . lsp))
 
 (use-package lsp-ui
   :ensure t
@@ -1832,12 +1849,12 @@ questions.  Else use completion to select the tab to switch to."
   :custom
   (nrepl-hide-special-buffers t))
 
-(use-package anakondo
-  :ensure t
-  :hook
-  (clojure-mode-hook . anakondo-minor-mode)
-  (clojurescript-mode-hook . anakondo-minor-mode)
-  (clojurec-mode-hook . anakondo-minor-mode))
+;; (use-package anakondo
+;;   :ensure t
+;;   :hook
+;;   (clojure-mode-hook . anakondo-minor-mode)
+;;   (clojurescript-mode-hook . anakondo-minor-mode)
+;;   (clojurec-mode-hook . anakondo-minor-mode))
 
 (use-package flycheck-clj-kondo
   :ensure t)
@@ -1906,6 +1923,7 @@ questions.  Else use completion to select the tab to switch to."
 ;;;; GDScript
 
 (use-package gdscript-mode
+  :ensure t
   :quelpa (gdscript-mode
            :fetcher github
            :repo "godotengine/emacs-gdscript-mode")
@@ -1934,6 +1952,14 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c t t" . rustic-cargo-test)
         ("C-c t r" . rustic-cargo-test-rerun)
         ("C-c t c" . rustic-cargo-current-test)))
+
+;;; Shaders
+
+(use-package wgsl-mode
+  :ensure t)
+
+(use-package glsl-mode
+  :ensure t)
 
 ;;;; Go
 (use-package go-mode
@@ -2085,6 +2111,7 @@ questions.  Else use completion to select the tab to switch to."
 ;;; Direnv (lorri)
 (use-package direnv
   :ensure t
+  :disabled t
   :config
   (direnv-mode))
 
@@ -2242,6 +2269,7 @@ questions.  Else use completion to select the tab to switch to."
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
 (use-package org-ql
+  :ensure t
   :quelpa (org-ql :fetcher github :repo "alphapapa/org-ql"
                   :files (:defaults (:exclude "helm-org-ql.el")))
   :after org)
@@ -2698,6 +2726,7 @@ questions.  Else use completion to select the tab to switch to."
 ;; (setq org-gtd-update-ack "2.1.0")
 (setq org-gtd-update-ack "3.0.0")
 (use-package org-gtd
+  :ensure t
   :after org
   :quelpa (org-gtd :fetcher github :repo "trevoke/org-gtd.el"
                    ;; :commit "2.0.0"
