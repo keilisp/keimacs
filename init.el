@@ -1,9 +1,10 @@
-;;; -*- lexical-binding: t; -*-
 
-(eval-and-compile
-  (setq use-package-expand-minimally t)
-  (setq use-package-enable-imenu-support t)
-  (setq use-package-hook-name-suffix nil))
+ (setq gc-cons-threshold most-positive-fixnum)
+
+ (eval-and-compile
+   (setq use-package-expand-minimally t)
+   (setq use-package-enable-imenu-support t)
+   (setq use-package-hook-name-suffix nil))
 
 
 ;;; Init packages
@@ -120,7 +121,8 @@
   (resize-mini-frames nil)
   (ring-bell-function 'ignore)
   (resize-mini-windows nil)
-  (default-frame-alist '((menu-bar-lines . 0)
+  (default-frame-alist '((font . "Iosevka-12")
+                         (menu-bar-lines . 0)
                          (tool-bar-lines . 0)
                          (scroll-bar . nil)
                          (vertical-scroll-bars . nil)
@@ -164,6 +166,16 @@ See `display-line-numbers' for what these values mean."
     (interactive)
     (set-window-dedicated-p (selected-window)
                             (not (window-dedicated-p (selected-window)))))
+
+  (defun kei/emacsclient-frame-close ()
+    "Close only the current frame when it belongs to emacsclient."
+    (interactive)
+    (if (and (fboundp 'server-running-p) (server-running-p)
+             (frame-parameter nil 'client))
+        (delete-frame)
+      (save-buffers-kill-terminal)))
+
+  (global-set-key [remap save-buffers-kill-terminal] #'kei/emacsclient-frame-close)
   :bind
   (("C-c k n" . kei/toggle-line-numbers)
    ("C-c k u" . insert-char)
@@ -193,9 +205,10 @@ See `display-line-numbers' for what these values mean."
                               (modify-syntax-entry ?? "w")
                               (modify-syntax-entry ?! "w")
                               (modify-syntax-entry ?> "w"))))
-  (rust-mode-hook . (lambda ()
-                      (progn
-                        (modify-syntax-entry ?_ "w")))))
+  ((rust-mode-hook
+    odin-mode-hook) . (lambda ()
+                        (progn
+                          (modify-syntax-entry ?_ "w")))))
 
 ;;; Isearch
 (use-package isearch
@@ -259,7 +272,7 @@ search started."
   ;; (kept-new-versions 2)
   ;; (kept-old-versions 2)
   ;; (version-control t)
-  (confirm-kill-emacs #'yes-or-no-p)
+  ;; (confirm-kill-emacs #'yes-or-no-p)
   :config
   (defun kei/find-file-in-org ()
     "Search for a file in `org'."
@@ -315,6 +328,7 @@ search started."
 ;;; custom file -> /dev/null
 (use-package cus-edit
   :defer t
+  :disabled t
   :custom
   (custom-file null-device "Don't store customizations"))
 
@@ -416,11 +430,11 @@ search started."
   (("C-=" . text-scale-increase)
    ("C-_" . text-scale-decrease))
   :custom-face
-  (default ((t (:font "Iosevka" :height 90))))
-  (fixed-pitch ((t (:font "Iosevka" :height 90))))
-  (variable-pitch ((t (:font "Iosevka" :height 90))))
-  (mode-line ((t (:font "Iosevka" :height 90))))
-  (mode-line-inactive ((t (:font "Iosevka" :height 90)))))
+  (default ((t (:font "Iosevka" :height 120))))
+  (fixed-pitch ((t (:font "Iosevka" :height 120))))
+  (variable-pitch ((t (:font "Iosevka" :height 120))))
+  (mode-line ((t (:font "Iosevka" :height 120))))
+  (mode-line-inactive ((t (:font "Iosevka" :height 120)))))
 
 (use-package unicode-fonts
   :ensure t
@@ -587,7 +601,8 @@ search started."
     (indent-according-to-mode))
 
   (dolist (mode '(c-mode c++-mode css-mode objc-mode java-mode
-                         js2-mode json-mode rust-mode
+                         js2-mode json-mode go-mode rust-mode
+                         odin-mode
                          python-mode sh-mode web-mode))
     (sp-local-pair mode "{" nil :post-handlers
                    '((radian-enter-and-indent-sexp "RET")
@@ -835,17 +850,6 @@ search started."
   :ensure t)
 
 ;;; Imenu
-(use-package imenu
-  :bind
-  (:map goto-map
-        ("i" . imenu))
-  :custom
-  (imenu-auto-rescan t)
-  (imenu-auto-rescan-maxout 60000)
-  (imenu-use-popup-menu nil)
-  (imenu-eager-completion-buffer t)
-  :hook
-  (imenu-after-jump-hook . recenter-top-bottom))
 
 (use-package flimenu
   :ensure t
@@ -1223,7 +1227,7 @@ search started."
 (use-package hl-todo
   :ensure t
   :custom-face
-  (hl-todo ((t (:inherit hl-todo :italic t))))
+  (hl-todo ((t (:italic t))))
   :hook
   ((prog-mode-hook
     yaml-mode-hook) . hl-todo-mode))
@@ -1244,11 +1248,11 @@ search started."
   (projectile-project-search-path (cddr (directory-files "~/code/" t)))
   (projectile-require-project-root nil)
   (projectile-sort-order 'recentf)
-  (projectile-project-root-files-functions
-   '(projectile-root-local
-     projectile-root-top-down
-     projectile-root-bottom-up
-     projectile-root-top-down-recurring))
+  ;; (projectile-project-root-files-functions
+  ;;  '(projectile-root-local
+  ;;    projectile-root-top-down
+  ;;    projectile-root-bottom-up
+  ;;    projectile-root-top-down-recurring))
   (projectile-completion-system 'ivy))
 
 ;;;; Autocompletion
@@ -1593,14 +1597,14 @@ questions.  Else use completion to select the tab to switch to."
 
 ;;;; SQL
 
-(use-package ejc-sql
-  :ensure t
-  :hook
-  (ejc-sql-connected-hook . (lambda ()
-                              (ejc-set-fetch-size nil)
-                              (ejc-set-max-rows nil)
-                              (ejc-set-column-width-limit 80)
-                              (ejc-set-use-unicode t))))
+;; (use-package ejc-sql
+;;   :ensure t
+;;   :hook
+;;   (ejc-sql-connected-hook . (lambda ()
+;;                               (ejc-set-fetch-size nil)
+;;                               (ejc-set-max-rows nil)
+;;                               (ejc-set-column-width-limit 80)
+;;                               (ejc-set-use-unicode t))))
 
 ;;;; JABA
 (use-package lsp-java
@@ -1867,19 +1871,6 @@ questions.  Else use completion to select the tab to switch to."
 ;; (use-package docker-tramp
 ;;   :ensure t)
 
-;;;;;;;;;;;;;;;;;;;;
-;;; QBP specific ;;;
-;;;;;;;;;;;;;;;;;;;;
-
-(ejc-create-connection
- "qbp_bdm_demo_dev_v2"
- :classpath (cider-jar-find-or-fetch "mysql" "mysql-connector-java" "5.1.44")
- :subprotocol "mysql"
- :subname "//172.17.0.1:3406/bdm_demo_dev_v2?autoReconnect=true&useSSL=false"
- :user "root"
- :password "root")
-
-
 ;;;; Haskell
 (use-package haskell-mode
   :ensure t
@@ -1933,6 +1924,15 @@ questions.  Else use completion to select the tab to switch to."
   (gdscript-godot-executable "godot4")
   (gdscript-gdformat-save-and-format t))
 
+;;;; Odin
+(use-package odin-mode
+  :ensure t
+  :quelpa
+  (odin-mode
+   :repo "mattt-b/odin-mode"
+   :fetcher github
+   :version original))
+
 ;;;; Rust
 (use-package rustic
   :ensure t
@@ -1964,10 +1964,17 @@ questions.  Else use completion to select the tab to switch to."
 ;;;; Go
 (use-package go-mode
   :ensure t
-  :hook
-  (go-mode-hook . (lambda ()
-                    (lsp-format-buffer)
-                    (lsp-organize-imports))))
+  ;; :custom
+  ;; (lsp-go-analyses . '((shadow . t)
+  ;;                      (simplifycompositelit . :json-false)))
+  ;; :hook
+  ;; (go-mode-hook . (lambda ()
+  ;;                   (smartparens-mode)
+  ;;                   (evil-cleverparens-mode)
+  ;;                   ;; (lsp-deferred)
+  ;;                   (add-hook 'before-save-hook #'lsp-format-buffer nil t)
+  ;;                   (add-hook 'before-save-hook #'lsp-organize-imports nil t)))
+  )
 
 
 ;;; Lua (just for awesomewm)
@@ -2060,6 +2067,7 @@ questions.  Else use completion to select the tab to switch to."
         ("C-c c D" . sly-disassemble-symbol)
         ("C-c s"   . sly-scratch)
         ("C-c n d" . sly-stickers-dwim)
+        ("C-c n D" . sly-stickers-delete-sticker-at-point)
         ("C-c n r" . sly-stickers-replay)
         ("C-c n t" . sly-stickers-toggle-break-on-stickers)
         ("C-c n f" . sly-stickers-fetch)
@@ -2530,7 +2538,7 @@ questions.  Else use completion to select the tab to switch to."
   (org-agenda-skip-scheduled-if-done . nil)
   (org-agenda-skip-deadline-if-done . nil)
   (org-agenda-tags-column 0)
-  (org-agenda-span 10))
+  (org-agenda-span 'month))
 
 (use-package org-super-agenda
   :ensure t)
@@ -2724,7 +2732,7 @@ questions.  Else use completion to select the tab to switch to."
 ;; FIXME `org-gtd-engage` fails on last version (2.3.1) with
 ;; "string-pad: Wrong type argument: arrayp", pin 2.0.0 for now
 ;; (setq org-gtd-update-ack "2.1.0")
-(setq org-gtd-update-ack "3.0.0")
+(setq org-gtd-update-ack "4.0.0")
 (use-package org-gtd
   :ensure t
   :after org
@@ -2741,14 +2749,14 @@ questions.  Else use completion to select the tab to switch to."
               (lambda (&rest _)
                 (org-save-all-org-buffers)))
   :bind
-  (("C-c d c" . org-gtd-capture)
-   ("C-c d e" . org-gtd-engage)
-   ("C-c d p" . org-gtd-process-inbox)
-   ("C-c d n" . org-gtd-show-all-next)
-   ("C-c d s" . org-gtd-show-stuck-projects)
-   ("C-c d A" . org-gtd-archive-completed-items)
-   :map org-gtd-clarify-map
-   ("C-c d c" . org-gtd-organize)))
+  (("C-c t c" . org-gtd-capture)
+   ("C-c t e" . org-gtd-engage)
+   ("C-c t p" . org-gtd-process-inbox)
+   ("C-c t n" . org-gtd-show-all-next)
+   ("C-c t s" . org-gtd-show-stuck-projects)
+   ("C-c t A" . org-gtd-archive-completed-items)
+   :map org-gtd-clarify-mode-map
+   ("C-c t c" . org-gtd-organize)))
 
 (use-package org-download
   :ensure t
@@ -2901,3 +2909,56 @@ questions.  Else use completion to select the tab to switch to."
   (dashboard-setup-startup-hook)
   (dashboard-insert-agenda)
   (dashboard-refresh-buffer))
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 20 1024 1024))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(adaptive-wrap all-the-icons all-the-icons-ivy anzu auctex beacon
+                   browse-at-remote ccls cider citar citar-org-roam
+                   coffee-mode company company-auctex company-math
+                   company-org-block company-shell counsel dashboard
+                   emojify eros ess evil evil-anzu evil-collection
+                   evil-commentary evil-escape evil-goggles evil-org
+                   evil-surround evil-tex faces fennel-mode flimenu
+                   flycheck flycheck-clj-kondo flycheck-grammarly
+                   flycheck-hledger flyspell-correct-popup fnhh
+                   font-lock+ forge format-all free-keys
+                   frog-jump-buffer gcmh gdscript-mode geiser-eros
+                   geiser-guile geiser-racket glsl-mode go-mode
+                   google-this google-translate grammarly haskell-mode
+                   helpful hindent hledger-mode ibuffer-projectile
+                   ipretty iqa js2-mode json-mode kbd-mode keyfreq
+                   latex-preview-pane link-hint log4j-mode lsp-java
+                   lsp-mode lsp-ui macrostep macrostep-geiser magit
+                   marginalia modus-themes nix-mode no-littering
+                   odin-mode olivetti orderless org-download org-edna
+                   org-fancy-priorities org-gtd org-ql org-recur
+                   org-roam org-roam-ui page-break-lines paradox
+                   pdf-tools pdf-view-restore quelpa
+                   quelpa-use-package rainbow-delimiters rainbow-mode
+                   ranger request rg rjsx-mode rustic scratch shm
+                   skewer-mode sly sly-asdf sly-macrostep
+                   sly-named-readtables sly-quicklisp smartparens smex
+                   ssh-agency string-inflection sudo-edit tide
+                   tree-sitter treemacs typescript-mode undo-fu unfill
+                   unicode-fonts use-package-custom-update vterm
+                   websocket wgsl-mode yasnippet))
+ '(safe-local-variable-values '((projectile-project-root . "~/code/clojure/ozon/"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-goggles-change-face ((t (:inherit diff-removed))))
+ '(evil-goggles-delete-face ((t (:inherit diff-removed))))
+ '(evil-goggles-paste-face ((t (:inherit diff-added))))
+ '(evil-goggles-undo-redo-add-face ((t (:inherit diff-added))))
+ '(evil-goggles-undo-redo-change-face ((t (:inherit diff-changed))))
+ '(evil-goggles-undo-redo-remove-face ((t (:inherit diff-removed))))
+ '(evil-goggles-yank-face ((t (:inherit diff-changed)))))
